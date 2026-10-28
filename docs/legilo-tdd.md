@@ -1315,7 +1315,14 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
 
 **Windows Qt (open question 7).** Qt 6.12, as described in 4.2.
 
-**Selection capture on Wayland.** A test program with no window read both the primary selection and the clipboard through `KSystemClipboard` on Plasma 6.3.6 Wayland, without ever having focus. Each read took under 5 ms. Checks of selections made in Okular, Firefox and Kate are still pending.
+**Selection capture on Wayland.** A test program with no window polled the primary selection and the clipboard through `KSystemClipboard` every 500 ms on Plasma 6.3.6 Wayland. It never had focus.
+
+- Selections highlighted (not copied) in Firefox, Kate and a PDF in Okular all arrived, up to 5,537 characters. Each read took at most 3 ms. Highlighting left the clipboard untouched, as it should.
+- When focus moved to Konsole, the primary selection reverted to Konsole's own earlier selection. Later, an application cleared it.
+  - The primary selection is whatever the system last set it to, not necessarily what is highlighted on screen.
+  - A global shortcut doesn't move focus, so speak-selection reads the selection the user just made.
+  - An empty selection takes the existing path: notify, or fall back to the clipboard (7.1).
+- Conclusion: `KSystemClipboard` is suitable. The `wl-paste` contingency (7.1.2) stays documented but is not expected to be needed.
 
 ### Stage 1 - Speech core and command line (M)
 
@@ -1492,7 +1499,7 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| `KSystemClipboard` in Frameworks 6.13 misbehaves on trixie Wayland | Low | High | Stage 0 spike: reads work without focus (12); `wl-paste` contingency selected at run time (7.1.2) |
+| `KSystemClipboard` in Frameworks 6.13 misbehaves on trixie Wayland | Low | High | Stage 0 spike: selections from Firefox, Kate and Okular read without focus (12); `wl-paste` contingency selected at run time (7.1.2) |
 | Pre-converted Piper voices missing or unsuitably licensed | Low | High | Checked in stage 0: public-domain voices exist; default `en_GB-cori-medium` (12) |
 | First audio misses NFR-01 with long segments | Low | Medium | Short first chunk (7.5); Piper medium measured at about 0.3 s for the first chunk in stage 0 (12); benchmark job (9.6) |
 | Default shortcuts clash with keyboard layouts or system combinations | Medium | Medium | No Ctrl+Alt defaults on Windows; checks in stage 5 and the manual checklist (7.6.2, 9.4) |
@@ -1674,6 +1681,7 @@ Stage 0 results (12) and the changes they require:
 - The default voice is `en_GB-cori-medium`. Voices derived from lessac are flagged for licence (7.3.2, 7.10, 11, stage 4).
 - Windows uses Qt 6.12 (4.2).
 - Open questions 3 and 7 are resolved; question 5 gains the Qt 6.12 constraint (14).
+- Selection capture through `KSystemClipboard` works without focus on Plasma Wayland (12, 13).
 - The repository layout gains `packaging/container/` and `scripts/`. The Debian package gains a generated manual page (6.5, 10.3).
 
 ### Draft 0.2 (27 October 2026)
