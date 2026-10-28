@@ -63,7 +63,8 @@
         {
             "name": "test-base",
             "hidden": true,
-            "output": { "outputOnFailure": true }
+            "output": { "outputOnFailure": true },
+            "execution": { "noTestsAction": "error" }
         },
         { "name": "linux-debug", "inherits": "test-base", "configurePreset": "linux-debug" },
         { "name": "linux-release", "inherits": "test-base", "configurePreset": "linux-release" },

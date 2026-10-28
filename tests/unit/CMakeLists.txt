@@ -11,3 +11,5 @@ function(legilo_add_unit_test name)
     set_tests_properties(${name} PROPERTIES
         ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_LOGGING_RULES=*.debug=false")
 endfunction()
+
+legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)

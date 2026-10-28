@@ -2,6 +2,8 @@
 add_library(legilo_app STATIC
     Logging.cpp
     Logging.h
+    Settings.cpp
+    Settings.h
 )
 target_include_directories(legilo_app PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(legilo_app PUBLIC legilo_core legilo_platform Qt6::Core)
