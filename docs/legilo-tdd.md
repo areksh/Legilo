@@ -324,7 +324,9 @@ legilo/
     unit/  integration/
     corpus/ (clean-up and detection regression samples)
   debian/                     (Debian packaging)
+  packaging/container/        (trixie build image)
   packaging/windows/          (Inno Setup script)
+  scripts/                    (check, build-deb, container; fetch-deps from stage 1)
   docs/
 ```
 
@@ -1185,7 +1187,7 @@ Cache the sherpa-onnx build and the test model between runs.
 
 ### 10.3 Debian package
 
-- A `debian/` directory with `debhelper-compat (= 13)`, `dh $@ --buildsystem=cmake+ninja`, and `Build-Depends` taken from section 5, without `devscripts`.
+- A `debian/` directory with `debhelper-compat (= 13)`, `dh $@ --buildsystem=cmake+ninja`, and `Build-Depends` taken from section 5, without `devscripts` and with `help2man`. `debian/control` is the authoritative list: the build container installs from it.
 - **Package name:** `legilo`, architecture `amd64`.
 - **Versioning:** from the first release (stage 3), semantic versioning: `0.x.y` until stage 9, then `1.0.0`.
   - The Debian version is the upstream version plus `-1`.
@@ -1196,6 +1198,7 @@ Cache the sherpa-onnx build and the test model between runs.
   | File | Location |
   |---|---|
   | Binary | `/usr/bin/legilo` |
+  | Manual page | `/usr/share/man/man1/legilo.1.gz`, generated from `--help` with `help2man` at build time |
   | Private libraries | `/usr/lib/legilo/` |
   | Desktop file | `/usr/share/applications/io.github.example.legilo.desktop` |
   | Icons | `/usr/share/icons/hicolor/.../apps/io.github.example.legilo.*` |
