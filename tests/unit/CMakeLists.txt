@@ -7,9 +7,11 @@ function(legilo_add_unit_test name)
     target_link_libraries(${name} PRIVATE Qt6::Test ${ARG_LIBS})
     legilo_set_warnings(${name})
     add_test(NAME ${name} COMMAND ${name})
-    # No test may need a display or touch the user's real settings.
+    # No test may need a display or touch the user's real settings. Unit
+    # tests take well under a second, so a long run means a deadlock.
     set_tests_properties(${name} PROPERTIES
-        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_LOGGING_RULES=*.debug=false")
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_LOGGING_RULES=*.debug=false"
+        TIMEOUT 30)
 endfunction()
 
 legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
