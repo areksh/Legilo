@@ -1,0 +1,20 @@
+#!/bin/sh
+# Builds the .deb in the trixie build container from a clean copy of the
+# working tree (tracked and untracked files, minus anything ignored), runs
+# lintian on it, and copies the results to out/.
+set -eu
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+mkdir -p "$root/out"
+
+"$root/scripts/container" sh -euc '
+    git config --global --add safe.directory /src
+    rm -rf /tmp/build && mkdir -p /tmp/build/legilo
+    git ls-files -z --cached --others --exclude-standard \
+        | tar --create --null --files-from=- --ignore-failed-read \
+        | tar --extract --directory=/tmp/build/legilo
+    cd /tmp/build/legilo
+    dpkg-buildpackage -us -uc -b
+    lintian --fail-on warning --info ../*.changes
+    cp ../*.deb ../*.buildinfo ../*.changes /src/out/
+'

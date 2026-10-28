@@ -1,0 +1,12 @@
+# Debian trixie build environment. Build dependencies come from
+# debian/control so the package list is kept in one place; the extra
+# packages are the lint and packaging tools.
+FROM docker.io/library/debian:trixie
+
+COPY debian/control /tmp/legilo/debian/control
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential ca-certificates clang-format clang-tidy git lintian \
+    && apt-get build-dep -y /tmp/legilo \
+    && rm -rf /var/lib/apt/lists/* /tmp/legilo

@@ -1,0 +1,23 @@
+#!/bin/sh
+# Runs a command in the Debian trixie build container with the repository
+# mounted at /src, building the image first if it is out of date.
+#
+# Usage: scripts/container [COMMAND [ARG...]]   (default: a shell)
+# Set CONTAINER_ENGINE=docker to use Docker instead of Podman.
+set -eu
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+engine=${CONTAINER_ENGINE:-podman}
+image=legilo-build:trixie
+
+"$engine" build --quiet --tag "$image" \
+    --file "$root/packaging/container/Containerfile" "$root" >/dev/null
+
+tty=
+if [ -t 0 ] && [ -t 1 ]; then
+    tty=--tty
+fi
+
+exec "$engine" run --rm --interactive $tty \
+    --volume "$root:/src:Z" --workdir /src \
+    "$image" "${@:-bash}"
