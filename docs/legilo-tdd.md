@@ -1,7 +1,7 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.2
-- Date: 27 October 2026
+- Status: Draft 0.3
+- Date: 28 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
 
@@ -136,7 +136,7 @@ Each requirement has an ID and the stage that delivers it (section 12).
 
 | ID | Requirement |
 |---|---|
-| NFR-01 | Latency: under 500 ms from shortcut to first audio with a warm Piper "medium" voice on a typical modern 4-core CPU; under 1.5 s with Kokoro. Depends on the short first chunk (7.5); measured from stage 0 (12) |
+| NFR-01 | Latency: under 500 ms from shortcut to first audio with a warm Piper "medium" voice on a typical modern 4-core CPU; under 1.5 s with Kokoro. Depends on the short first chunk (7.5); measured from stage 0 (12). The stage 0 measurements show Kokoro missing this on a 4-core 2020 laptop CPU, so the Kokoro target holds only on faster CPUs (7.3.2) |
 | NFR-02 | Memory: under 300 MB resident with one Piper voice loaded; under 600 MB with Kokoro |
 | NFR-03 | Tray start-up under 1 s, excluding voice loading (voices load in the background) |
 | NFR-04 | No network access except user-initiated model downloads; no telemetry |
@@ -159,10 +159,11 @@ Each requirement has an ID and the stage that delivers it (section 12).
 
 ### 4.2 Windows
 
-- Windows 11 x64 is the primary target. Windows 10 x64 is best effort: it reached end of support in October 2025 (extended security updates aside), but Qt 6.8 still supports it.
+- Windows 11 x64 is the primary target. Windows 10 x64 is best effort: it reached end of support in October 2025 (extended security updates aside), but Qt 6.12 still supports it, and is the last Qt release that does.
 - MSVC 2022 (v143), CMake, Ninja.
 - Qt installed with the Qt online installer or `aqtinstall`. Windows bundles its own Qt, so it does not have to match Debian's 6.8.2:
-  - Decide at stage 0 (open question 7). If Qt 6.8 open-source patch releases are still being made, use the latest 6.8.x. Otherwise use the newest Qt 6 release, to get security fixes.
+  - Decided at stage 0 (open question 7): **Qt 6.12**, latest 6.12.x. Qt 6.8 open-source patch releases have ended (6.8.8 is commercial only), so the rule "newest Qt 6 release, for security fixes" applies.
+  - Qt 6.12 is an LTS release, but open-source users get its patch releases only until Qt 6.13 ships (around March 2027). Then move to the newest release, which may end Windows 10 support (open question 5).
   - The Linux build enforces the 6.8 API ceiling for shared code. Windows-only code (`platform/windows`) must stay within it by review.
 - Other C/C++ dependencies come from vcpkg in manifest mode.
 
@@ -180,7 +181,8 @@ Each requirement has an ID and the stage that delivers it (section 12).
 | UI framework | Qt 6, 6.8 API (Core, Gui, Widgets, Network, Concurrent, DBus on Linux, Test, LinguistTools) | LGPL-3.0 | Both | 0 | Widgets for the native look (Breeze on Plasma, Windows 11 style on Windows). DBus for MPRIS (7.7). Version per platform: 4.1, 4.2 |
 | Global shortcuts (Linux) | KF6 GlobalAccel | LGPL-2.1+ | Linux | 3 | Native KDE shortcuts, shown in System Settings |
 | Selection and clipboard (Linux) | KF6 GuiAddons (`KSystemClipboard`) | LGPL-2.0+ | Linux | 3 | Reads the selection without focus on Wayland via data-control |
-| Speech | sherpa-onnx, pinned release | Apache-2.0 | Both | 1 | Bundles ONNX Runtime (MIT) and an espeak-ng fork (GPL-3.0) for phonemisation |
+| Speech | sherpa-onnx 2.x, pinned release | Apache-2.0 | Both | 1 | Bundles ONNX Runtime (MIT). Since 2.0 it has no phonemiser for Piper or Kokoro; Legilo supplies phonemes (7.3.1) |
+| Phonemisation | espeak-ng (libespeak-ng 1.52 or later) | GPL-3.0-or-later | Both | 1 | Debian's package on Linux; built from source on Windows. Used by Legilo's `Phonemiser` (7.3.1) |
 | Audio output | miniaudio (single header, vendored) | Public domain / MIT-0 | Both | 1 | PulseAudio/PipeWire/ALSA on Linux, WASAPI on Windows |
 | Archive extraction | libarchive | BSD-2-Clause | Both | 1 | Model archives are `.tar.bz2`. Needed from stage 1 for `--install-voice` (FR-28) |
 | Signature check | Monocypher (vendored) | BSD-2-Clause or CC0-1.0 | Both | 4 | Verifies the signed voice catalogue (7.10) |
@@ -197,7 +199,7 @@ Packages from Debian (stage 0, extended per stage):
 build-essential cmake ninja-build pkg-config
 qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 libkf6globalaccel-dev libkf6guiaddons-dev extra-cmake-modules
-libarchive-dev libsndfile1-dev
+libarchive-dev libsndfile1-dev libespeak-ng-dev
 debhelper devscripts
 ```
 
@@ -210,26 +212,26 @@ Confirm the exact names with `apt search` on trixie. Package naming for KDE Fram
 ### 6.1 Overview
 
 ```
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
 |                               app                                    |
 |  TrayController   ReaderWindow   PreviewPane   SettingsDialog        |
 |  ModelManagerDialog   ExportDialog   IpcServer   CommandLine         |
-+----------------------------+----------------------------------------+
++----------------------------+-----------------------------------------+
                              | uses
-+----------------------------v----------------------------------------+
++----------------------------v-----------------------------------------+
 |                               core                                   |
 |  text/      Normaliser, PdfDetector, Reflow, CleanupPipeline,        |
 |             Segmenter, CleanupSettings                               |
 |  document/  Document, Segment, PositionStore                         |
 |  tts/       TtsEngine (interface), SherpaTtsEngine, Voice,           |
-|             VoiceRegistry                                            |
+|             VoiceRegistry, Phonemiser                                |
 |  audio/     AudioOutput (interface), MiniaudioOutput, AudioQueue     |
 |  playback/  PlaybackController (state machine)                       |
 |  models/    ModelCatalogue, ModelDownloader, ModelInstaller          |
 |  export/    AudioExporter                                            |
-+----------------------------+----------------------------------------+
++----------------------------+-----------------------------------------+
                              | interfaces implemented by
-+----------------------------v----------------------------------------+
++----------------------------v-----------------------------------------+
 |                             platform                                 |
 |  GlobalShortcuts   TextSource   Autostart   FileIntegration          |
 |  MediaControls                                                       |
@@ -237,7 +239,7 @@ Confirm the exact names with `apt search` on trixie. Package naming for KDE Fram
 |              WlPasteTextSource, XdgAutostart, MprisControls          |
 |     windows/ Win32Shortcuts, UiaTextSource, RunKeyAutostart,         |
 |              SmtcControls                                            |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
 ```
 
 Rules:
@@ -285,7 +287,8 @@ User presses shortcut
   -> TextSource::readSelection()  -> QFuture<TextCapture>
   -> CleanupPipeline::run(capture, settings) -> Document    [text worker for large text]
   -> PlaybackController::play(document, startSegment = 0)
-       -> SynthesisWorker: apply speech rules to each segment (7.2.5), then
+       -> SynthesisWorker: apply speech rules to each segment (7.2.5) and
+          phonemise it (7.3.1), then
           synthesise segment 0 as a short first chunk plus the rest (7.5),
           then 1, 2 ... up to the look-ahead
        -> AudioQueue: segment PCM appended with segment index tags
@@ -597,25 +600,36 @@ The preview shows the relationship between `original` and the spoken form throug
 
 #### 7.3.1 sherpa-onnx usage
 
-- Use the sherpa-onnx C++ API wrapper (`sherpa-onnx/c-api/cxx-api.h`), which wraps the stable C API. Pin one release and upgrade deliberately; the API still changes.
+- Use the sherpa-onnx C++ API wrapper (`sherpa-onnx/c-api/cxx-api.h`), which wraps the stable C API. Pin one 2.x release and upgrade deliberately; the API still changes.
 - One `OfflineTts` instance per loaded voice. Configuration:
-  - **Piper (VITS):** `model.vits.model`, `model.vits.tokens`, `model.vits.data_dir` (espeak-ng data shipped in the model archive).
-  - **Kokoro:** `model.kokoro.model`, `model.kokoro.voices`, `model.kokoro.tokens`, `model.kokoro.data_dir`.
+  - **Piper (VITS):** `model.vits.model`, `model.vits.tokens`.
+  - **Kokoro:** `model.kokoro.model`, `model.kokoro.voices`, `model.kokoro.tokens`.
+  - `data_dir` is ignored since sherpa-onnx 2.0. The model archives still contain `espeak-ng-data`; Legilo doesn't use it (see "Phonemisation" below).
   - `model.num_threads`: a setting, defaulting to half the logical cores, clamped to the range 1 to 4.
   - `max_num_sentences = 1`, because Legilo segments the text itself.
-- Synthesis: `Generate(text, sid, speed, callback)` returns float samples plus the sample rate. If the callback returns 0, synthesis is cancelled.
+- Synthesis: `Generate` with a generation config holding the phonemes (below), speaker ID and speed, plus a callback. It returns float samples plus the sample rate. If the callback returns 0, synthesis is cancelled.
   - The callback runs only between sherpa-onnx's internal sentence batches. A single `Generate` call on one sentence can't be interrupted part-way.
   - So stop and seek silence playback at once (7.4) and discard the in-flight result by generation. The worker is free again within one chunk's synthesis time, which the short first chunk (7.5) keeps small.
-- Thread safety: don't assume concurrent `Generate` calls are safe, on one `OfflineTts` instance or on two (espeak-ng keeps global state). Verify in stage 1. If they aren't safe, serialise calls with one process-wide lock, and have the export loop give way to playback between segments (7.13).
+- Thread safety: don't assume concurrent `Generate` calls are safe, on one `OfflineTts` instance or on two. Verify in stage 1. If they aren't safe, serialise calls with one process-wide lock, and have the export loop give way to playback between segments (7.13).
 - Speed: passed per call (1.0 is normal; range 0.5 to 2.5, step 0.1). A change applies from the next segment that has not yet been synthesised. The controller discards look-ahead audio that hasn't been played yet and re-synthesises it, so a change is heard within one segment.
 
 Field and function names above, and the callback granularity, match recent sherpa-onnx releases. Verify them against the pinned version in stage 1.
+
+**Phonemisation.** sherpa-onnx 2.0 removed espeak-ng and piper-phonemize, so that sherpa-onnx contains no GPL code. For Piper and Kokoro voices the caller now supplies phonemes, as `phoneme_codepoints` in the generation config instead of `text`. Legilo's `Phonemiser` (`core/tts`) does this:
+
+- It links espeak-ng: Debian's `libespeak-ng` (1.52) on Linux, with its data from the `espeak-ng-data` package; on Windows, espeak-ng built from source, with its data bundled.
+- It phonemises one segment at a time, clause by clause, with `espeak_TextToPhonemesWithTerminator` in IPA mode, and appends each clause's punctuation from the terminator. This is what piper-phonemize does, and the Piper voices were trained on its output.
+- The espeak-ng voice (`en-gb`, `en-us`) comes from the model's metadata.
+- espeak-ng keeps global state, so there is one process-wide `Phonemiser`, with calls serialised by a mutex. Phonemising takes far less time than synthesis, so the lock is not a bottleneck.
+- It is written test-first against golden fixtures. The phoneme strings are generated once with piper-phonemize and committed, covering sentences, punctuation and clause terminators, numbers, abbreviations and non-ASCII text.
+- Verify in stage 1 that Kokoro takes the same phoneme stream as Piper. Kokoro v0.19 was trained on espeak-ng IPA.
+- Owning the phonemiser also makes per-word pronunciation fixes possible later (15).
 
 #### 7.3.2 Voices
 
 ```cpp
 struct Voice {
-    QString id;             // e.g. "piper-en_GB-alba-medium" or "kokoro-en-v0_19:bf_emma"
+    QString id;             // e.g. "piper-en_GB-cori-medium" or "kokoro-en-v0_19:bf_emma"
     QString engine;         // "piper" | "kokoro"
     QString displayName;
     QString language;       // "en-GB", "en-US"
@@ -641,9 +655,13 @@ struct Voice {
   - Loaded voices are held by `std::shared_ptr`, so evicting one from the cache never frees an instance that is still in use.
   - Unloading happens on the synthesis thread.
   - Optional: unload all voices after a period of no playback (`voice/unloadAfterIdleMin`, default 0 for never). A resident tray app holding a few hundred megabytes all day is noticeable. The next speak then pays the load time.
+- **Slow voices:** Kokoro and Piper "high" voices run at about real time on a 4-core laptop CPU (stage 0 results, 12). That is too slow to stay ahead of playback, and first audio takes seconds.
+  - The catalogue marks them with `needsFastCpu`, and the model manager says so beside them.
+  - While playing, the controller compares synthesis time with audio length. If playback runs dry twice in one document, it notifies once, suggesting a "medium" voice.
+  - Use fp32 Kokoro, not int8: on CPUs without VNNI instructions, int8 is slower.
 - **Existing Piper voices:** the voices in `~/.local/share/piper-voices` (`.onnx` plus `.onnx.json`) cannot be used directly, because sherpa-onnx needs extra metadata in the ONNX file.
   - sherpa-onnx publishes pre-converted versions of the Piper voices in its TTS model releases, so the model manager downloads those instead.
-  - Check the catalogue for the specific voices you use, such as `en_GB-alba-medium`.
+  - Check the catalogue for the specific voices you use, such as `en_GB-alba-medium`. Check its licence too: alba is fine-tuned from lessac (section 11).
   - Importing your own `.onnx` files would need the conversion step reimplemented in C++. Deferred.
 
 ### 7.4 Audio output
@@ -853,16 +871,17 @@ Windows defaults:
 
 ```json
 {
-  "id": "piper-en_GB-alba-medium",
+  "id": "piper-en_GB-cori-medium",
   "engine": "piper",
-  "name": "Alba (British English, medium)",
+  "name": "Cori (British English, medium)",
   "language": "en-GB",
   "quality": "medium",
-  "speakers": [{ "id": 0, "name": "Alba" }],
-  "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_GB-alba-medium.tar.bz2",
+  "needsFastCpu": false,
+  "speakers": [{ "id": 0, "name": "Cori" }],
+  "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_GB-cori-medium.tar.bz2",
   "sha256": "<checksum>",
-  "size": 64000000,
-  "licence": "CC-BY-4.0",
+  "size": 67000000,
+  "licence": "LicenseRef-public-domain",
   "licenceUrl": "https://...",
   "sampleUrl": "https://..."
 }
@@ -1091,6 +1110,7 @@ public:
   - speech rules applied per segment, and the spoken text matching the preview
 - **Segmenter.** Abbreviations in each group (7.2.7), initials, decimals, ellipses, quotes, URLs and emails as single tokens, recursive maximum-length splitting, short-segment merging at paragraph edges, offsets matching the text.
 - **Detector.** Feature calculations on small synthetic inputs.
+- **Phonemiser.** Golden phoneme fixtures from piper-phonemize (7.3.1): punctuation and clause terminators, numbers, abbreviations, non-ASCII text, empty input.
 - **Playback controller.** State transitions driven through fakes of the `TtsEngine` and `AudioOutput` interfaces (6.1). The fake engine returns tone bursts of known length; the fake output consumes frames on demand. This makes the following testable without real audio:
   - navigation, speed changes and pause
   - the short first chunk
@@ -1226,10 +1246,11 @@ Cache the sherpa-onnx build and the test model between runs.
 
 ## 11. Licensing
 
-- **Legilo's own code:** GPL-3.0-or-later. This is the simplest choice, because sherpa-onnx links an espeak-ng fork (GPL-3.0) for Piper and Kokoro phonemisation.
+- **Legilo's own code:** GPL-3.0-or-later. This is required, because Legilo links espeak-ng (GPL-3.0-or-later) for phonemisation (7.3.1).
 - **If MuPDF is chosen at stage 10:** no relicensing is needed. Section 13 of the GPLv3 explicitly allows a GPLv3 work to be combined with AGPLv3 code. Legilo's own code stays GPL-3.0-or-later, and the MuPDF part of the combination keeps its AGPL terms. The AGPL's network clause has no practical effect on an offline desktop app.
 - **Third-party notices:** a `THIRD-PARTY-NOTICES` file is generated from a list maintained in the repository, and shown in the About dialog.
 - **Voice licences:** shown in the model manager (7.10) and written into each voice's directory. Non-commercial voices are flagged.
+  - Voices trained or fine-tuned on the lessac dataset are flagged in the same way. Its licence (Blizzard Challenge 2013) is for research use only. This covers lessac itself and voices fine-tuned from it, such as alba and joe. Each voice's model card says how it was trained.
 
 ---
 
@@ -1259,17 +1280,55 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
   - The `.deb` installs and runs on a clean trixie machine.
   - Spike results are recorded in this document, with the plan adjusted where they require it.
 
+#### Stage 0 results (28 October 2026)
+
+**Latency.** Measured with sherpa-onnx's own command-line tool on an Intel Core i7-10610U (4 cores, 8 threads, a 2020 laptop CPU). The figures are synthesis time only, with the voice already loaded, as the mean of three runs. They were taken with v1.13.8, because 2.x needs the phonemiser that doesn't exist yet (see below). Synthesis runs the same ONNX models in both versions.
+
+| Voice | Threads | 44 characters (2.5 s of audio) | 317 characters (17 to 18 s of audio) | Real-time factor, long text |
+|---|---|---|---|---|
+| Piper cori medium | 1 / 2 / 4 | 0.27 / 0.20 / 0.16 s | 2.1 / 1.9 / 1.8 s | 0.12 / 0.11 / 0.10 |
+| Piper cori high | 1 / 2 / 4 | 2.6 / 1.6 / 1.3 s | 19.2 / 13.6 / 14.5 s | 1.12 / 0.80 / 0.84 |
+| Kokoro v0.19 fp32 | 1 / 2 / 4 | 4.5 / 3.0 / 2.7 s | 24.2 / 17.6 / 18.0 s | 1.33 / 0.97 / 0.99 |
+| Kokoro v0.19 int8 | 1 / 2 / 4 | 7.0 / 5.0 / 4.4 s | 38.6 / 24.7 / 23.2 s | 2.13 / 1.36 / 1.28 |
+
+- Piper medium meets NFR-01 comfortably. An 80-character first chunk takes about 0.3 s.
+- Piper high and Kokoro run at about real time at best on this CPU, so they miss NFR-01 and can't stay ahead of playback. The plan now treats them as voices for fast CPUs (7.3.2).
+- Kokoro int8 is slower than fp32 here: this CPU has no VNNI instructions.
+- Above 2 threads there is little gain, which supports the default of half the cores, clamped to 1 to 4 (7.3.1).
+- Loading a voice took a further 1.4 to 2.7 s, including process start. Hence the background preloading (7.3.2).
+- Memory was not measured. It is checked in stage 1 against NFR-02.
+
+**sherpa-onnx 2.0 removed phonemisation.** Version 2.0.0 (23 October 2026) dropped espeak-ng and piper-phonemize, to keep sherpa-onnx free of GPL code. Piper and Kokoro voices now need phonemes supplied by the caller.
+
+- Decision: track 2.x and give Legilo its own `Phonemiser` on espeak-ng (7.3.1), rather than pinning v1.13.8, the last release with espeak-ng built in. v1 gets no further fixes, and moving off it later would need the same work in the middle of the project.
+- Debian trixie's `libespeak-ng` 1.52 exports `espeak_TextToPhonemesWithTerminator`, the function piper-phonemize is built on, so the Linux build can use the distribution package.
+- Effects: stage 1 grows by about a week. Section 5 has a new dependency, and the licensing reason in section 11 changes.
+
+**Voices and licences (open question 3).** sherpa-onnx publishes about 45 pre-converted English Piper voices plus Kokoro. Their model cards show three kinds of licence:
+
+- **Public domain, with a clean lineage:**
+  - cori (en_GB) and kristin (en_US) were trained from scratch on LibriVox recordings.
+  - john (en_US) was fine-tuned from kristin.
+- **Research only:** the lessac dataset's licence (Blizzard Challenge 2013). This covers lessac and voices fine-tuned from it, including alba and joe. Flagged as described in section 11.
+- **Non-commercial (CC BY-NC):** hfc_female, hfc_male, semaine and l2arctic.
+- Decision: the first-run default is `en_GB-cori-medium`. Kokoro's weights are Apache-2.0.
+
+**Windows Qt (open question 7).** Qt 6.12, as described in 4.2.
+
+**Selection capture on Wayland.** A test program with no window read both the primary selection and the clipboard through `KSystemClipboard` on Plasma 6.3.6 Wayland, without ever having focus. Each read took under 5 ms. Checks of selections made in Okular, Firefox and Kate are still pending.
+
 ### Stage 1 - Speech core and command line (M)
 
 - **Goal:** text in, audio out, from the command line.
 - **Scope:**
-  - sherpa-onnx integration through `FetchContent`, pinned.
+  - sherpa-onnx 2.x integration through `FetchContent`, pinned.
+  - The `Phonemiser` on espeak-ng, test-first against golden fixtures from piper-phonemize (7.3.1). This adds about a week to the stage.
   - The `TtsEngine` interface and its sherpa-onnx implementation, `Voice` and `VoiceRegistry`.
-  - `ModelInstaller` and `legilo --install-voice ARCHIVE` (FR-28). Download sherpa-onnx's `vits-piper-en_GB-alba-medium` archive by hand for now; the command installs it.
+  - `ModelInstaller` and `legilo --install-voice ARCHIVE` (FR-28). Download sherpa-onnx's `vits-piper-en_GB-cori-medium` archive by hand for now; the command installs it.
   - The `AudioOutput` interface and its miniaudio implementation; `AudioQueue` with the flush protocol (7.4); the synthesis worker with look-ahead and the short first chunk (7.5).
   - A minimal `PlaybackController` (play, pause, resume, stop, speed).
   - A temporary command-line front end: `legilo --speak "text"` and `--speak-file`. Stage 3 replaces them with `--speak-text` and `--read` (Appendix B).
-  - Integration test for TTS (9.3), including the thread-safety check (7.3.1).
+  - Integration test for TTS (9.3), including the thread-safety check (7.3.1) and a check that Kokoro takes the Piper phoneme stream.
 - **Exit criteria:**
   - Speaks a long text file smoothly, with no gaps between sentences.
   - First audio arrives within the NFR-01 budget with a warm voice.
@@ -1319,7 +1378,7 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
   - Model manager dialog with licence display and samples.
   - Kokoro engine support, with speakers listed as voices.
   - The least-recently-used voice cache.
-  - First-run flow: if no voice is installed, offer the recommended default (Piper en_GB medium, about 60 MB).
+  - First-run flow: if no voice is installed, offer the recommended default (Piper `en_GB-cori-medium`, about 67 MB).
 - **Exit criteria:**
   - A clean install reaches a working voice in three clicks.
   - Checksum failure and malicious-archive tests pass.
@@ -1433,14 +1492,15 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| `KSystemClipboard` in Frameworks 6.13 misbehaves on trixie Wayland | Medium | High | Validate in the stage 0 spike; `wl-paste` contingency selected at run time (7.1.2) |
-| Pre-converted Piper voices missing or unsuitably licensed | Low | High | Checked in the stage 0 spike, before the first-run default is fixed |
-| First audio misses NFR-01 with long segments | Medium | Medium | Short first chunk (7.5); measured in the stage 0 spike and the benchmark job (9.6) |
+| `KSystemClipboard` in Frameworks 6.13 misbehaves on trixie Wayland | Low | High | Stage 0 spike: reads work without focus (12); `wl-paste` contingency selected at run time (7.1.2) |
+| Pre-converted Piper voices missing or unsuitably licensed | Low | High | Checked in stage 0: public-domain voices exist; default `en_GB-cori-medium` (12) |
+| First audio misses NFR-01 with long segments | Low | Medium | Short first chunk (7.5); Piper medium measured at about 0.3 s for the first chunk in stage 0 (12); benchmark job (9.6) |
 | Default shortcuts clash with keyboard layouts or system combinations | Medium | Medium | No Ctrl+Alt defaults on Windows; checks in stage 5 and the manual checklist (7.6.2, 9.4) |
 | Windows selection capture unreliable in some apps | High | Medium | UI Automation first, then simulated copy; clear notification; "speak clipboard" always works |
 | Simulated Ctrl+C has side effects (terminals, apps that bind Ctrl+C differently) | Medium | Medium | Console detection; per-application exclusion list in settings |
-| sherpa-onnx API changes between releases | Medium | Medium | Pin the version; wrap it entirely in `TtsEngine`; upgrade deliberately |
-| Kokoro too slow on CPU for long documents | Medium | Low | Look-ahead buffering; Piper remains the default; GPU later |
+| sherpa-onnx API changes or removes features between releases (2.0 removed phonemisation) | Medium | High | Pin the version; wrap it entirely in `TtsEngine`; upgrade deliberately; Legilo owns phonemisation (7.3.1) |
+| Legilo's phonemes differ from piper-phonemize's, degrading voice quality | Medium | Medium | Golden fixtures from piper-phonemize (7.3.1, 9.1); listening check in the manual checklist |
+| Kokoro and Piper high too slow on typical laptop CPUs | High | Low | Measured in stage 0 at about real time (12); marked `needsFastCpu`, with an underrun notification (7.3.2); Piper medium remains the default; GPU later |
 | PDF detection false positives damage normal text | Medium | Medium | Conservative threshold; negative signals; corpus with false positives weighted double; Auto/Always/Never and preview |
 | Voice licence restrictions (non-commercial voices) | Low | Medium | Licences shown and flagged; default voice chosen with a permissive licence |
 | Antivirus flags on Windows (unsigned binary that simulates keystrokes) | Medium | Medium | Code signing (stage 9); keystroke simulation only on explicit user action |
@@ -1455,11 +1515,11 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
    - **Decide before stage 3.** The ID ends up in KGlobalAccel's shortcut storage, the settings and data paths, the desktop files and the IPC address.
    - Changing it after the first release loses users' shortcuts and settings.
 2. Hosting: GitHub or GitLab (affects CI configuration and where the apt repository and releases live).
-3. Default voice: confirm which pre-converted Piper voices are available in sherpa-onnx, and their licences, before fixing the first-run default. Resolved by the stage 0 spike.
+3. ~~Default voice.~~ Resolved at stage 0: `en_GB-cori-medium` (12).
 4. Should a speak-selection capture always open the reader, never, or only for long text? The provisional default is `ifVisible` (Appendix A).
-5. Windows 10 support: best effort, or officially supported?
+5. Windows 10 support: best effort, or officially supported? Qt 6.12 is the last Qt release that supports it, and its open-source patch releases end when Qt 6.13 ships (around March 2027) (4.2).
 6. PDF library (stage 10). The licence no longer depends on it (section 11).
-7. Qt version on Windows: latest 6.8.x, or the newest Qt 6 (4.2). Decide at stage 0.
+7. ~~Qt version on Windows.~~ Resolved at stage 0: Qt 6.12 (4.2).
 
 ---
 
@@ -1476,7 +1536,7 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 - Optional online engines.
 - Windows 11 top-level context menu via `IExplorerCommand` and package identity.
 - Flatpak (with the GlobalShortcuts portal or kglobalaccel access) and GNOME support.
-- Pronunciation dictionary: user-defined replacements for names and acronyms.
+- Pronunciation dictionary: user-defined replacements for names and acronyms, as text or as phonemes now that Legilo owns phonemisation (7.3.1).
 
 ---
 
@@ -1604,6 +1664,17 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.3 (28 October 2026)
+
+Stage 0 results (12) and the changes they require:
+
+- sherpa-onnx 2.0 removed phonemisation, so Legilo gets its own `Phonemiser` on espeak-ng (5, 6.1, 6.4, 7.3.1, 9.1, 11, stage 1).
+- Kokoro and Piper high are too slow for typical laptop CPUs. They are marked `needsFastCpu`, playback warns on underruns, and fp32 is preferred over int8 (NFR-01, 7.3.2, 7.10, 13).
+- The default voice is `en_GB-cori-medium`. Voices derived from lessac are flagged for licence (7.3.2, 7.10, 11, stage 4).
+- Windows uses Qt 6.12 (4.2).
+- Open questions 3 and 7 are resolved; question 5 gains the Qt 6.12 constraint (14).
+- The repository layout gains `packaging/container/` and `scripts/`. The Debian package gains a generated manual page (6.5, 10.3).
 
 ### Draft 0.2 (27 October 2026)
 
