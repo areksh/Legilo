@@ -1,0 +1,30 @@
+# Build output
+/build/
+/out/
+compile_commands.json
+.cache/
+
+# Debian package build
+/debian/.debhelper/
+/debian/legilo/
+/debian/debhelper-build-stamp
+/debian/files
+/debian/*.substvars
+/debian/*.log
+/*.deb
+/*.buildinfo
+/*.changes
+
+# Downloaded dependencies (scripts/fetch-deps)
+/third_party/downloads/
+
+# Editor and OS cruft
+.vscode/
+.idea/
+*.user
+*.swp
+.DS_Store
+
+# Backups
+*.orig
+*.bak
