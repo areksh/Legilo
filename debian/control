@@ -6,7 +6,9 @@ Build-Depends:
  cmake (>= 3.25),
  debhelper-compat (= 13),
  help2man,
+ libespeak-ng-dev (>= 1.52),
  ninja-build,
+ pkgconf,
  qt6-base-dev (>= 6.8),
 Standards-Version: 4.7.2
 Rules-Requires-Root: no

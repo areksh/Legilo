@@ -1,0 +1,135 @@
+{
+  "voice": "en-us",
+  "cases": [
+    {
+      "text": "The quick brown fox jumps over the lazy dog.",
+      "sentences": [
+        "ðə kwˈɪk bɹˈaʊn fˈɑːks dʒˈʌmps ˌoʊvɚ ðə lˈeɪzi dˈɑːɡ."
+      ]
+    },
+    {
+      "text": "Hello there. How are you? I'm fine!",
+      "sentences": [
+        "həlˈoʊ ðˈɛɹ.",
+        "hˈaʊ ɑːɹ juː?",
+        "aɪm fˈaɪn!"
+      ]
+    },
+    {
+      "text": "First, second; third: fourth.",
+      "sentences": [
+        "fˈɜːst, sˈɛkənd; θˈɜːd: fˈoːɹθ."
+      ]
+    },
+    {
+      "text": "no full stop at the end",
+      "sentences": [
+        "nˈoʊ fˈʊl stˈɑːp æt ðɪ ˈɛnd"
+      ]
+    },
+    {
+      "text": "",
+      "sentences": [
+        ""
+      ]
+    },
+    {
+      "text": "   ",
+      "sentences": [
+        ""
+      ]
+    },
+    {
+      "text": "It costs 42 pounds and 7 pence, in 1999.",
+      "sentences": [
+        "ɪt kˈɔsts fˈoːɹɾi tˈuː pˈaʊndz ænd sˈɛvən pˈɛns, ɪn nˈaɪntiːnhˈʌndɹɪd nˈaɪnti nˈaɪn."
+      ]
+    },
+    {
+      "text": "Pi is about 3.14, and the crowd was 2,500 strong.",
+      "sentences": [
+        "pˈaɪ ɪz ɐbˌaʊt θɹˈiː pɔɪnt wˈʌn fˈoːɹ, ænd ðə kɹˈaʊd wʌz tˈuː θˈaʊzənd fˈaɪvhˈʌndɹɪd stɹˈɔŋ."
+      ]
+    },
+    {
+      "text": "Dr. Smith lives on Baker St. near the U.K. border.",
+      "sentences": [
+        "dˈɑːktɚ.",
+        "smˈɪθ lˈaɪvz ˌɔn bˈeɪkɚ sənt nˌɪɹ ðə jˌuːkˈeɪ bˈoːɹdɚ."
+      ]
+    },
+    {
+      "text": "NASA and the BBC both reported it.",
+      "sentences": [
+        "nˈæsɐ ænd ðə bˌiːbˌiːsˈiː bˈoʊθ ɹᵻpˈoːɹɾᵻd ɪt."
+      ]
+    },
+    {
+      "text": "It's John's book, isn't it?",
+      "sentences": [
+        "ɪts dʒˈɑːnz bˈʊk, ˈɪzənt ɪt?"
+      ]
+    },
+    {
+      "text": "The café served crème brûlée to a naïve guest.",
+      "sentences": [
+        "ðə kæfˈeɪ sˈɜːvd kɹˈɛm bɹuːlˈeɪ tʊ ɐ naɪˈiːv ɡˈɛst."
+      ]
+    },
+    {
+      "text": "She said \"wait\" - then left.",
+      "sentences": [
+        "ʃiː sˈɛd wˈeɪt ðˈɛn lˈɛft."
+      ]
+    },
+    {
+      "text": "Well... maybe.",
+      "sentences": [
+        "wˈɛlmˈeɪbiː."
+      ]
+    },
+    {
+      "text": "Line one\nLine two.",
+      "sentences": [
+        "lˈaɪn wˈʌn lˈaɪn tˈuː."
+      ]
+    },
+    {
+      "text": "First paragraph.\n\nSecond paragraph.",
+      "sentences": [
+        "fˈɜːst pˈæɹəɡɹˌæf",
+        "sˈɛkənd pˈæɹəɡɹˌæf."
+      ]
+    },
+    {
+      "text": "Visit example.com today.",
+      "sentences": [
+        "vˈɪzɪt ɛɡzˈæmpəl dˈɑːt kˈɑːm tədˈeɪ."
+      ]
+    },
+    {
+      "text": "Colour, behaviour and organisation are spelt differently.",
+      "sentences": [
+        "kˈʌlɚ, bᵻhˈeɪvjɚɹ ænd ˌɔːɹɡɐnəzˈeɪʃən ɑːɹ spˈɛlt dˈɪfɹəntli."
+      ]
+    },
+    {
+      "text": "Read the record, then record the read.",
+      "sentences": [
+        "ɹˈiːd ðə ɹˈɛkɚd, ðˈɛn ɹᵻkˈoːɹd ðə ɹˈiːd."
+      ]
+    },
+    {
+      "text": "The Greek letter α is called alpha.",
+      "sentences": [
+        "ðə ɡɹˈiːk lˈɛɾɚɹ ˈælfə ɪz kˈɔːld ˈælfə."
+      ]
+    },
+    {
+      "text": "Moscow is Москва in Russian.",
+      "sentences": [
+        "mˈɑːskoʊ ɪz ˈɛm ˈoː ˈɛs kˈææ vˈɛː ˈææ ɪn ɹˈʌʃən."
+      ]
+    }
+  ]
+}

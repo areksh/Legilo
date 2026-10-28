@@ -16,8 +16,8 @@ The design, requirements and staged plan are in
 Install the build dependencies:
 
 ```
-sudo apt install build-essential cmake ninja-build qt6-base-dev \
-    clang-format clang-tidy help2man
+sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
+    libespeak-ng-dev clang-format clang-tidy help2man
 ```
 
 `debian/control` holds the authoritative list of build dependencies.

@@ -6,6 +6,8 @@ function(legilo_add_unit_test name)
     add_executable(${name} ${ARG_SOURCES})
     target_link_libraries(${name} PRIVATE Qt6::Test ${ARG_LIBS})
     legilo_set_warnings(${name})
+    target_compile_definitions(${name} PRIVATE
+        LEGILO_FIXTURES_DIR="${PROJECT_SOURCE_DIR}/tests/fixtures")
     add_test(NAME ${name} COMMAND ${name})
     # No test may need a display or touch the user's real settings. Unit
     # tests take well under a second, so a long run means a deadlock.
@@ -15,3 +17,4 @@ function(legilo_add_unit_test name)
 endfunction()
 
 legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
+legilo_add_unit_test(tst_phonemiser SOURCES tst_phonemiser.cpp LIBS legilo_core)
