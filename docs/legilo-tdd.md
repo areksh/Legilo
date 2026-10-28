@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.3
+- Status: Draft 0.4
 - Date: 28 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -619,7 +619,8 @@ Field and function names above, and the callback granularity, match recent sherp
 
 - It links espeak-ng: Debian's `libespeak-ng` (1.52) on Linux, with its data from the `espeak-ng-data` package; on Windows, espeak-ng built from source, with its data bundled.
 - It phonemises one segment at a time, clause by clause, with `espeak_TextToPhonemesWithTerminator` in IPA mode, and appends each clause's punctuation from the terminator. This is what piper-phonemize does, and the Piper voices were trained on its output.
-- The espeak-ng voice (`en-gb`, `en-us`) comes from the model's metadata.
+- The espeak-ng voice comes from the model's metadata: `en` for British English (`en-gb` is not an espeak-ng voice name) and `en-us` for American.
+- It uses the system's espeak-ng data, not the data piper-phonemize ships from its own espeak-ng fork. Checked in stage 1: with the fork's data the `Phonemiser` matches every golden fixture, and with Debian's 1.52 data it matches every `en` fixture. For `en-us`, 1.52 gives an open o before r ("four", "record") where the fork gives a close-mid o; the unit test records that one difference. Bundling the fork's data is the fallback if the listening check finds it audible.
 - espeak-ng keeps global state, so there is one process-wide `Phonemiser`, with calls serialised by a mutex. Phonemising takes far less time than synthesis, so the lock is not a bottleneck.
 - It is written test-first against golden fixtures. The phoneme strings are generated once with piper-phonemize and committed, covering sentences, punctuation and clause terminators, numbers, abbreviations and non-ASCII text.
 - Verify in stage 1 that Kokoro takes the same phoneme stream as Piper. Kokoro v0.19 was trained on espeak-ng IPA.
@@ -1506,7 +1507,7 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 | Windows selection capture unreliable in some apps | High | Medium | UI Automation first, then simulated copy; clear notification; "speak clipboard" always works |
 | Simulated Ctrl+C has side effects (terminals, apps that bind Ctrl+C differently) | Medium | Medium | Console detection; per-application exclusion list in settings |
 | sherpa-onnx API changes or removes features between releases (2.0 removed phonemisation) | Medium | High | Pin the version; wrap it entirely in `TtsEngine`; upgrade deliberately; Legilo owns phonemisation (7.3.1) |
-| Legilo's phonemes differ from piper-phonemize's, degrading voice quality | Medium | Medium | Golden fixtures from piper-phonemize (7.3.1, 9.1); listening check in the manual checklist |
+| Legilo's phonemes differ from piper-phonemize's, degrading voice quality | Low | Medium | Golden fixtures from piper-phonemize (7.3.1, 9.1); British English matches exactly, American differs in one vowel because of espeak-ng's data; listening check in the manual checklist |
 | Kokoro and Piper high too slow on typical laptop CPUs | High | Low | Measured in stage 0 at about real time (12); marked `needsFastCpu`, with an underrun notification (7.3.2); Piper medium remains the default; GPU later |
 | PDF detection false positives damage normal text | Medium | Medium | Conservative threshold; negative signals; corpus with false positives weighted double; Auto/Always/Never and preview |
 | Voice licence restrictions (non-commercial voices) | Low | Medium | Licences shown and flagged; default voice chosen with a permissive licence |
@@ -1671,6 +1672,12 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.4 (28 October 2026)
+
+Stage 1 findings:
+
+- The espeak-ng voice for British English is `en`. Legilo uses the system's espeak-ng data, which differs from piper-phonemize's in one American vowel (7.3.1, 13).
 
 ### Draft 0.3 (28 October 2026)
 
