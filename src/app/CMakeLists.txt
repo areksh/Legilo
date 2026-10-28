@@ -1,0 +1,15 @@
+# Everything except main() goes in a library so the tests can link it.
+add_library(legilo_app STATIC
+    Logging.cpp
+    Logging.h
+)
+target_include_directories(legilo_app PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(legilo_app PUBLIC legilo_core legilo_platform Qt6::Core)
+legilo_set_warnings(legilo_app)
+
+add_executable(legilo main.cpp)
+target_compile_definitions(legilo PRIVATE LEGILO_VERSION="${PROJECT_VERSION}")
+target_link_libraries(legilo PRIVATE legilo_app)
+legilo_set_warnings(legilo)
+
+install(TARGETS legilo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

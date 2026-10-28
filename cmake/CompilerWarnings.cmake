@@ -1,0 +1,15 @@
+# Applies the project's warning flags to a target. CI configures with
+# LEGILO_WARNINGS_AS_ERRORS=ON so that any new warning fails the build.
+function(legilo_set_warnings target)
+    if(MSVC)
+        target_compile_options(${target} PRIVATE /W4 /permissive-)
+        if(LEGILO_WARNINGS_AS_ERRORS)
+            target_compile_options(${target} PRIVATE /WX)
+        endif()
+    else()
+        target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+        if(LEGILO_WARNINGS_AS_ERRORS)
+            target_compile_options(${target} PRIVATE -Werror)
+        endif()
+    endif()
+endfunction()
