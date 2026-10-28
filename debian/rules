@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/architecture.mk
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+builddir = obj-$(DEB_HOST_GNU_TYPE)
+
+%:
+	dh $@ --buildsystem=cmake+ninja --builddir=$(builddir)
+
+# Generate the manual page from --help so it cannot drift from the binary.
+execute_after_dh_auto_build:
+	LC_ALL=C.UTF-8 help2man --no-info \
+		--name="offline text-to-speech reader" \
+		--output=debian/legilo.1 $(builddir)/src/app/legilo

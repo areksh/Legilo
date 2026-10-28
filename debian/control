@@ -1,0 +1,25 @@
+Source: legilo
+Section: sound
+Priority: optional
+Maintainer: Arek <me@arek.sh>
+Build-Depends:
+ cmake (>= 3.25),
+ debhelper-compat (= 13),
+ help2man,
+ ninja-build,
+ qt6-base-dev (>= 6.8),
+Standards-Version: 4.7.2
+Rules-Requires-Root: no
+
+Package: legilo
+Architecture: amd64
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: offline text-to-speech reader
+ Legilo reads selected text, the clipboard and plain-text files aloud
+ with neural voices that run entirely on the local machine. It cleans up
+ text copied from PDFs before speaking it, and integrates with KDE
+ Plasma through global shortcuts and the system tray.
+ .
+ This is an early development build with no speech yet.
