@@ -4,6 +4,9 @@ add_library(legilo_core STATIC
     Logging.h
     tts/Phonemiser.cpp
     tts/Phonemiser.h
+    tts/Voice.h
+    tts/VoiceRegistry.cpp
+    tts/VoiceRegistry.h
 )
 target_include_directories(legilo_core PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(legilo_core PUBLIC Qt6::Core)
