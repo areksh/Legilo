@@ -1,13 +1,14 @@
 #!/bin/sh
 # Runs the checks CI runs, inside the trixie build container: formatting,
-# a build with warnings as errors, the unit tests, and clang-tidy. Covers
+# a build with warnings as errors, the unit and integration tests, and
+# clang-tidy. Covers
 # tracked files and untracked files that are not ignored. Runs without
-# network access, as Debian package builds do, so the archives from
-# scripts/fetch-deps are fetched on the host first.
+# network access, as Debian package builds do, so the archives and test
+# voices from scripts/fetch-deps are fetched on the host first.
 set -eu
 
 root=$(cd "$(dirname "$0")/.." && pwd)
-"$root/scripts/fetch-deps" >/dev/null
+"$root/scripts/fetch-deps" --test-voices >/dev/null
 
 CONTAINER_NETWORK=none "$root/scripts/container" sh -euc '
     build=build/container

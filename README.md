@@ -31,6 +31,11 @@ never downloads anything, so run this again whenever
 scripts/fetch-deps
 ```
 
+The integration tests (`tests/integration/`) synthesise speech with real
+voices, about 390 MB, and skip any voice that is absent. Fetch them with
+`scripts/fetch-deps --test-voices`. Run the unit tests alone with
+`ctest --preset linux-debug -LE integration`.
+
 Configure, build and test with the CMake presets:
 
 ```
@@ -52,12 +57,13 @@ Docker with `CONTAINER_ENGINE=docker`.
 
 | Command | What it does |
 |---|---|
-| `scripts/check` | Formatting, a warnings-as-errors build, the unit tests and clang-tidy. Run this before committing. |
+| `scripts/check` | Formatting, a warnings-as-errors build, the unit and integration tests, and clang-tidy. Run this before committing. |
 | `scripts/build-deb` | Builds the `.deb`, runs lintian on it, and writes the results to `out/` |
 | `scripts/container [COMMAND]` | Runs a command (or a shell) in the container, with the repository at `/src` |
 | `scripts/fetch-deps` | Downloads the pinned source archives into `third_party/downloads/` (runs on the host) |
 
-`scripts/check` and `scripts/build-deb` run `scripts/fetch-deps` first, then
+`scripts/check` (with `--test-voices`) and `scripts/build-deb` run
+`scripts/fetch-deps` first, then
 build with the container's network switched off, as Debian's build daemons
 do. The first run of the container scripts builds the container image, and
 the first build compiles sherpa-onnx; each takes a few minutes.
@@ -70,11 +76,13 @@ the first build compiles sherpa-onnx; each takes a few minutes.
 | `src/platform/` | Interfaces to the operating system, with Linux and Windows implementations |
 | `src/app/` | The application: tray, windows, settings, command line |
 | `tests/unit/` | Qt Test unit tests, run through CTest |
+| `tests/integration/` | Tests against real dependencies, such as speech synthesis with real voices |
 | `debian/` | Debian packaging |
 | `packaging/` | The build container and, later, the Windows installer |
 | `scripts/` | Developer scripts (see above) |
 | `cmake/` | CMake modules, including the pinned dependency list (`Dependencies.cmake`) |
 | `third_party/downloads/` | Archives from `scripts/fetch-deps` (not committed) |
+| `third_party/test-voices/` | Voices from `scripts/fetch-deps --test-voices` (not committed) |
 | `docs/` | Design documentation |
 
 ## Contributing

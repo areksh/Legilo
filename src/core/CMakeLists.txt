@@ -4,6 +4,9 @@ add_library(legilo_core STATIC
     Logging.h
     tts/Phonemiser.cpp
     tts/Phonemiser.h
+    tts/SherpaTtsEngine.cpp
+    tts/SherpaTtsEngine.h
+    tts/TtsEngine.h
     tts/Voice.h
     tts/VoiceRegistry.cpp
     tts/VoiceRegistry.h
@@ -15,5 +18,5 @@ target_link_libraries(legilo_core PUBLIC Qt6::Core)
 # distribution's library; the Windows build is set up in stage 5.
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ESPEAK_NG REQUIRED IMPORTED_TARGET espeak-ng>=1.52)
-target_link_libraries(legilo_core PRIVATE PkgConfig::ESPEAK_NG)
+target_link_libraries(legilo_core PRIVATE PkgConfig::ESPEAK_NG Legilo::SherpaOnnx)
 legilo_set_warnings(legilo_core)
