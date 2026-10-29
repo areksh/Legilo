@@ -1,0 +1,9 @@
+#!/bin/sh
+# Downloads the pinned source archives the build needs (cmake/Dependencies.cmake)
+# into third_party/downloads/. Run it once after cloning and again after the
+# list changes; the build itself never downloads anything.
+set -eu
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+
+exec cmake -P "$root/cmake/FetchDeps.cmake"

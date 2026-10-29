@@ -7,6 +7,7 @@ Build-Depends:
  debhelper-compat (= 13),
  help2man,
  libespeak-ng-dev (>= 1.52),
+ libonnxruntime-dev,
  ninja-build,
  pkgconf,
  qt6-base-dev (>= 6.8),

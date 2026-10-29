@@ -17,10 +17,19 @@ Install the build dependencies:
 
 ```
 sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
-    libespeak-ng-dev clang-format clang-tidy help2man
+    libespeak-ng-dev libonnxruntime-dev clang-format clang-tidy help2man
 ```
 
 `debian/control` holds the authoritative list of build dependencies.
+
+Download the pinned source archives the build needs (sherpa-onnx and the
+libraries it builds with) into `third_party/downloads/`. The build itself
+never downloads anything, so run this again whenever
+`cmake/Dependencies.cmake` changes:
+
+```
+scripts/fetch-deps
+```
 
 Configure, build and test with the CMake presets:
 
@@ -46,9 +55,12 @@ Docker with `CONTAINER_ENGINE=docker`.
 | `scripts/check` | Formatting, a warnings-as-errors build, the unit tests and clang-tidy. Run this before committing. |
 | `scripts/build-deb` | Builds the `.deb`, runs lintian on it, and writes the results to `out/` |
 | `scripts/container [COMMAND]` | Runs a command (or a shell) in the container, with the repository at `/src` |
+| `scripts/fetch-deps` | Downloads the pinned source archives into `third_party/downloads/` (runs on the host) |
 
-The first run of any of these builds the container image, which takes a
-few minutes.
+`scripts/check` and `scripts/build-deb` run `scripts/fetch-deps` first, then
+build with the container's network switched off, as Debian's build daemons
+do. The first run of the container scripts builds the container image, and
+the first build compiles sherpa-onnx; each takes a few minutes.
 
 ## Repository layout
 
@@ -61,6 +73,8 @@ few minutes.
 | `debian/` | Debian packaging |
 | `packaging/` | The build container and, later, the Windows installer |
 | `scripts/` | Developer scripts (see above) |
+| `cmake/` | CMake modules, including the pinned dependency list (`Dependencies.cmake`) |
+| `third_party/downloads/` | Archives from `scripts/fetch-deps` (not committed) |
 | `docs/` | Design documentation |
 
 ## Contributing
