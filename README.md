@@ -19,8 +19,8 @@ Install the build dependencies:
 
 ```
 sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
-    libespeak-ng-dev libonnxruntime-dev libarchive-dev clang-format clang-tidy \
-    help2man
+    libespeak-ng-dev libonnxruntime-dev libarchive-dev libminiaudio-dev \
+    clang-format clang-tidy help2man
 ```
 
 `debian/control` holds the authoritative list of build dependencies.

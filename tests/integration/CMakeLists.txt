@@ -22,3 +22,4 @@ function(legilo_add_integration_test name)
 endfunction()
 
 legilo_add_integration_test(tst_synthesis SOURCES tst_synthesis.cpp LIBS legilo_core)
+legilo_add_integration_test(tst_audiooutput SOURCES tst_audiooutput.cpp LIBS legilo_core)
