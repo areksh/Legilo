@@ -1,7 +1,7 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.4
-- Date: 28 October 2026
+- Status: Draft 0.5
+- Date: 29 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
 
@@ -47,7 +47,7 @@ The design replaces an existing pair of scripts (`speak-selection`, Bash, and `s
 |---|---|
 | Platforms | KDE Plasma on Debian 13 (Wayland primary, X11 best effort) and Windows. No macOS, no GNOME for now. |
 | Language and UI | C++20 with Qt 6 Widgets |
-| Speech engine | sherpa-onnx (ONNX Runtime) for TTS now and speech-to-text (STT) later. No Python or PyTorch at runtime. |
+| Speech engine | sherpa-onnx (ONNX Runtime) for TTS now and speech-to-text (STT) later. No Python or PyTorch at runtime. On Linux it links Debian's ONNX Runtime (10.1). |
 | Voices | Piper (VITS) and Kokoro, English only for now |
 | Network | Fully offline. The only network use is model downloads the user starts. |
 | GPU | Not at first |
@@ -181,7 +181,9 @@ Each requirement has an ID and the stage that delivers it (section 12).
 | UI framework | Qt 6, 6.8 API (Core, Gui, Widgets, Network, Concurrent, DBus on Linux, Test, LinguistTools) | LGPL-3.0 | Both | 0 | Widgets for the native look (Breeze on Plasma, Windows 11 style on Windows). DBus for MPRIS (7.7). Version per platform: 4.1, 4.2 |
 | Global shortcuts (Linux) | KF6 GlobalAccel | LGPL-2.1+ | Linux | 3 | Native KDE shortcuts, shown in System Settings |
 | Selection and clipboard (Linux) | KF6 GuiAddons (`KSystemClipboard`) | LGPL-2.0+ | Linux | 3 | Reads the selection without focus on Wayland via data-control |
-| Speech | sherpa-onnx 2.x, pinned release | Apache-2.0 | Both | 1 | Bundles ONNX Runtime (MIT). Since 2.0 it has no phonemiser for Piper or Kokoro; Legilo supplies phonemes (7.3.1) |
+| Speech | sherpa-onnx 2.x, pinned release | Apache-2.0 | Both | 1 | Built as a separate project from pinned archives (10.1). Since 2.0 it has no phonemiser for Piper or Kokoro; Legilo supplies phonemes (7.3.1) |
+| Speech, compiled into sherpa-onnx | kaldi-native-fbank, kaldi-decoder, kaldifst, openfst, simple-sentencepiece, kissfft, eigen, utf8proc, nlohmann/json | Apache-2.0, MPL-2.0, Expat, BSD-2/3-Clause, Zlib, Unicode data | Both | 1 | Fetched by sherpa-onnx's build; pinned in `cmake/Dependencies.cmake`. Mostly for speech recognition, which sherpa-onnx cannot leave out |
+| Neural network runtime | ONNX Runtime | MIT | Both | 1 | Debian's `libonnxruntime` 1.21 on Linux; a prebuilt release on Windows (stage 5) |
 | Phonemisation | espeak-ng (libespeak-ng 1.52 or later) | GPL-3.0-or-later | Both | 1 | Debian's package on Linux; built from source on Windows. Used by Legilo's `Phonemiser` (7.3.1) |
 | Audio output | miniaudio (single header, vendored) | Public domain / MIT-0 | Both | 1 | PulseAudio/PipeWire/ALSA on Linux, WASAPI on Windows |
 | Archive extraction | libarchive | BSD-2-Clause | Both | 1 | Model archives are `.tar.bz2`. Needed from stage 1 for `--install-voice` (FR-28) |
@@ -199,7 +201,7 @@ Packages from Debian (stage 0, extended per stage):
 build-essential cmake ninja-build pkg-config
 qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 libkf6globalaccel-dev libkf6guiaddons-dev extra-cmake-modules
-libarchive-dev libsndfile1-dev libespeak-ng-dev
+libarchive-dev libsndfile1-dev libespeak-ng-dev libonnxruntime-dev
 debhelper devscripts
 ```
 
@@ -306,8 +308,9 @@ legilo/
   CMakeLists.txt
   CMakePresets.json
   vcpkg.json                  (Windows dependencies)
-  cmake/                      (FetchSherpaOnnx.cmake, CompilerWarnings.cmake ...)
+  cmake/                      (SherpaOnnx.cmake, Dependencies.cmake, CompilerWarnings.cmake ...)
   third_party/                (miniaudio.h, diff_match_patch, word list)
+    downloads/                (pinned archives from scripts/fetch-deps; not committed)
   src/
     core/
       text/  document/  tts/  audio/  playback/  models/  export/
@@ -329,7 +332,7 @@ legilo/
   debian/                     (Debian packaging)
   packaging/container/        (trixie build image)
   packaging/windows/          (Inno Setup script)
-  scripts/                    (check, build-deb, container; fetch-deps from stage 1)
+  scripts/                    (check, build-deb, container, fetch-deps)
   docs/
 ```
 
@@ -1188,11 +1191,13 @@ A regression of more than 20% against the previous recorded run is reported in t
 
 - **CMake presets:** `linux-debug`, `linux-release`, `windows-debug`, `windows-release`. All use Ninja.
 - **Compiler warnings:** warnings as errors in CI (`-Wall -Wextra -Wpedantic` on GCC; `/W4` on MSVC).
-- **sherpa-onnx:**
-  - Built with `FetchContent` from a pinned release tag, with `BUILD_SHARED_LIBS=ON` and the Python bindings, tests, examples and binaries off.
-  - It downloads a prebuilt ONNX Runtime by default.
-  - For offline and reproducible builds (and Debian's no-network build rule), a `scripts/fetch-deps` step downloads the sherpa-onnx source and ONNX Runtime archives into `third_party/downloads/` beforehand. CMake is pointed at them with `FETCHCONTENT_SOURCE_DIR_SHERPA_ONNX` and the matching ONNX Runtime variable.
-- **Private libraries:** on Linux, sherpa-onnx and ONNX Runtime are installed to `/usr/lib/legilo/`, with `INSTALL_RPATH` set to `$ORIGIN/../lib/legilo`. They never clash with system libraries.
+- **sherpa-onnx** (`cmake/SherpaOnnx.cmake`):
+  - Built as an `ExternalProject` from a pinned release archive, with `BUILD_SHARED_LIBS=ON` and the Python bindings, tests, examples, binaries, websocket server and speaker diarisation off. It always builds as a release build.
+  - Not `FetchContent`: sherpa-onnx's top-level `CMakeLists.txt` assumes it is the top level. It forces a release build, sets global output directories and definitions, and installs its headers, static libraries and pkg-config files, which would land in the package. Built apart, it installs into the build tree.
+  - Legilo links its C++ API through the imported target `Legilo::SherpaOnnx`.
+  - **ONNX Runtime:** on Linux, Debian's `libonnxruntime` 1.21 (`libonnxruntime-dev`) rather than the prebuilt 1.28.2 that sherpa-onnx downloads by default. Configuration fails if it is missing, because sherpa-onnx would otherwise download its own without saying so. Windows uses a prebuilt release (stage 5). The comparison is in the stage 1 results (12).
+- **Pinned archives, offline builds:** sherpa-onnx's configure step fetches nine more source archives, directly and through the projects it pulls in. `cmake/Dependencies.cmake` lists all ten with their SHA-256. `scripts/fetch-deps` downloads them into `third_party/downloads/` on the host, and the build copies them to where each fetch looks first, so the build itself never touches the network. `scripts/check` and `scripts/build-deb` run with the container's network switched off, so a missing archive fails there. Re-derive the list whenever sherpa-onnx is upgraded.
+- **Private libraries:** on Linux, sherpa-onnx's two shared libraries (`libsherpa-onnx-c-api.so`, `libsherpa-onnx-cxx-api.so`) are installed to `/usr/lib/legilo/`, and the binary will find them through `INSTALL_RPATH` `$ORIGIN/../lib/legilo`. They never clash with system libraries.
 - **Windows dependencies:** vcpkg manifest mode for libarchive and libsndfile (with MP3 support enabled), and later MuPDF. `windeployqt` collects the Qt runtime.
 
 ### 10.2 Continuous integration (GitHub Actions or GitLab CI)
@@ -1213,7 +1218,7 @@ Cache the sherpa-onnx build and the test model between runs.
 - **Versioning:** from the first release (stage 3), semantic versioning: `0.x.y` until stage 9, then `1.0.0`.
   - The Debian version is the upstream version plus `-1`.
   - `CHANGELOG.md` and `debian/changelog` are updated with every release.
-- `Depends` are generated by `dh_shlibdeps`. Point it at the private libraries (`dh_shlibdeps -l debian/legilo/usr/lib/legilo`), so their own dependencies are found, but generate no shlibs file for them.
+- `Depends` are generated by `dh_shlibdeps`. It resolves the private libraries through their own `$ORIGIN` RUNPATH, so it needs no `-l`, and `dh_makeshlibs` generates no shlibs file for them. Their unversioned sonames draw a harmless "can't extract name and version" warning.
 - **Installed files:**
 
   | File | Location |
@@ -1229,7 +1234,7 @@ Cache the sherpa-onnx build and the test model between runs.
 
 - **Recommends:** none at first. If the `wl-paste` contingency is used (7.1.2), add `wl-clipboard` to `Depends`.
 - **Distribution:** stage 3 ships `.deb` files on the project's releases page. Stage 9 adds a signed apt repository (`aptly` or `reprepro`, hosted on GitHub Pages or similar) so users get updates through `apt`.
-- **Official Debian archive:** out of scope. Debian would not accept the bundled prebuilt ONNX Runtime.
+- **Official Debian archive:** out of scope. Debian would want sherpa-onnx and the libraries compiled into it packaged separately rather than built from downloaded archives.
 
 ### 10.4 Windows installer
 
@@ -1249,7 +1254,7 @@ Cache the sherpa-onnx build and the test model between runs.
 
 - **Legilo's own code:** GPL-3.0-or-later. This is required, because Legilo links espeak-ng (GPL-3.0-or-later) for phonemisation (7.3.1).
 - **If MuPDF is chosen at stage 10:** no relicensing is needed. Section 13 of the GPLv3 explicitly allows a GPLv3 work to be combined with AGPLv3 code. Legilo's own code stays GPL-3.0-or-later, and the MuPDF part of the combination keeps its AGPL terms. The AGPL's network clause has no practical effect on an offline desktop app.
-- **Third-party notices:** a `THIRD-PARTY-NOTICES` file is generated from a list maintained in the repository, and shown in the About dialog.
+- **Third-party notices:** a `THIRD-PARTY-NOTICES` file is generated from a list maintained in the repository, and shown in the About dialog. Until then, `debian/copyright` records the code compiled into the private libraries: sherpa-onnx and its dependencies, under Apache-2.0, MPL-2.0, Expat, BSD-2/3-Clause, Zlib and the Unicode data licence, all compatible with GPL-3.0-or-later.
 - **Voice licences:** shown in the model manager (7.10) and written into each voice's directory. Non-commercial voices are flagged.
   - Voices trained or fine-tuned on the lessac dataset are flagged in the same way. Its licence (Blizzard Challenge 2013) is for research use only. This covers lessac itself and voices fine-tuned from it, such as alba and joe. Each voice's model card says how it was trained.
 
@@ -1329,7 +1334,7 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
 
 - **Goal:** text in, audio out, from the command line.
 - **Scope:**
-  - sherpa-onnx 2.x integration through `FetchContent`, pinned.
+  - sherpa-onnx 2.x, pinned, built as an `ExternalProject` against Debian's ONNX Runtime (10.1).
   - The `Phonemiser` on espeak-ng, test-first against golden fixtures from piper-phonemize (7.3.1). This adds about a week to the stage.
   - The `TtsEngine` interface and its sherpa-onnx implementation, `Voice` and `VoiceRegistry`.
   - `ModelInstaller` and `legilo --install-voice ARCHIVE` (FR-28). Download sherpa-onnx's `vits-piper-en_GB-cori-medium` archive by hand for now; the command installs it.
@@ -1343,6 +1348,24 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
   - Pause and stop silence playback within 100 ms.
   - Speed changes are heard within one sentence.
   - Works on both platforms.
+
+#### Stage 1 results (29 October 2026)
+
+**Phonemiser.** Done, test-first against the golden fixtures (7.3.1). With piper-phonemize's own espeak-ng data, its output matches all 42 fixture cases. With Debian's data it matches every British English case; American English differs in one vowel, which the test records.
+
+**ONNX Runtime (Linux).** sherpa-onnx 2.0.1 was built twice in the trixie container: against Debian's `libonnxruntime` 1.21, and against the prebuilt 1.28.2 it downloads by default. Both synthesised cori-medium and Kokoro v0.19 fp32 from the `Phonemiser`'s output. Synthesis time for the 317-character text, best of three, on the same i7-10610U as stage 0, as real-time factors:
+
+| Voice | Threads | Debian 1.21 | Prebuilt 1.28.2 |
+|---|---|---|---|
+| Piper cori medium | 1 / 2 / 4 | 0.15 / 0.12 / 0.09 | 0.14 / 0.11 / 0.09 |
+| Kokoro v0.19 fp32 | 1 / 2 / 4 | 1.27 / 0.94 / 0.82 | 1.25 / 0.92 / 0.82 |
+
+- The speed is the same. sherpa-onnx's code needs nothing newer than ONNX Runtime API 17.
+- Decision: link Debian's. It saves a 26 MB library in the package, gets Debian's security updates, and avoids shipping a binary from a personal GitHub mirror (`csukuangfj/onnxruntime-libs`) rather than from Microsoft. It is often installed already: `gstreamer1.0-plugins-bad` depends on it.
+- Cost: each time a voice loads, Debian's build writes 567 "Schema error: Trying to register schema ... already registered" lines to stderr. Synthesis is unaffected, and the prebuilt one writes nothing. The cause is probably its separate system `libonnx` registering the same operator schemas, but that is unconfirmed, and no bug report was found. Report it to Debian; Legilo does not hide stderr, which would hide real errors too (13).
+- Cost: sherpa-onnx is developed against 1.28.2, seven minor versions ahead. If a later release needs a newer API, the fallback is bundling (13).
+
+**Build.** sherpa-onnx is built as an `ExternalProject`, not with `FetchContent`, and all of its downloads are pinned and fetched beforehand (10.1). The first build takes about 4 minutes and adds about 4.2 MB of private libraries to the package.
 
 ### Stage 2 - Text clean-up and PDF detection (M)
 
@@ -1507,6 +1530,8 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 | Windows selection capture unreliable in some apps | High | Medium | UI Automation first, then simulated copy; clear notification; "speak clipboard" always works |
 | Simulated Ctrl+C has side effects (terminals, apps that bind Ctrl+C differently) | Medium | Medium | Console detection; per-application exclusion list in settings |
 | sherpa-onnx API changes or removes features between releases (2.0 removed phonemisation) | Medium | High | Pin the version; wrap it entirely in `TtsEngine`; upgrade deliberately; Legilo owns phonemisation (7.3.1) |
+| A later sherpa-onnx needs a newer ONNX Runtime than Debian's 1.21 | Medium | Medium | Pinned versions; the TTS integration test catches it; fall back to bundling the prebuilt runtime as private libraries (10.1) |
+| Debian's ONNX Runtime floods stderr (567 lines per voice load), filling the journal | High | Low | Report it to Debian; voices load rarely, at start and on a voice change, because idle unloading is off by default (7.3.2) |
 | Legilo's phonemes differ from piper-phonemize's, degrading voice quality | Low | Medium | Golden fixtures from piper-phonemize (7.3.1, 9.1); British English matches exactly, American differs in one vowel because of espeak-ng's data; listening check in the manual checklist |
 | Kokoro and Piper high too slow on typical laptop CPUs | High | Low | Measured in stage 0 at about real time (12); marked `needsFastCpu`, with an underrun notification (7.3.2); Piper medium remains the default; GPU later |
 | PDF detection false positives damage normal text | Medium | Medium | Conservative threshold; negative signals; corpus with false positives weighted double; Auto/Always/Never and preview |
@@ -1672,6 +1697,16 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.5 (29 October 2026)
+
+Stage 1 decisions on building sherpa-onnx:
+
+- On Linux, sherpa-onnx links Debian's ONNX Runtime 1.21 rather than its prebuilt 1.28.2, after a comparison showed the same speed (1.3, 5, 10.1, 12, 13).
+- sherpa-onnx is built as an `ExternalProject` instead of with `FetchContent`, and its ten source archives are pinned in `cmake/Dependencies.cmake` and fetched by `scripts/fetch-deps`. Check and package builds run without network (6.5, 10.1).
+- `dh_shlibdeps` needs no `-l` for the private libraries; the official-archive note gives the new reason (10.3).
+- The libraries compiled into sherpa-onnx and their licences are listed (5, 11).
+- New section: Stage 1 results (12).
 
 ### Draft 0.4 (28 October 2026)
 
