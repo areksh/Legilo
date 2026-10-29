@@ -6,6 +6,7 @@ Build-Depends:
  cmake (>= 3.25),
  debhelper-compat (= 13),
  help2man,
+ libarchive-dev (>= 3.6),
  libespeak-ng-dev (>= 1.52),
  libonnxruntime-dev,
  ninja-build,

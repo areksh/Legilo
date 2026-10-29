@@ -2,6 +2,8 @@
 add_library(legilo_core STATIC
     Logging.cpp
     Logging.h
+    models/ModelInstaller.cpp
+    models/ModelInstaller.h
     tts/Phonemiser.cpp
     tts/Phonemiser.h
     tts/SherpaTtsEngine.cpp
@@ -19,4 +21,8 @@ target_link_libraries(legilo_core PUBLIC Qt6::Core)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ESPEAK_NG REQUIRED IMPORTED_TARGET espeak-ng>=1.52)
 target_link_libraries(legilo_core PRIVATE PkgConfig::ESPEAK_NG Legilo::SherpaOnnx)
+
+# libarchive unpacks voice model archives (.tar.bz2).
+find_package(LibArchive 3.6 REQUIRED)
+target_link_libraries(legilo_core PRIVATE LibArchive::LibArchive)
 legilo_set_warnings(legilo_core)

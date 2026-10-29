@@ -5,8 +5,10 @@ reads the selected text, the clipboard, or a plain-text file aloud with
 neural voices (Piper and Kokoro, through sherpa-onnx) that run entirely on
 your machine. Text copied from PDFs is cleaned up before it is spoken.
 
-**Status:** early development (stage 0 of the delivery plan). The binary
-builds, installs and prints its version, but does not speak yet.
+**Status:** early development (stage 1 of the delivery plan). The binary
+can install a voice from one of sherpa-onnx's model archives
+(`legilo --install-voice vits-piper-en_GB-cori-medium.tar.bz2`), but does
+not speak yet.
 
 The design, requirements and staged plan are in
 [docs/legilo-tdd.md](docs/legilo-tdd.md).
@@ -17,7 +19,8 @@ Install the build dependencies:
 
 ```
 sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
-    libespeak-ng-dev libonnxruntime-dev clang-format clang-tidy help2man
+    libespeak-ng-dev libonnxruntime-dev libarchive-dev clang-format clang-tidy \
+    help2man
 ```
 
 `debian/control` holds the authoritative list of build dependencies.
