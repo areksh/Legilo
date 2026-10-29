@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.6
+- Status: Draft 0.7
 - Date: 29 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -905,9 +905,13 @@ Windows defaults:
   - Streamed to a `.part` file, with progress and cancel.
   - Resumable with an HTTP `Range` request if interrupted.
 - **Verification:** SHA-256 of the downloaded archive must match the catalogue. A mismatch deletes the file and reports an error.
-- **Installation:** `ModelInstaller` (7.3.2, also used by `--install-voice`) extracts with libarchive into a temporary directory inside the voices directory, named `.install-*` so the registry ignores it.
-  - Use `ARCHIVE_EXTRACT_SECURE_NODOTDOT`, `ARCHIVE_EXTRACT_SECURE_SYMLINKS` and `ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS`.
+- **Installation:** `ModelInstaller` (7.3.2, also used by `--install-voice`) reads the tar archive with libarchive into a temporary directory inside the voices directory, named `.install-*` so the registry ignores it.
+  - It writes the files itself and accepts only regular files and directories. An absolute path, a `..`, a backslash or colon, a symbolic or hard link, or a device fails the whole install. This is stricter than libarchive's `ARCHIVE_EXTRACT_SECURE_*` flags, which would still create a symbolic link pointing out of the model directory.
+  - Archives that unpack to more than 2 GiB are refused. Each model's `espeak-ng-data` directory is skipped (7.3.1).
+  - The model ID is the archive's single top-level directory, or its file name, without sherpa-onnx's `vits-` prefix. A model already installed under that ID is left alone.
+  - Without a catalogue entry, the manifest's name, language and speakers come from a Piper model's `.onnx.json`, and the licence is "unknown". Kokoro keeps its speaker names inside the ONNX model, so it installs as a single voice until the catalogue lists its speakers.
   - Write `legilo-voice.json`, then rename the directory into place so installs are atomic.
+  - Installing Kokoro takes about 27 s, almost all of it bzip2 decompression on one core. The model manager runs installs on a worker thread with progress.
 - **User interface:** a filterable list showing name, engine, accent, quality, size, licence and installed state.
   - Actions: download, remove, set as default, play sample.
   - The sample is synthesised locally once a voice is installed; before that, there is a link to the online sample.
@@ -1384,6 +1388,8 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
 - Synthesis is not deterministic, for Piper or Kokoro, and speed does not scale duration in proportion: cori at 2.0 takes about 0.66 of the time (7.3.1).
 - Kokoro's metadata names `en-us` for all eleven speakers, including the four British ones, so a speaker can override the espeak-ng voice in its manifest (7.3.2).
 
+**Installer.** `ModelInstaller` and `legilo --install-voice` are done, with stricter extraction than planned and tests on malicious archives built as the tests run (7.10). cori-medium installs in about a second, Kokoro in about 27 s.
+
 ### Stage 2 - Text clean-up and PDF detection (M)
 
 - **Goal:** the full text pipeline, test-first.
@@ -1714,6 +1720,12 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.7 (29 October 2026)
+
+Stage 1 installer:
+
+- Extraction writes the files itself and accepts only regular files and directories, instead of relying on libarchive's `SECURE_*` flags. It caps the unpacked size and skips the models' espeak-ng data. Model IDs and the manifest's contents for archives not in the catalogue are described, and installs move to a worker in the model manager (7.10, 12).
 
 ### Draft 0.6 (29 October 2026)
 
