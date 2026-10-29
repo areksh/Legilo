@@ -22,5 +22,6 @@ legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_phonemiser SOURCES tst_phonemiser.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_voiceregistry SOURCES tst_voiceregistry.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_sherpattsengine SOURCES tst_sherpattsengine.cpp LIBS legilo_core)
+legilo_add_unit_test(tst_audioqueue SOURCES tst_audioqueue.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_modelinstaller SOURCES tst_modelinstaller.cpp
     LIBS legilo_core LibArchive::LibArchive)

@@ -2,6 +2,8 @@
 add_library(legilo_core STATIC
     Logging.cpp
     Logging.h
+    audio/AudioQueue.cpp
+    audio/AudioQueue.h
     models/ModelInstaller.cpp
     models/ModelInstaller.h
     tts/Phonemiser.cpp
