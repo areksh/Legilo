@@ -23,4 +23,8 @@ Checks: >
 HeaderFilterRegex: '/(src|tests)/'
 ExcludeHeaderFilterRegex: '/build/|_autogen/'
 FormatStyle: file
+CheckOptions:
+  # Qt Test's QCOMPARE and QTRY_* expand to branches and loops, which would
+  # otherwise make a six-line test look as complex as a parser.
+  readability-function-cognitive-complexity.IgnoreMacros: true
 ...
