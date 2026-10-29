@@ -31,6 +31,16 @@ set(LEGILO_DEPENDENCIES
     "json-3.12.0.tar.gz|https://github.com/nlohmann/json/archive/refs/tags/v3.12.0.tar.gz|4b92eb0c06d10683f7447ce9406cb97cd4b453be18d7279320f7b2f025c10187"
 )
 
+# Voices for the integration tests (tests/integration), in the same format.
+# scripts/fetch-deps --test-voices unpacks them into third_party/test-voices/,
+# one directory per archive, named after it. The tests skip a voice that is
+# absent. cori-medium is the default voice; Kokoro is checked to accept the
+# Piper phoneme stream.
+set(LEGILO_TEST_VOICES
+    "vits-piper-en_GB-cori-medium.tar.bz2|https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_GB-cori-medium.tar.bz2|49c9a5361bbdd95d7ca9687c4de11e5908481f65e7c7c368960df79949fdac2b"
+    "kokoro-en-v0_19.tar.bz2|https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-en-v0_19.tar.bz2|912804855a04745fa77a30be545b3f9a5d15c4d66db00b88cbcd4921df605ac7"
+)
+
 # legilo_dependency_fields(<entry> <name-var> <url-var> <hash-var>)
 function(legilo_dependency_fields entry name_var url_var hash_var)
     string(REPLACE "|" ";" fields "${entry}")

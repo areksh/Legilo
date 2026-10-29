@@ -17,6 +17,7 @@ compile_commands.json
 
 # Downloaded dependencies (scripts/fetch-deps)
 /third_party/downloads/
+/third_party/test-voices/
 
 # Editor and OS cruft
 .vscode/

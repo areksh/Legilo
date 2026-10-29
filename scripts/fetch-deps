@@ -2,8 +2,19 @@
 # Downloads the pinned source archives the build needs (cmake/Dependencies.cmake)
 # into third_party/downloads/. Run it once after cloning and again after the
 # list changes; the build itself never downloads anything.
+#
+# Usage: scripts/fetch-deps [--test-voices]
+#   --test-voices  also fetch the integration tests' voices (about 390 MB)
+#                  into third_party/test-voices/
 set -eu
 
 root=$(cd "$(dirname "$0")/.." && pwd)
 
-exec cmake -P "$root/cmake/FetchDeps.cmake"
+voices=OFF
+case "${1:-}" in
+    "") ;;
+    --test-voices) voices=ON ;;
+    *) echo "Usage: $0 [--test-voices]" >&2; exit 2 ;;
+esac
+
+exec cmake -DLEGILO_TEST_VOICES=$voices -P "$root/cmake/FetchDeps.cmake"
