@@ -1,12 +1,13 @@
 #!/bin/sh
 # Runs the checks CI runs, inside the trixie build container: formatting,
 # a build with warnings as errors, the unit tests, and clang-tidy. Covers
-# tracked files and untracked files that are not ignored.
+# tracked files and untracked files that are not ignored. Runs without
+# network access, as Debian package builds do.
 set -eu
 
 root=$(cd "$(dirname "$0")/.." && pwd)
 
-"$root/scripts/container" sh -euc '
+CONTAINER_NETWORK=none "$root/scripts/container" sh -euc '
     build=build/container
     git config --global --add safe.directory /src
     sources() { git ls-files -z --cached --others --exclude-standard -- "$@"; }

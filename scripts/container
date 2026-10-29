@@ -3,7 +3,8 @@
 # mounted at /src, building the image first if it is out of date.
 #
 # Usage: scripts/container [COMMAND [ARG...]]   (default: a shell)
-# Set CONTAINER_ENGINE=docker to use Docker instead of Podman.
+# Set CONTAINER_ENGINE=docker to use Docker instead of Podman, and
+# CONTAINER_NETWORK=none to run the command without network access.
 set -eu
 
 root=$(cd "$(dirname "$0")/.." && pwd)
@@ -18,6 +19,11 @@ if [ -t 0 ] && [ -t 1 ]; then
     tty=--tty
 fi
 
-exec "$engine" run --rm --interactive $tty \
+network=
+if [ -n "${CONTAINER_NETWORK:-}" ]; then
+    network=--network=$CONTAINER_NETWORK
+fi
+
+exec "$engine" run --rm --interactive $tty $network \
     --volume "$root:/src:Z" --workdir /src \
     "$image" "${@:-bash}"

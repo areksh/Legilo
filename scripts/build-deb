@@ -1,13 +1,14 @@
 #!/bin/sh
 # Builds the .deb in the trixie build container from a clean copy of the
 # working tree (tracked and untracked files, minus anything ignored), runs
-# lintian on it, and copies the results to out/.
+# lintian on it, and copies the results to out/. Runs without network
+# access, as Debian's build daemons do.
 set -eu
 
 root=$(cd "$(dirname "$0")/.." && pwd)
 mkdir -p "$root/out"
 
-"$root/scripts/container" sh -euc '
+CONTAINER_NETWORK=none "$root/scripts/container" sh -euc '
     git config --global --add safe.directory /src
     rm -rf /tmp/build && mkdir -p /tmp/build/legilo
     git ls-files -z --cached --others --exclude-standard \
