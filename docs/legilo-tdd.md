@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.5
+- Status: Draft 0.6
 - Date: 29 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -311,6 +311,7 @@ legilo/
   cmake/                      (SherpaOnnx.cmake, Dependencies.cmake, CompilerWarnings.cmake ...)
   third_party/                (miniaudio.h, diff_match_patch, word list)
     downloads/                (pinned archives from scripts/fetch-deps; not committed)
+    test-voices/              (voices for the integration tests; not committed)
   src/
     core/
       text/  document/  tts/  audio/  playback/  models/  export/
@@ -613,8 +614,10 @@ The preview shows the relationship between `original` and the spoken form throug
 - Synthesis: `Generate` with a generation config holding the phonemes (below), speaker ID and speed, plus a callback. It returns float samples plus the sample rate. If the callback returns 0, synthesis is cancelled.
   - The callback runs only between sherpa-onnx's internal sentence batches. A single `Generate` call on one sentence can't be interrupted part-way.
   - So stop and seek silence playback at once (7.4) and discard the in-flight result by generation. The worker is free again within one chunk's synthesis time, which the short first chunk (7.5) keeps small.
-- Thread safety: don't assume concurrent `Generate` calls are safe, on one `OfflineTts` instance or on two. Verify in stage 1. If they aren't safe, serialise calls with one process-wide lock, and have the export loop give way to playback between segments (7.13).
+- Thread safety: checked in stage 1. Concurrent `Generate` calls on one `OfflineTts` instance and on two produced sound speech every time (`tests/integration/tst_synthesis.cpp`), so there is no process-wide lock. A short test is evidence, not proof: if the export loop (7.13) shows problems, serialise calls with one lock and have export give way to playback between segments.
 - Speed: passed per call (1.0 is normal; range 0.5 to 2.5, step 0.1). A change applies from the next segment that has not yet been synthesised. The controller discards look-ahead audio that hasn't been played yet and re-synthesises it, so a change is heard within one segment.
+  - Speed does not scale duration in proportion. A Piper voice at 2.0 takes about 0.66 of the time, and at 0.5 about 1.6 times, because each sound keeps at least one frame. The slider's labels are nominal.
+- Synthesis is not deterministic: each call draws fresh noise, durations included, so the same sentence varies by about 7% in length from call to call. Tests cannot compare audio exactly.
 
 Field and function names above, and the callback granularity, match recent sherpa-onnx releases. Verify them against the pinned version in stage 1.
 
@@ -622,11 +625,11 @@ Field and function names above, and the callback granularity, match recent sherp
 
 - It links espeak-ng: Debian's `libespeak-ng` (1.52) on Linux, with its data from the `espeak-ng-data` package; on Windows, espeak-ng built from source, with its data bundled.
 - It phonemises one segment at a time, clause by clause, with `espeak_TextToPhonemesWithTerminator` in IPA mode, and appends each clause's punctuation from the terminator. This is what piper-phonemize does, and the Piper voices were trained on its output.
-- The espeak-ng voice comes from the model's metadata: `en` for British English (`en-gb` is not an espeak-ng voice name) and `en-us` for American.
+- The espeak-ng voice comes from the model's metadata, which sherpa-onnx returns from `OfflineTts::Lang()`: `en` for British English (`en-gb` is not an espeak-ng voice name) and `en-us` for American. A speaker's `espeakVoice` in the voice manifest overrides it (7.3.2), because Kokoro's metadata says `en-us` for all its speakers, the British ones included.
 - It uses the system's espeak-ng data, not the data piper-phonemize ships from its own espeak-ng fork. Checked in stage 1: with the fork's data the `Phonemiser` matches every golden fixture, and with Debian's 1.52 data it matches every `en` fixture. For `en-us`, 1.52 gives an open o before r ("four", "record") where the fork gives a close-mid o; the unit test records that one difference. Bundling the fork's data is the fallback if the listening check finds it audible.
 - espeak-ng keeps global state, so there is one process-wide `Phonemiser`, with calls serialised by a mutex. Phonemising takes far less time than synthesis, so the lock is not a bottleneck.
 - It is written test-first against golden fixtures. The phoneme strings are generated once with piper-phonemize and committed, covering sentences, punctuation and clause terminators, numbers, abbreviations and non-ASCII text.
-- Verify in stage 1 that Kokoro takes the same phoneme stream as Piper. Kokoro v0.19 was trained on espeak-ng IPA.
+- Kokoro takes the same phoneme stream as Piper (checked in stage 1). Kokoro v0.19 was trained on espeak-ng IPA.
 - Owning the phonemiser also makes per-word pronunciation fixes possible later (15).
 
 #### 7.3.2 Voices
@@ -634,22 +637,29 @@ Field and function names above, and the callback granularity, match recent sherp
 ```cpp
 struct Voice {
     QString id;             // e.g. "piper-en_GB-cori-medium" or "kokoro-en-v0_19:bf_emma"
+    QString modelId;        // the installed model; its speakers share it
     QString engine;         // "piper" | "kokoro"
     QString displayName;
     QString language;       // "en-GB", "en-US"
     int speakerId = 0;      // multi-speaker models
-    int sampleRate;         // read from the model; 22050 for Piper medium, 24000 for Kokoro
+    QString espeakVoice;    // overrides the model's espeak-ng voice; usually empty
     QString directory;      // installed location
-    QString licence;        // SPDX ID or short name
+    QString modelPath, tokensPath, voicesPath;  // voicesPath for Kokoro only
+    QString licence;        // SPDX ID or short name; "unknown" if not recorded
     QUrl licenceUrl;
 };
 ```
+
+- The sample rate is not part of `Voice`: only the loaded model knows it reliably, so `TtsEngine::sampleRate()` reports it (22050 for Piper medium, 24000 for Kokoro).
+- `TtsEngine` is the interface: `sampleRate()` and `synthesise(text, speed)`, which returns mono float samples, no samples for text with nothing to say, or nothing on failure. `SherpaTtsEngine::load(voice, threads)` creates one per loaded voice.
 
 - `VoiceRegistry` scans the voices directory at start-up and after installs.
   - Directory: `QStandardPaths::AppLocalDataLocation` + `/voices/`, which is `~/.local/share/legilo/voices/` on Linux and `%LOCALAPPDATA%\legilo\voices\` on Windows.
   - Not `AppDataLocation`: on Windows that is the roaming profile, and voices are hundreds of megabytes.
   - Leave the organisation name empty, or the path gains a second `legilo/` level.
-  - Each voice directory holds the model files plus a `legilo-voice.json` manifest written at install time.
+  - Each voice directory holds the model files plus a `legilo-voice.json` manifest written at install time. Format 1, documented in `VoiceRegistry.h`, holds the model's ID, engine, name, files (relative to its directory), and optionally its language, licence and speakers. A speaker may carry `espeakVoice`; the catalogue and installer set it to `en` for Kokoro's British speakers (`bf_*`, `bm_*`) in stage 4.
+  - Each speaker of a multi-speaker model is its own voice, with the ID `model:speaker`.
+  - A manifest that is invalid, names a missing file or one outside its directory, or repeats an earlier ID is skipped with a warning, so one broken install never hides the rest.
   - The registry ignores directories without a manifest, and the installer's temporary directories (7.10).
 - **Installing:** one installer component (`ModelInstaller`) serves both `legilo --install-voice ARCHIVE` (stage 1, FR-28) and the model manager (stage 4).
   - It verifies the archive's SHA-256 against the catalogue when the archive is listed there. An unlisted archive installs with its licence marked unknown.
@@ -1142,11 +1152,11 @@ public:
 
 ### 9.3 Integration tests
 
-- **TTS:** synthesise a fixed sentence with the smallest Piper model.
-  - Assert a non-empty result, the expected sample rate, and a duration within plausible bounds.
-  - Stop: playback output ends within 100 ms, and the worker is free within one chunk's synthesis time (7.3.1).
-  - Concurrent `Generate` calls, on one instance and on two, to settle the thread-safety question in 7.3.1.
-  - The model is downloaded once and cached in CI; locally, the test is skipped if the model is absent.
+- **TTS** (`tests/integration/tst_synthesis.cpp`, label `integration`): synthesise a fixed sentence with cori-medium, the default voice, and with Kokoro v0.19.
+  - Assert a non-empty result, the expected sample rate, and a duration within plausible bounds. Synthesis is not deterministic (7.3.1), so duration checks average several calls.
+  - Stop: playback output ends within 100 ms, and the worker is free within one chunk's synthesis time (7.3.1). Added with the synthesis worker.
+  - Concurrent `Generate` calls, on one instance and on two (7.3.1).
+  - The voices are pinned in `cmake/Dependencies.cmake` and fetched with `scripts/fetch-deps --test-voices` (about 390 MB), which `scripts/check` runs; CI caches them. A test whose voice is absent is skipped. The suite takes about 11 s.
 - **IPC:** start an instance, send each command from a second process, check the replies.
 - **Export:** export a short document to each format, then reopen the file with libsndfile and check its duration.
 
@@ -1366,6 +1376,13 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
 - Cost: sherpa-onnx is developed against 1.28.2, seven minor versions ahead. If a later release needs a newer API, the fallback is bundling (13).
 
 **Build.** sherpa-onnx is built as an `ExternalProject`, not with `FetchContent`, and all of its downloads are pinned and fetched beforehand (10.1). The first build takes about 4 minutes and adds about 4.2 MB of private libraries to the package.
+
+**TTS engine.** `TtsEngine`, `SherpaTtsEngine`, `Voice` and `VoiceRegistry` are done, with the integration suite (9.3). It settled:
+
+- Kokoro accepts the Piper phoneme stream.
+- Concurrent synthesis on one engine and on two gave sound speech every time, so there is no process-wide lock (7.3.1).
+- Synthesis is not deterministic, for Piper or Kokoro, and speed does not scale duration in proportion: cori at 2.0 takes about 0.66 of the time (7.3.1).
+- Kokoro's metadata names `en-us` for all eleven speakers, including the four British ones, so a speaker can override the espeak-ng voice in its manifest (7.3.2).
 
 ### Stage 2 - Text clean-up and PDF detection (M)
 
@@ -1697,6 +1714,15 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.6 (29 October 2026)
+
+Stage 1 TTS engine:
+
+- Concurrent synthesis needs no lock; synthesis is not deterministic; speed is not proportional to duration (7.3.1, 12).
+- Kokoro takes the Piper phoneme stream. The espeak-ng voice comes from `OfflineTts::Lang()`, and a speaker can override it (7.3.1, 7.3.2).
+- `Voice` gains the model ID, file paths and `espeakVoice` and loses the sample rate; the `TtsEngine` interface and the manifest format are described (7.3.2).
+- The TTS integration test exists, with pinned test voices (6.5, 9.3).
 
 ### Draft 0.5 (29 October 2026)
 
