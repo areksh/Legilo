@@ -27,6 +27,7 @@ struct Speaker
 {
     int id = 0;
     QString name;
+    QString espeakVoice;
 };
 
 // Each helper below reads part of a manifest into the voice that every
@@ -96,18 +97,20 @@ std::optional<QList<Speaker>> readSpeakers(const QJsonObject &manifest, const Vo
                                            QString &reason)
 {
     if (!manifest.contains(u"speakers")) {
-        return QList<Speaker>{{0, model.displayName}};
+        return QList<Speaker>{{0, model.displayName, {}}};
     }
     QList<Speaker> speakers;
     for (const auto &value : manifest.value(u"speakers").toArray()) {
         const QJsonObject speaker = value.toObject();
         const int id = speaker.value(u"id").toInt(-1);
         const QString name = speaker.value(u"name").toString();
-        if (id < 0 || name.isEmpty()) {
+        const QString espeakVoice = speaker.value(u"espeakVoice").toString();
+        if (id < 0 || name.isEmpty() ||
+            (speaker.contains(u"espeakVoice") && espeakVoice.isEmpty())) {
             reason = u"has an invalid speaker"_s;
             return std::nullopt;
         }
-        speakers.append({id, name});
+        speakers.append({id, name, espeakVoice});
     }
     if (speakers.isEmpty()) {
         reason = u"lists no speakers"_s;
@@ -151,6 +154,7 @@ std::optional<QList<Voice>> readManifest(const QString &directory, QString &reas
             voice.displayName += u": "_s + speaker.name;
         }
         voice.speakerId = speaker.id;
+        voice.espeakVoice = speaker.espeakVoice;
         voices.append(voice);
     }
     return voices;

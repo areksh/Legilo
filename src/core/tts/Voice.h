@@ -16,7 +16,8 @@ struct Voice
     QString displayName; // the model's name, followed by the speaker's if it has several
     QString language;    // BCP 47, such as "en-GB"; empty if unknown
     int speakerId = 0;
-    QString directory; // the model's installed directory
+    QString espeakVoice; // overrides the model's espeak-ng voice; empty to use the model's
+    QString directory;   // the model's installed directory
     QString modelPath;
     QString tokensPath;
     QString voicesPath; // Kokoro's speaker embeddings; empty for Piper

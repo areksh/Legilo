@@ -39,8 +39,10 @@ QJsonObject kokoroManifest()
         {u"files"_s, QJsonObject{{u"model"_s, u"model.onnx"_s},
                                  {u"tokens"_s, u"tokens.txt"_s},
                                  {u"voices"_s, u"voices.bin"_s}}},
-        {u"speakers"_s, QJsonArray{QJsonObject{{u"id"_s, 9}, {u"name"_s, u"bm_george"_s}},
-                                   QJsonObject{{u"id"_s, 7}, {u"name"_s, u"bf_emma"_s}}}},
+        {u"speakers"_s,
+         QJsonArray{
+             QJsonObject{{u"id"_s, 9}, {u"name"_s, u"bm_george"_s}},
+             QJsonObject{{u"id"_s, 7}, {u"name"_s, u"bf_emma"_s}, {u"espeakVoice"_s, u"en"_s}}}},
         {u"licence"_s, u"Apache-2.0"_s},
     };
 }
@@ -97,6 +99,7 @@ private slots:
     void readsSingleSpeakerModel();
     void listsEachSpeakerOfMultiSpeakerModel();
     void optionalFieldsHaveDefaults();
+    void speakerCanOverrideEspeakVoice();
     void skipsDirectoryWithoutManifest();
     void skipsInstallerTemporaryDirectory();
     void skipsInvalidManifest_data();
@@ -188,6 +191,17 @@ void TestVoiceRegistry::optionalFieldsHaveDefaults()
     QCOMPARE(voice.licenceUrl, QUrl());
 }
 
+void TestVoiceRegistry::speakerCanOverrideEspeakVoice()
+{
+    install(m_root->path(), u"kokoro"_s, kokoroManifest());
+
+    const VoiceRegistry registry(m_root->path());
+
+    QCOMPARE(registry.find(u"kokoro-en-v0_19:bf_emma"_s).value_or(Voice{}).espeakVoice, u"en"_s);
+    QCOMPARE(registry.find(u"kokoro-en-v0_19:bm_george"_s).value_or(Voice{}).espeakVoice,
+             QString());
+}
+
 void TestVoiceRegistry::skipsDirectoryWithoutManifest()
 {
     QVERIFY(QDir(m_root->path()).mkdir(u"stray"_s));
@@ -250,6 +264,10 @@ void TestVoiceRegistry::skipsInvalidManifest_data()
     row("empty speakers", with(piperManifest(), u"speakers"_s, QJsonArray{}));
     row("speaker without name",
         with(piperManifest(), u"speakers"_s, QJsonArray{QJsonObject{{u"id"_s, 0}}}));
+    row("empty espeak voice",
+        with(piperManifest(), u"speakers"_s,
+             QJsonArray{
+                 QJsonObject{{u"id"_s, 0}, {u"name"_s, u"Cori"_s}, {u"espeakVoice"_s, u""_s}}}));
     row("negative speaker id",
         with(piperManifest(), u"speakers"_s,
              QJsonArray{QJsonObject{{u"id"_s, -1}, {u"name"_s, u"Cori"_s}}}));

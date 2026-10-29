@@ -20,15 +20,19 @@ namespace legilo {
 //     "language": "en-US",
 //     "files": { "model": "model.onnx", "tokens": "tokens.txt",
 //                "voices": "voices.bin" },
-//     "speakers": [ { "id": 7, "name": "bf_emma" } ],
+//     "speakers": [ { "id": 7, "name": "bf_emma", "espeakVoice": "en" } ],
 //     "licence": "Apache-2.0",
 //     "licenceUrl": "https://..."
 //   }
 //
 // "format", "id", "engine", "name" and "files" are required, and "voices"
 // only for Kokoro. Without "speakers" the model has one speaker, 0. A
-// directory without a manifest, an installer's ".install-*" directory, or
-// a manifest that is invalid or names a missing file is skipped, so one
+// speaker's "espeakVoice" overrides the phonemiser voice in the model's
+// metadata: Kokoro's metadata says "en-us" for all its speakers, British
+// ones included.
+//
+// A directory without a manifest, an installer's ".install-*" directory,
+// or a manifest that is invalid or names a missing file is skipped, so one
 // broken install never hides the others.
 class VoiceRegistry
 {
