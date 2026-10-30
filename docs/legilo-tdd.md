@@ -1,7 +1,7 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.8
-- Date: 29 October 2026
+- Status: Draft 0.9
+- Date: 30 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
 
@@ -564,6 +564,7 @@ Rules (English):
 5. URLs and email addresses (as matched in 7.2.5) are single tokens: no boundary falls inside them. This matters because speech rules run after segmentation.
 6. Maximum segment length is 300 characters (configurable). Longer sentences are split at the separator nearest the middle: first `;`, then `:`, then a dash, then a comma, then any whitespace. Splitting repeats until every part is within the limit. Short segments give better prosody than one long synthesis. First-audio latency is handled separately by the short first chunk (7.5).
 7. A segment shorter than 3 characters merges into the previous segment in the same paragraph. If it starts a paragraph, it merges into the next one. A paragraph shorter than 3 characters in total stays as its own segment. Merging never crosses a paragraph break (rule 1).
+   - A segment of a single word merges the same way, whatever its length. Piper voices babble on one-word sentences: in stage 1, cori took 2 to 2.9 s to say "Eight." on its own, every time, against about 0.6 s for other numbers (12). The short first chunk (7.5) must not end after a single word either.
 
 Qt's `QTextBoundaryFinder` (Unicode sentence boundaries) is not sufficient on its own: it breaks after "Mr." and "Dr.". The custom rules run as a refinement layer on top of it, or replace it entirely; whichever tests better.
 
@@ -702,7 +703,7 @@ struct Voice {
 - **Device changes:**
   - Losing the device that is playing (headphones unplugged, Bluetooth disconnected) **pauses** playback. It does not carry on through another device. Reading private text aloud on the laptop speakers is the wrong default, and phones behave the same way.
   - Resume plays on the new default device, from the current segment start.
-  - Use miniaudio's device notification callback (rerouted and stopped notifications). It fires on a miniaudio thread, so forward it to the GUI thread. Implemented: a reroute, or a stop Legilo did not ask for, stops the output and emits `AudioOutput::deviceLost()`. Whether PipeWire reports unplugged headphones as a reroute is checked by hand (9.4).
+  - Use miniaudio's device notification callback (rerouted and stopped notifications). It fires on a miniaudio thread, so forward it to the GUI thread. Implemented: a reroute, or a stop Legilo did not ask for, stops the output and emits `AudioOutput::deviceLost()`. Checked by hand in stage 1: unplugging wired headphones under PipeWire is reported as a reroute, and playback stops (12). Bluetooth and Windows remain for the manual checklist (9.4).
   - Check first how much miniaudio already does. Its WASAPI and PulseAudio backends follow the default device automatically, so the work may reduce to detecting the change and pausing, with no re-initialisation of our own.
 - **Optional leading silence trim and inter-segment gap:**
   - Trim leading silence, so segments join naturally.
@@ -1393,6 +1394,15 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
 
 **Audio.** `AudioQueue`, `AudioOutput` and `MiniaudioOutput` are done. The queue's flush protocol changed to deliver every flush in order, after a race in the original design came to light (7.4); a test pins it, and ThreadSanitizer found no races with the producer, controller and consumer at work together. miniaudio comes from Debian's package rather than a vendored copy (5).
 
+**Listening checks (30 October 2026).** A throwaway program played the speech path through a real device (Plasma 6.3.6, PipeWire, wired headphones):
+
+- cori plays through miniaudio's PulseAudio backend (PipeWire's emulation) with 75 ms of buffering. The first sentence was queued 60 to 260 ms after start, with the voice already loaded.
+- cori's first few words of a text can sound rushed, with odd pitch changes. Piper's own engine (`piper-tts`) does the same with the same model, so it is the voice, not Legilo.
+- One-word sentences make Piper babble: "Eight." alone took 2 to 2.9 s and stuttered audibly. Segmentation must not produce one-word segments (7.2.7).
+- Pause and resume are clean: the callback pulls nothing while stopped, and `stop()` returns at once.
+- Kokoro's British speaker `bf_emma` sounds better with British phonemes (`en`) than with the `en-us` in the model's metadata, so the catalogue sets `espeakVoice` for Kokoro's British speakers (7.3.2).
+- Unplugging wired headphones stops playback, which does not move to the speakers: PipeWire reports the change as a reroute, which miniaudio passes on (7.4).
+
 **Installer.** `ModelInstaller` and `legilo --install-voice` are done, with stricter extraction than planned and tests on malicious archives built as the tests run (7.10). cori-medium installs in about a second, Kokoro in about 27 s.
 
 ### Stage 2 - Text clean-up and PDF detection (M)
@@ -1725,6 +1735,14 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.9 (30 October 2026)
+
+Stage 1 listening checks on a real device (12):
+
+- The speech path works end to end through PipeWire; pause and resume are clean, and unplugging headphones stops playback (7.4).
+- One-word segments make Piper babble, so segmentation merges them (7.2.7).
+- Kokoro's British speakers sound better with British phonemes, confirming the per-speaker `espeakVoice` (7.3.2).
 
 ### Draft 0.8 (29 October 2026)
 
