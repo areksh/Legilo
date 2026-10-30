@@ -1,0 +1,11 @@
+# sample<TAB>why. Excerpts of a PDF whose text reflows, that hold no prose,
+# so are negative. Applied by tools/make_excerpts.py.
+arxiv-2610.40563-3	table cells, one per line
+arxiv-2610.40627-3	a figure of a chat transcript
+arxiv-2610.40638-1	an equation, one symbol per line
+arxiv-2610.40656-1	chart axis labels
+arxiv-2610.40656-6	chart axis labels
+plos-0357895-1	table cells, one per line
+plos-0358694-5	table cells, one per line
+made-letter-2	an address block and nothing else
+made-recipe-3	mostly an ingredients list

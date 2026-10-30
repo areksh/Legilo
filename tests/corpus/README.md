@@ -14,12 +14,21 @@ addresses, tables, subtitles. A menu, a table or a poem copied from a PDF
 is negative, because reflowing it would damage it. That is the decision
 the detector makes, and what its precision target (98%) protects.
 
+A sample is labelled by what it holds, not by where it came from. An
+excerpt takes its document's label, but an excerpt of a paper can hold
+nothing but a table or a chart's axis labels; `detection/relabelled.tsv`
+lists those excerpts, with the reason for each, and makes them negative.
+An excerpt that mixes the two, such as a letter's address block followed
+by its wrapped body, keeps the positive label: reflow helps it more than
+it harms it.
+
 ## Layout
 
 | Path | Contents |
 |---|---|
 | `detection/positive/`, `detection/negative/` | One sample per file |
 | `detection/split.txt` | Which samples are for tuning and which are held out |
+| `detection/relabelled.tsv` | Excerpts that hold no prose, so are negative |
 | `cleanup/<name>/input.txt`, `expected.txt` | Whole documents and the text reflow should recover |
 | `sources.json` | The downloaded documents, with URLs, hashes and licences |
 | `tools/` | The scripts that make all of the above |
@@ -75,8 +84,6 @@ own, which is why the helper watches instead of waiting for Enter.
 committed; `--clipboard` watches the Ctrl+C clipboard instead.
 Then run `tools/identify_copies.py`, which records the PDF each copy came
 from in `detection/copies.tsv`, and `tools/split.py`.
-
-
 
 ## The split
 

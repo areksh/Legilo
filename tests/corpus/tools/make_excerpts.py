@@ -8,7 +8,9 @@ pdftotext's reading order and its content-stream order (-raw), and page
 breaks become line breaks, as a clipboard copy gives. Writes:
 
 - tests/corpus/detection/{positive,negative}/<source>-<n>.txt, labelled
-  by whether the line breaks are layout that reflow should undo;
+  by whether the line breaks are layout that reflow should undo. An
+  excerpt takes its document's label unless detection/relabelled.tsv
+  names it: an excerpt of a paper can hold only a table or a chart;
 - tests/corpus/cleanup/<name>/input.txt for each document the corpus
   typeset itself and has expected text for (tools/build_documents.py);
 - with --local DIR, excerpts of the PDFs in DIR under tests/corpus/local/,
@@ -32,6 +34,8 @@ CLEANUP = ROOT / "tests/corpus/cleanup"
 LOCAL = ROOT / "tests/corpus/local"
 
 EXCERPTS = {"arxiv": 6, "plos": 5, "nist": 8, "made": 4}
+RELABELLED = {line.split("\t")[0] for line in (DETECTION / "relabelled.tsv").read_text().splitlines()
+              if line and not line.startswith("#")}
 BODY_FRACTION = 0.6  # research papers end in references and appendices
 
 
@@ -73,7 +77,9 @@ def write_excerpts(pdf, label_dir, name, number, rng, body_only):
     for i in range(number):
         text = excerpt(pdf, rng, raw=i % 2 == 1, body_only=body_only)
         if text:
-            (label_dir / f"{name}-{i + 1}.txt").write_text(text, encoding="utf-8")
+            sample = f"{name}-{i + 1}"
+            target = DETECTION / "negative" if sample in RELABELLED else label_dir
+            (target / f"{sample}.txt").write_text(text, encoding="utf-8")
             written += 1
     return written
 
