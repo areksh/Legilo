@@ -15,6 +15,8 @@ add_library(legilo_core STATIC
     playback/PlaybackController.h
     playback/SynthesisWorker.cpp
     playback/SynthesisWorker.h
+    text/Normaliser.cpp
+    text/Normaliser.h
     tts/Phonemiser.cpp
     tts/Phonemiser.h
     tts/SherpaTtsEngine.cpp
