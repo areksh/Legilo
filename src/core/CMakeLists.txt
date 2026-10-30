@@ -16,6 +16,8 @@ add_library(legilo_core STATIC
     playback/SynthesisWorker.cpp
     playback/SynthesisWorker.h
     document/Segment.h
+    text/LineRules.cpp
+    text/LineRules.h
     text/Normaliser.cpp
     text/Normaliser.h
     text/Reflow.cpp
