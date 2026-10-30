@@ -9,6 +9,8 @@ add_library(legilo_core STATIC
     audio/MiniaudioOutput.h
     models/ModelInstaller.cpp
     models/ModelInstaller.h
+    playback/FirstChunk.cpp
+    playback/FirstChunk.h
     tts/Phonemiser.cpp
     tts/Phonemiser.h
     tts/SherpaTtsEngine.cpp
