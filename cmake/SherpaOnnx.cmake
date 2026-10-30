@@ -8,6 +8,9 @@
 # into the build tree, and Legilo installs only the two shared libraries it
 # links, as private libraries in lib/legilo.
 #
+# Legilo patches it before configuring; cmake/PatchSherpaOnnx.cmake lists
+# the changes and why.
+#
 # On Linux it links Debian's ONNX Runtime (libonnxruntime-dev) instead of
 # downloading the prebuilt one sherpa-onnx defaults to. The Windows build
 # is set up in stage 5.
@@ -52,6 +55,8 @@ ExternalProject_Add(sherpa_onnx_external
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     PREFIX "${CMAKE_BINARY_DIR}/_deps/sherpa-onnx"
     INSTALL_DIR "${sherpa_install}"
+    PATCH_COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=<SOURCE_DIR>
+        -P ${CMAKE_CURRENT_LIST_DIR}/PatchSherpaOnnx.cmake
     CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}

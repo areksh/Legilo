@@ -74,6 +74,7 @@ private slots:
 
     void piperSynthesisesSentence();
     void piperSpeedShortensSpeech();
+    void piperDoesNotBabbleOnShortWord();
     void textWithNothingToSayGivesNoAudio_data();
     void textWithNothingToSayGivesNoAudio();
     void concurrentCallsOnOneEngineSucceed();
@@ -137,6 +138,26 @@ void TestSynthesis::piperSpeedShortensSpeech()
     QVERIFY(normal > 0);
     const double ratio = fast / normal;
     QVERIFY2(ratio > 0.45 && ratio < 0.8, qPrintable(u"ratio %1"_s.arg(ratio)));
+}
+
+// sherpa-onnx 2.0.1 puts a pad token after the start marker, which Piper's
+// own runtime does not. With it, cori babbles on "Open." in nearly every
+// call (20 of 20 when measured, against none without it), running to two
+// seconds or more; Legilo patches it out (cmake/SherpaOnnx.cmake). "Open."
+// is a short word that takes about 0.6 s.
+void TestSynthesis::piperDoesNotBabbleOnShortWord()
+{
+    REQUIRE(m_cori);
+    int babbled = 0;
+
+    for (int i = 0; i < 10; ++i) {
+        const auto samples = m_cori->synthesise(u"Open."_s, 1.0).value_or(std::vector<float>{});
+        if (seconds(samples, m_cori->sampleRate()) > 1.0) {
+            ++babbled;
+        }
+    }
+
+    QVERIFY2(babbled <= 3, qPrintable(u"%1 of 10 calls ran over 1 s"_s.arg(babbled)));
 }
 
 void TestSynthesis::textWithNothingToSayGivesNoAudio_data()
