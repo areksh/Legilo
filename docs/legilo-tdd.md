@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.14
+- Status: Draft 0.15
 - Date: 30 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -1158,9 +1158,9 @@ public:
     - precision at least 98%, because false positives damage text
     - recall at least 90%
 - Start the corpus from the inputs you already tested the scripts with.
-- **As built (`tests/corpus/`, stage 2):** 185 samples, 93 positive and 92 negative.
+- **As built (`tests/corpus/`, stage 2):** 190 samples, 98 positive and 92 negative.
   - Labels follow what the detector decides: positive means the line breaks are layout that reflow should undo. A menu, a table or a poem copied from a PDF is negative, because reflowing it would damage it.
-  - Positives are excerpts, cut with `pdftotext` (poppler, as Okular uses), of six arXiv papers and two PLOS ONE articles (CC BY 4.0), NIST SP 800-12 (public domain), and ten documents typeset for the corpus with LibreOffice, whose clean text is known exactly and gives six clean-up pairs. Fourteen samples were selected by hand in Firefox and Okular.
+  - Positives are excerpts, cut with `pdftotext` (poppler, as Okular uses), of six arXiv papers and two PLOS ONE articles (CC BY 4.0), NIST SP 800-12 (public domain), and ten documents typeset for the corpus with LibreOffice, whose clean text is known exactly and gives six clean-up pairs. Nineteen samples were selected by hand in Firefox, Okular and Chromium.
   - Negatives are written for the corpus, plus public-domain poems and book prose.
   - The held-out third is fixed by `detection/split.txt` and keeps each PDF's excerpts together. `tests/corpus/local/`, which git ignores, holds samples of private documents, for local tuning only.
   - The tools that make it all, and the licences, are in `tests/corpus/README.md`.
@@ -1448,18 +1448,22 @@ Against the exit criteria, on 30 October 2026:
 
 Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, and the regression corpus (9.2).
 
-**Real selections differ from `pdftotext`.** Text selected by hand in Firefox and Okular, compared with `pdftotext`'s excerpts of the same kind of text (aggregate figures only; private samples included):
+**Real selections differ from `pdftotext`, and from each other.** Text selected by hand in Firefox (pdf.js), Okular (poppler) and Chromium (PDFium), compared with `pdftotext`'s excerpts of the same kind of text (aggregate figures only; private samples included):
 
-| Source | Mean line length | Blank lines | Lines under 20 characters |
-|---|---|---|---|
-| `pdftotext` | 63 | 7.9% | 20% |
-| Okular | 57 | 0% | 24% |
-| Firefox | 46 | 38.6% | 40% |
+| Source | Mean line length | Blank lines | Of those, mid-sentence | Lines ending in "-" | Lines under 20 characters |
+|---|---|---|---|---|---|
+| `pdftotext` | 63 | 7.9% | 79% | 5.5% | 20% |
+| Okular | 57 | 0% | - | 8.9% | 24% |
+| Firefox | 46 | 38.6% | 81% | 6.5% | 40% |
+| Chromium | 74 | 0% | - | 0.2% | 11% |
 
 - **Okular** keeps no blank lines: paragraph breaks are lost, so reflow would join a whole selection into one paragraph, broken only by its heading rule.
 - **Firefox** puts a blank line between many lines, and they are not paragraph breaks: the line before ends mid-sentence in 877 of 1080 cases, and half of its hyphenated breaks have a blank line between the halves.
+- **Chromium** keeps no blank lines either, and almost no line ends in a hyphen: a hyphenated break seems to arrive joined into one line, with a space after the hyphen ("inter- ferometric").
+- `pdftotext`'s blank lines are mostly page and column breaks too (79% fall mid-sentence). In no source does a blank line reliably mark a paragraph.
 - Reflow (7.2.4) and detection (7.2.3) both read a blank line as a paragraph break. They have to change, test-first against these samples, when the detector is built:
   - In PDF mode, a blank line inside a sentence (the line before ends without terminal punctuation and the next continues it) is not a paragraph break, and de-hyphenation works across it.
+  - In PDF mode, "word- word" inside a line (Chromium's form of a hyphenated break) joins when the word list confirms the joined word.
   - Where a copy has lost its paragraph breaks, a paragraph ends after a line that ends a sentence and is clearly shorter than the text's usual line length.
   - Detection's features must not depend on blank lines marking paragraphs.
 - `pdftotext` itself sometimes merges two lines into one, leaves a space inside a hyphenated word ("ac count"), and runs a word hyphenated at the foot of a page into the footer ("somePage 1 of 5"). The corpus keeps these as found.
@@ -1784,10 +1788,14 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 
 ## Appendix D: Revision history
 
+### Draft 0.15 (30 October 2026)
+
+- Chromium's selections join the comparison: no blank lines, and hyphenated breaks inside a line, which reflow must handle; `pdftotext`'s blank lines are no more reliable as paragraph breaks than Firefox's (9.2, 12).
+
 ### Draft 0.14 (30 October 2026)
 
 - The regression corpus is built and described (9.2).
-- Real selections from Firefox and Okular break the assumption that a blank line marks a paragraph; reflow and detection are to change accordingly (12, stage 2 results).
+- Real selections from Firefox, Okular and Chromium break the assumption that a blank line marks a paragraph, and Chromium brings hyphenated breaks inside a line; reflow and detection are to change accordingly (12, stage 2 results).
 - Keyboard selections may not set the primary selection, which speak-selection reads (7.1.2).
 
 ### Draft 0.13 (30 October 2026)
