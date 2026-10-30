@@ -7,8 +7,10 @@ Usage: python3 -I tests/corpus/tools/save_copy.py VIEWER NAME [--negative] [--lo
 
 Start it, then select passages in the reader; there is no need to come
 back to the terminal. Each selection that stays unchanged for a moment is
-saved as copy-VIEWER-NAME-1.txt, then -2 and so on. Press Ctrl+C here
-when done. It reads the primary selection, which is what Legilo's
+saved as copy-VIEWER-NAME-1.txt, then -2 and so on. A selection that
+extends or trims the one just saved replaces it: Chromium updates the
+selection while it is still being dragged, so a pause mid-drag would
+otherwise save part of it. Press Ctrl+C here when done. It reads the primary selection, which is what Legilo's
 speak-selection reads; --clipboard watches the Ctrl+C clipboard instead.
 
 Focusing the terminal replaces the primary selection with the
@@ -29,7 +31,7 @@ import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 POLL_SECONDS = 0.5
-STEADY_SECONDS = 1.5  # a selection still being dragged keeps changing
+STEADY_SECONDS = 2.5  # a selection still being dragged keeps changing
 MIN_CHARACTERS = 40
 
 
@@ -59,6 +61,7 @@ def main():
     last_saved = selected(args.clipboard)
     candidate, since = None, 0.0
     saved = 0
+    last_path = None
     print(f"Watching the {'clipboard' if args.clipboard else 'selection'}. "
           f"Select passages in {args.viewer}; press Ctrl+C here when done.")
     try:
@@ -71,12 +74,15 @@ def main():
             if (time.monotonic() - since < STEADY_SECONDS or text == last_saved
                     or len(text.strip()) < MIN_CHARACTERS or "save_copy.py" in text):
                 continue
-            path = folder / f"{slug}-{number}.txt"
+            # The same selection, dragged further or pulled back.
+            revised = last_path is not None and (last_saved.strip() in text or text.strip() in last_saved)
+            path = last_path if revised else folder / f"{slug}-{number}.txt"
             path.write_text(text.rstrip("\n") + "\n", encoding="utf-8")
-            print(f"Saved {len(text.splitlines())} lines as {path.relative_to(ROOT)}")
-            last_saved = text
-            number += 1
-            saved += 1
+            print(f"{'Updated' if revised else 'Saved'} {len(text.splitlines())} lines as {path.relative_to(ROOT)}")
+            last_saved, last_path = text, path
+            if not revised:
+                number += 1
+                saved += 1
     except KeyboardInterrupt:
         print()
     print(f"{saved} saved.")
