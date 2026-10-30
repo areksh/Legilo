@@ -92,6 +92,7 @@ private:
     int m_startSegment = 0;
     int m_currentSegment = -1;
     bool m_synthesisDone = false;
+    bool m_ranDry = false;
 };
 
 } // namespace legilo

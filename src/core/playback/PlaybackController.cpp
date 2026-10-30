@@ -198,9 +198,16 @@ void PlaybackController::poll()
         const int segment = m_queue.currentSegment();
         if (segment != m_currentSegment) {
             m_currentSegment = segment;
+            qCDebug(lcPlayback) << "Playing segment" << segment;
             emit segmentChanged(segment);
         }
     }
+    // Playback has caught up with synthesis: the listener hears a gap.
+    const bool dry = !m_synthesisDone && m_queue.queuedFrames() == 0;
+    if (dry && !m_ranDry) {
+        qCDebug(lcPlayback) << "Queue ran dry in segment" << m_currentSegment;
+    }
+    m_ranDry = dry;
     if (m_synthesisDone && m_queue.queuedFrames() == 0) {
         m_output->stop();
         m_pollTimer.stop();
