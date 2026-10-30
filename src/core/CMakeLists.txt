@@ -20,6 +20,8 @@ add_library(legilo_core STATIC
     text/Normaliser.h
     text/Segmenter.cpp
     text/Segmenter.h
+    text/WordList.cpp
+    text/WordList.h
     tts/Phonemiser.cpp
     tts/Phonemiser.h
     tts/SherpaTtsEngine.cpp
@@ -55,6 +57,17 @@ if(UNIX)
     target_link_libraries(legilo_miniaudio PUBLIC m)
 endif()
 target_link_libraries(legilo_core PRIVATE legilo_miniaudio)
+
+# The English word list for de-hyphenation (design 7.2.4): SCOWL's British
+# and American lists from Debian's wbritish and wamerican, compiled in as a
+# compressed resource. The Windows build pins the same SCOWL release
+# (stage 5).
+find_file(LEGILO_BRITISH_WORDS british-english PATHS /usr/share/dict NO_DEFAULT_PATH REQUIRED)
+find_file(LEGILO_AMERICAN_WORDS american-english PATHS /usr/share/dict NO_DEFAULT_PATH REQUIRED)
+set_source_files_properties(${LEGILO_BRITISH_WORDS} PROPERTIES QT_RESOURCE_ALIAS british-english)
+set_source_files_properties(${LEGILO_AMERICAN_WORDS} PROPERTIES QT_RESOURCE_ALIAS american-english)
+qt_add_resources(legilo_core legilo_words PREFIX /legilo/words
+    FILES ${LEGILO_BRITISH_WORDS} ${LEGILO_AMERICAN_WORDS})
 
 # libarchive unpacks voice model archives (.tar.bz2).
 find_package(LibArchive 3.6 REQUIRED)

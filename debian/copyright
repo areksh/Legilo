@@ -201,3 +201,20 @@ License: Unicode-data
  not be used in advertising or otherwise to promote the sale, use or other
  dealings in these Data Files or Software without prior written
  authorization of the copyright holder.
+
+License: SCOWL
+ Legilo compiles in the SCOWL word lists from Debian's wbritish and
+ wamerican packages (scowl 2020.12.07), for de-hyphenation. They are not in
+ the source tree.
+ .
+ Copyright 2000-2011 by Kevin Atkinson, and the copyrights listed in
+ /usr/share/doc/wbritish/copyright.
+ .
+ Permission to use, copy, modify, distribute and sell these word
+ lists, the associated scripts, the output created from the scripts,
+ and its documentation for any purpose is hereby granted without fee,
+ provided that the above copyright notice appears in all copies and
+ that both that copyright notice and this permission notice appear in
+ supporting documentation. Kevin Atkinson makes no representations
+ about the suitability of this array for any purpose. It is provided
+ "as is" without express or implied warranty.
