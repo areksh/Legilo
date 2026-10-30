@@ -53,6 +53,7 @@ private slots:
     void pushFailsWhenChunksDoNotFit();
     void emptyPushAddsNothing();
     void reportsSegmentFramesAndQueue();
+    void reportsGenerationOfAudioPlaying();
     void flushWithoutKeepDiscardsEverything();
     void flushKeepsSegmentsUpToKeepThrough();
     void flushStartsNewGeneration();
@@ -147,6 +148,21 @@ void TestAudioQueue::reportsSegmentFramesAndQueue()
     pull(queue, 4);
     QCOMPARE(queue.framesPlayed(), 6);
     QCOMPARE(queue.queuedFrames(), 0);
+}
+
+void TestAudioQueue::reportsGenerationOfAudioPlaying()
+{
+    AudioQueue queue(16);
+    QVERIFY(queue.push(0, 2, ramp(1, 2)));
+    pull(queue, 1);
+    QCOMPARE(queue.playingGeneration(), 0U);
+    const quint64 generation = queue.requestFlush(2).value_or(0);
+    QVERIFY(queue.push(generation, 3, ramp(10, 2)));
+
+    pull(queue, 2);
+
+    QCOMPARE(queue.currentSegment(), 3);
+    QCOMPARE(queue.playingGeneration(), generation);
 }
 
 void TestAudioQueue::flushWithoutKeepDiscardsEverything()

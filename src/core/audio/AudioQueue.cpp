@@ -124,6 +124,7 @@ qsizetype AudioQueue::pull(std::span<float> out)
         sampleRead += count;
         chunk.consumed += count;
         m_currentSegment.store(chunk.segment, std::memory_order_relaxed);
+        m_playingGeneration.store(chunk.generation, std::memory_order_relaxed);
         if (chunk.consumed == chunk.frames) {
             ++chunkRead;
         }
@@ -134,6 +135,11 @@ qsizetype AudioQueue::pull(std::span<float> out)
     m_sampleRead.store(sampleRead, std::memory_order_release);
     m_chunkRead.store(chunkRead, std::memory_order_release);
     return written;
+}
+
+quint64 AudioQueue::playingGeneration() const
+{
+    return m_playingGeneration.load(std::memory_order_relaxed);
 }
 
 int AudioQueue::currentSegment() const

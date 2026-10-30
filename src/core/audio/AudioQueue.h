@@ -57,6 +57,9 @@ public:
 
     // The segment of the audio most recently pulled, or -1 if none yet.
     int currentSegment() const;
+    // The generation that audio was synthesised for. A segment kept
+    // through a flush still has its older generation.
+    quint64 playingGeneration() const;
     // Frames of audio pulled so far, not counting silence.
     qint64 framesPlayed() const;
     // Frames pushed but not yet pulled or discarded. Approximate while
@@ -99,8 +102,9 @@ private:
     std::atomic<quint64> m_generation = 0; // controller
     quint64 m_appliedGeneration = 0;       // consumer
 
-    std::atomic<int> m_currentSegment = -1; // consumer
-    std::atomic<qint64> m_framesPlayed = 0; // consumer
+    std::atomic<int> m_currentSegment = -1;       // consumer
+    std::atomic<quint64> m_playingGeneration = 0; // consumer
+    std::atomic<qint64> m_framesPlayed = 0;       // consumer
 };
 
 } // namespace legilo
