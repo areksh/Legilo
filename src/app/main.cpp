@@ -1,7 +1,8 @@
-#include "app/SimpleSegmenter.h"
 #include "core/audio/MiniaudioOutput.h"
 #include "core/models/ModelInstaller.h"
 #include "core/playback/PlaybackController.h"
+#include "core/text/Normaliser.h"
+#include "core/text/Segmenter.h"
 #include "core/tts/SherpaTtsEngine.h"
 #include "core/tts/VoiceRegistry.h"
 
@@ -67,7 +68,12 @@ int speak(QCoreApplication &app, const QString &text, const QString &voiceId, do
         return ExitError;
     }
 
-    const QStringList segments = simpleSegments(text);
+    // Stage 2 builds the rest of the clean-up pipeline around these steps.
+    const QString cleaned = normalise(text).text;
+    QStringList segments;
+    for (const Segment &s : segment(cleaned)) {
+        segments.append(cleaned.sliced(s.start, s.end - s.start));
+    }
     if (segments.isEmpty()) {
         return 0;
     }

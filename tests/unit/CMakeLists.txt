@@ -21,7 +21,6 @@ function(legilo_add_unit_test name)
 endfunction()
 
 legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
-legilo_add_unit_test(tst_simplesegmenter SOURCES tst_simplesegmenter.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_normaliser SOURCES tst_normaliser.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_segmenter SOURCES tst_segmenter.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_phonemiser SOURCES tst_phonemiser.cpp LIBS legilo_core)
