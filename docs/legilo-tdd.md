@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.9
+- Status: Draft 0.10
 - Date: 30 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -564,7 +564,7 @@ Rules (English):
 5. URLs and email addresses (as matched in 7.2.5) are single tokens: no boundary falls inside them. This matters because speech rules run after segmentation.
 6. Maximum segment length is 300 characters (configurable). Longer sentences are split at the separator nearest the middle: first `;`, then `:`, then a dash, then a comma, then any whitespace. Splitting repeats until every part is within the limit. Short segments give better prosody than one long synthesis. First-audio latency is handled separately by the short first chunk (7.5).
 7. A segment shorter than 3 characters merges into the previous segment in the same paragraph. If it starts a paragraph, it merges into the next one. A paragraph shorter than 3 characters in total stays as its own segment. Merging never crosses a paragraph break (rule 1).
-   - A segment of a single word merges the same way, whatever its length. Piper voices babble on one-word sentences: in stage 1, cori took 2 to 2.9 s to say "Eight." on its own, every time, against about 0.6 s for other numbers (12). The short first chunk (7.5) must not end after a single word either.
+   - A segment of a single word merges the same way, whatever its length. Even in Piper's own runtime, cori babbles on some isolated short words: about one call in five for "Eight." and nearly every call for "Yes." (12). The short first chunk (7.5) never splits off a single word either.
 
 Qt's `QTextBoundaryFinder` (Unicode sentence boundaries) is not sufficient on its own: it breaks after "Mr." and "Dr.". The custom rules run as a refinement layer on top of it, or replace it entirely; whichever tests better.
 
@@ -1213,6 +1213,7 @@ A regression of more than 20% against the previous recorded run is reported in t
   - Built as an `ExternalProject` from a pinned release archive, with `BUILD_SHARED_LIBS=ON` and the Python bindings, tests, examples, binaries, websocket server and speaker diarisation off. It always builds as a release build.
   - Not `FetchContent`: sherpa-onnx's top-level `CMakeLists.txt` assumes it is the top level. It forces a release build, sets global output directories and definitions, and installs its headers, static libraries and pkg-config files, which would land in the package. Built apart, it installs into the build tree.
   - Legilo links its C++ API through the imported target `Legilo::SherpaOnnx`.
+  - **Patched** before it is configured (`cmake/PatchSherpaOnnx.cmake`): for Piper voices, no pad token after the start marker, matching Piper's own runtime. Without the patch, some short sentences babble for seconds and sentence starts sound cramped (stage 1 results, 12). The script replaces exact text and fails the build if an upgrade has changed it. Report it upstream, so the patch can go.
   - **ONNX Runtime:** on Linux, Debian's `libonnxruntime` 1.21 (`libonnxruntime-dev`) rather than the prebuilt 1.28.2 that sherpa-onnx downloads by default. Configuration fails if it is missing, because sherpa-onnx would otherwise download its own without saying so. Windows uses a prebuilt release (stage 5). The comparison is in the stage 1 results (12).
 - **Pinned archives, offline builds:** sherpa-onnx's configure step fetches nine more source archives, directly and through the projects it pulls in. `cmake/Dependencies.cmake` lists all ten with their SHA-256. `scripts/fetch-deps` downloads them into `third_party/downloads/` on the host, and the build copies them to where each fetch looks first, so the build itself never touches the network. `scripts/check` and `scripts/build-deb` run with the container's network switched off, so a missing archive fails there. Re-derive the list whenever sherpa-onnx is upgraded.
 - **Private libraries:** on Linux, sherpa-onnx's two shared libraries (`libsherpa-onnx-c-api.so`, `libsherpa-onnx-cxx-api.so`) are installed to `/usr/lib/legilo/`, and the binary will find them through `INSTALL_RPATH` `$ORIGIN/../lib/legilo`. They never clash with system libraries.
@@ -1398,7 +1399,7 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
 
 - cori plays through miniaudio's PulseAudio backend (PipeWire's emulation) with 75 ms of buffering. The first sentence was queued 60 to 260 ms after start, with the voice already loaded.
 - cori's first few words of a text can sound rushed, with odd pitch changes. Piper's own engine (`piper-tts`) does the same with the same model, so it is the voice, not Legilo.
-- One-word sentences make Piper babble: "Eight." alone took 2 to 2.9 s and stuttered audibly. Segmentation must not produce one-word segments (7.2.7).
+- Some short sentences made cori babble for seconds ("Eight.", "Open."), and the first words of a text sounded cramped. Traced the same night: sherpa-onnx puts a pad token after the start marker that Piper's own runtime does not, and with it "Eight.", "Open." and "Eat." ran past 1 s in 18 to 20 calls of 20, against 0 to 5 for piper-tts. Running the model directly with only that pad changed reproduced it, and the cramped start was heard to go. Legilo now patches sherpa-onnx (10.1), after which it matches or beats piper-tts on every word measured. cori still babbles on some isolated words in both runtimes ("Yes."), so segmentation avoids one-word segments (7.2.7).
 - Pause and resume are clean: the callback pulls nothing while stopped, and `stop()` returns at once.
 - Kokoro's British speaker `bf_emma` sounds better with British phonemes (`en`) than with the `en-us` in the model's metadata, so the catalogue sets `espeakVoice` for Kokoro's British speakers (7.3.2).
 - Unplugging wired headphones stops playback, which does not move to the speakers: PipeWire reports the change as a reroute, which miniaudio passes on (7.4).
@@ -1568,6 +1569,7 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 | Windows selection capture unreliable in some apps | High | Medium | UI Automation first, then simulated copy; clear notification; "speak clipboard" always works |
 | Simulated Ctrl+C has side effects (terminals, apps that bind Ctrl+C differently) | Medium | Medium | Console detection; per-application exclusion list in settings |
 | sherpa-onnx API changes or removes features between releases (2.0 removed phonemisation) | Medium | High | Pin the version; wrap it entirely in `TtsEngine`; upgrade deliberately; Legilo owns phonemisation (7.3.1) |
+| Legilo's patch to sherpa-onnx (10.1) stops applying, or is dropped and the babbling returns, on an upgrade | Medium | Medium | The patch script fails the build if its target text changes; the integration test fails if the babbling returns (9.3); report it upstream |
 | A later sherpa-onnx needs a newer ONNX Runtime than Debian's 1.21 | Medium | Medium | Pinned versions; the TTS integration test catches it; fall back to bundling the prebuilt runtime as private libraries (10.1) |
 | Debian's ONNX Runtime floods stderr (567 lines per voice load), filling the journal | High | Low | Report it to Debian; voices load rarely, at start and on a voice change, because idle unloading is off by default (7.3.2) |
 | Legilo's phonemes differ from piper-phonemize's, degrading voice quality | Low | Medium | Golden fixtures from piper-phonemize (7.3.1, 9.1); British English matches exactly, American differs in one vowel because of espeak-ng's data; listening check in the manual checklist |
@@ -1735,6 +1737,10 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.10 (30 October 2026)
+
+- Draft 0.9 blamed one-word sentences for Piper's babbling. Most of it came from sherpa-onnx's token sequence, which Legilo now patches; the one-word rule stays, for the babbling that remains in Piper's own runtime (7.2.7, 10.1, 12, 13).
 
 ### Draft 0.9 (30 October 2026)
 
