@@ -6,7 +6,9 @@ tuning set only and scored on the held-out set.
 A sample's set follows from a hash of its name, so it never changes and
 adding samples leaves the others where they are: about one in three is
 held out. Excerpts of one PDF share a set, hashed on the document's name,
-so the held-out set never scores documents the detector was tuned on.
+and so does every copy made by hand from that PDF (detection/copies.tsv,
+from tools/identify_copies.py), so the held-out set never scores a
+document the detector was tuned on.
 Run after adding samples:
 python3 -I tests/corpus/tools/split.py
 """
@@ -22,7 +24,22 @@ DETECTION = ROOT / "tests/corpus/detection"
 FROM_DOCUMENTS = ("arxiv-", "plos-", "nist-", "made-")
 
 
+def copy_sources():
+    path = DETECTION / "copies.tsv"
+    if not path.exists():
+        return {}
+    pairs = [line.split("\t") for line in path.read_text().splitlines() if line and not line.startswith("#")]
+    return {pathlib.Path(copy).name: source for copy, source in pairs}
+
+
+COPIES = copy_sources()
+
+
 def group(name):
+    if name.startswith("copy-"):
+        if name not in COPIES:
+            raise SystemExit(f"{name} has no source in copies.tsv; run tools/identify_copies.py")
+        return COPIES[name]
     stem = name.removesuffix(".txt")
     return re.sub(r"-\d+$", "", stem) if stem.startswith(FROM_DOCUMENTS) else stem
 

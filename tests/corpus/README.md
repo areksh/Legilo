@@ -73,14 +73,18 @@ Focusing the terminal replaces the primary selection with the terminal's
 own, which is why the helper watches instead of waiting for Enter.
 `--local` keeps the samples out of git, for documents that must not be
 committed; `--clipboard` watches the Ctrl+C clipboard instead.
-Then run `tools/split.py`.
+Then run `tools/identify_copies.py`, which records the PDF each copy came
+from in `detection/copies.tsv`, and `tools/split.py`.
+
+
 
 ## The split
 
 `tools/split.py` assigns each sample to the tuning or held-out set from a
 hash of its name, so the sets are stable as samples are added; about a
-third is held out. Excerpts of one PDF share a set, so the held-out score
-never includes documents the detector was tuned on. Tune on the tuning
+third is held out. Excerpts of one PDF share a set, and so do the copies
+made by hand from it, so the held-out score never includes documents the
+detector was tuned on. Tune on the tuning
 set only.
 
 ## Licences
