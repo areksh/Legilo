@@ -1,0 +1,45 @@
+Monthly Mean Nitrogen Dioxide (micrograms per cubic
+metre)
+Station
+ Jan
+ Feb
+ Mar
+ Apr
+ May
+ Jun
+Northgate
+ 41.2
+ 38.9
+ 35.1
+ 28.4
+ 22.0
+ 19.7
+Riverside
+ 44.8
+ 40.3
+ 37.6
+ 30.2
+ 24.9
+ 21.1
+Hill Road
+ 36.5
+ 34.0
+ 31.8
+ 26.7
+ 20.3
+ 18.2
+Market Square
+ 52.1
+ 49.6
+ 44.0
+ 36.9
+ 29.4
+ 25.8
+Airport
+ 33.9
+ 31.2
+ 29.5
+ 24.1
+ 19.8
+ 17.0
+Source: council monitoring network. Provisional figures.

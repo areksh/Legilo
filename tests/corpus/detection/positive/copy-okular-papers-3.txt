@@ -1,0 +1,89 @@
+RESEARCH ARTICLE
+Developing students’ reading competence in
+an EFL context through annotated reading:
+A blended instructional design
+Yinxia Guan
+ 1
+, Haomin Zhang
+ 2,3
+*
+1 School of Foreign Languages, Guangdong Polytechnic Normal University, Guangzhou, Guangdong,
+China, 2 Faculty of Humanities and Social Sciences, City University of Macau, Macau SAR, China, 3 The
+Psycholinguistics Lab, School of Foreign Languages, East China Normal University, Shanghai, China
+* hmzhang@cityu.edu.mo
+OPEN ACCESS
+Citation: Guan Y, Zhang H (2026) Developing
+students’ reading competence in an EFL
+context through annotated reading: A blended
+instructional design. PLoS One 21(10):
+e0357895. https://doi.org/10.1371/journal.
+pone.0357895
+Editor: Rining Wei, Xi’an Jiaotong-Liverpool
+University, CHINA
+Received: December 29, 2025
+Accepted: August 24, 2026
+Published: October 14, 2026
+Peer Review History: PLOS recognizes the
+benefits of transparency in the peer review
+process; therefore, we enable the publication
+of all of the content of peer review and
+author responses alongside final, published
+articles. The editorial history of this article is
+available here: https://doi.org/10.1371/journal.
+pone.0357895
+Copyright: © 2026 Guan, Zhang. This is an
+open access article distributed under the terms
+of the Creative Commons Attribution License,
+which permits unrestricted use, distribution,
+Abstract
+Annotated reading is generally believed an effective way to improve learners’ reading
+competence. However, most existing studies focus on online annotated reading while
+neglecting to scaffold students throughout the entire learning process. To address the
+gap, this study proposed a four-stage annotated reading framework and employed a
+quasi-experimental design to evaluate its effectiveness in developing students’ read-
+ing competence. Concurrently, students’ perceptions and actualization of this peda-
+gogy were also investigated. Results demonstrated that this framework had potential
+in cultivating students’ reading competence, it was perceived as offering substantially
+more benefits than difficulties, and students who yielded greater gains exhibited
+higher engagement levels. Furthermore, modes of learning were not the decisive
+factor in learning outcomes, and students’ engagement proved equally critical. The
+findings can facilitate the field’s re-examination of technology use and shifting more
+focus to students’ individual differences and the holistic teaching-learning process.
+Targeted pedagogical suggestions were presented based on the findings.
+1. Introduction
+Reading competence, the ability to read and understand what has been read, is con-
+sidered a key competence that remains important throughout a person’s life [1], and
+ranked among the most pivotal language skills in language education [2]. In English
+learning, reading can not only expand learners’ vocabulary [3,4] but also improve
+their language output abilities [5], and the transfer of reading skills can be applied to
+other language skills such as listening, speaking and writing [6]. Therefore, develop-
+ing students’ English reading competence is one of the prominent responsibilities for
+English teachers.
+Annotated reading is believed to be effective in improving learners’ reading
+competence [7] and academic performance [8] due to their active engagement with
+PLOS One | https://doi.org/10.1371/journal.pone.0357895 October 14, 2026
+ 1 / 17
+and reproduction in any medium, provided the
+original author and source are credited.
+Data availability statement: All relevant
+data are within the paper and its Supporting
+Information files.
+Funding: This work was supported by the
+Department of Education of Guangdong
+Province (to YG). The funders had no role in
+study design, data collection and analysis,
+decision to publish, or preparation of the
+manuscript.
+Competing interests: The authors have
+declared that no competing interests exist.
+texts thus resulting in deeper understanding and longer memory retention. With the
+development of Internet and modern technology, the medium of reading has shifted
+from paper-based reading towards online reading [9], and a variety of digital annota-
+tion tools such as Diigo, Hypothesis and Perusall mushroom. It makes social reading,
+an online approach to reading that integrates social, interpersonal, and interactive
+elements in a collaborative and constructive process [10,11], possible. These tools
+provide platforms for readers not only to read and annotate but also to share, dis-
+cuss or even dispute, and hence foster social interaction. To date, social annotated
+reading has been reported to provide contextual, social, and linguistic affordances for
+EFL learners [12], reinforce learner engagement [13,14], enhance reading motivation
+[15,16] and bring positive affect [16].

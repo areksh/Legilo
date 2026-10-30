@@ -62,6 +62,14 @@ Copyright: The authors of the papers listed in tests/corpus/sources.json
 License: CC-BY-4.0
 Comment: Excerpts of the papers, attributed in tests/corpus/sources.json.
 
+Files: tests/corpus/detection/positive/copy-*
+ tests/corpus/detection/negative/copy-*
+Copyright: The authors of the papers listed in tests/corpus/sources.json, and Arek
+License: CC-BY-4.0
+Comment: Text selected by hand in Firefox and Okular from the arXiv and PLOS
+ papers in tests/corpus/sources.json, which are under CC BY 4.0, and from the
+ corpus's own documents (tools/build_documents.py).
+
 Files: tests/corpus/detection/negative/poem-*
  tests/corpus/detection/negative/web-*
 Copyright: none

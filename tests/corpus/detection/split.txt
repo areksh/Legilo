@@ -35,6 +35,17 @@ tuning	positive/arxiv-2610.40656-3.txt
 tuning	positive/arxiv-2610.40656-4.txt
 tuning	positive/arxiv-2610.40656-5.txt
 tuning	positive/arxiv-2610.40656-6.txt
+heldout	positive/copy-firefox-papers-1.txt
+heldout	positive/copy-firefox-papers-2.txt
+heldout	positive/copy-firefox-papers-3.txt
+tuning	positive/copy-firefox-papers-4.txt
+tuning	positive/copy-firefox-papers-5.txt
+tuning	positive/copy-firefox-papers-6.txt
+tuning	positive/copy-okular-papers-1.txt
+tuning	positive/copy-okular-papers-2.txt
+tuning	positive/copy-okular-papers-3.txt
+tuning	positive/copy-okular-papers-4.txt
+tuning	positive/copy-okular-papers-5.txt
 heldout	positive/made-letter-1.txt
 heldout	positive/made-letter-2.txt
 heldout	positive/made-letter-3.txt
@@ -102,6 +113,9 @@ tuning	negative/code-python.txt
 tuning	negative/code-shell.txt
 tuning	negative/code-sql.txt
 tuning	negative/code-yaml.txt
+tuning	negative/copy-okular-layout-1.txt
+tuning	negative/copy-okular-layout-2.txt
+tuning	negative/copy-okular-layout-3.txt
 tuning	negative/email-1.txt
 tuning	negative/email-10.txt
 tuning	negative/email-2.txt

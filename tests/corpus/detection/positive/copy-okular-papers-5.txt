@@ -1,0 +1,219 @@
+4
+ Hey et.troscopic constraints, etc.) are compared against a
+grid of stellar isochrones, and posterior distributions
+over Teff , log g, mass, radius, and age are obtained by
+marginalising over the grid. The two modes are com-
+plementary: direct mode is largely model-independent
+and is the preferred choice for cool, well-calibrated
+stars, while grid mode incorporates stellar-evolution
+physics and performs better in regimes where the color–
+temperature relations are poorly calibrated.
+For our sample of A- and F-type stars, direct mode
+is expected to perform poorly. The peak of the spec-
+tral energy distribution of an A-type star lies in the
+ultraviolet, so optical and near-infrared colors sample
+the Rayleigh–Jeans tail of the Planck function and be-
+come only weakly sensitive to effective temperature.
+The empirical surface-brightness relations on which di-
+rect mode relies are also predominantly calibrated using
+FGK stars, with relatively few hot calibrators available.
+We therefore expect direct mode to systematically de-
+grade in accuracy with increasing temperature, and we
+therefore used grid mode for our primary analysis.
+3.1. Validation against interferometry
+To verify that grid mode is suitable for our sample,
+we compared its output against interferometric effective
+temperatures. We assembled a comparison sample of 60
+stars hotter than 5500 K that have published interfero-
+metric angular diameters from the CHARA array (T. S.
+Boyajian et al. 2012a,b, 2013; T. R. White et al. 2013,
+2018), restricted to single, non-variable stars with Gaia
+DR3 counterparts. We used the published Fbol and θLD
+values to calculate interferometric temperatures.
+Figure 2 compares the isoclassify direct- and grid-
+mode temperatures against the interferometric values.
+Direct mode shows a clear systematic deviation that
+grows with increasing temperature, with a standard de-
+viation of 477 K about the one-to-one line and a ten-
+dency to under-predict Teff for the hottest stars in the
+sample, with fractional discrepancies exceeding ∼40%.
+This is the expected consequence of the aforementioned
+diminishing color–temperature sensitivity, confirming
+that direct mode is unsuitable for this sample. Grid
+mode, by contrast, shows no significant temperature
+trend and a standard deviation of 274 K, comparable
+to typical A-type spectroscopic temperature uncertain-
+ties (S. J. Murphy et al. 2019). We therefore adopt
+grid-mode parameters throughout the remainder of this
+paper.
+As a separate check of the grid-mode radius scale, we
+converted the isoclassify-derived radius R and Gaia
+distance d into an implied angular diameter,
+2R
+θiso =
+ ,
+ (1)
+d
+which we compared with the measured θLD . We found
+good agreement between θLD and θiso for the grid-mode
+al
+10000
+)
+K(ffeTYFISSALCOSI9000
+8000
+7000
+Direct
+Grid
+6000
+1.4
+l
+anoitcarF1.2
+1.0
+0.8
+6000
+7000
+8000
+9000
+ 10000
+σ diff = 477 K
+σ diff = 274 K
+0.6
+6000
+ 7000
+ 8000
+ 9000
+ 10000
+Interferometric T eff (K)
+Figure 2. Comparison of effective temperatures derived
+with the isoclassify direct (blue) and grid (orange) modes
+against interferometric temperatures from the CHARA sam-
+ple, for stars hotter than 5500 K. The lower panel shows the
+fractional difference; the standard deviation of the isoclas-
+sify–CHARA difference, σdiff , is indicated for each mode.
+sample, with a fractional scatter of σθ /θ ≈ 4.4%, con-
+sistent with the combined uncertainties. This angular-
+diameter comparison tests the inferred radius scale; be-
+cause R was obtained from the grid-mode fit, it is dis-
+tinct from the comparison with the independently pub-
+lished interferometric temperatures and is not itself a
+model-independent temperature validation.
+3.2. Grid-mode parameters for the full sample
+For each target in our A/F sample we ran isoclassify
+in grid mode using the MIST isochrones (J. Choi et al.
+2016; A. Dotter 2016). We used Gaia DR3 for parallax,
+G, GBP, and GRP magnitudes, and the TIC Teff as a
+loose prior with an inflated uncertainty of σTeff = 300 K
+to avoid over-weighting the photometric TIC tempera-
+tures. Extinctions are computed self-consistently within
+isoclassify using the combined19 dust map from the
+mwdust package (J. Bovy et al. 2016a,b), which com-
+bines the D. J. Marshall et al. (2006), G. M. Green
+et al. (2015), and R. Drimmel et al. (2003) maps into a
+single all-sky three-dimensional reddening model. The
+6
+5
+N=1,526,218
+R
+NS4
+3
+2
+TESS δ Scuti1
+ P(δ Sct)
+0.0
+ 0.5
+ 1.0
+0
+−1
+ 0
+ 1
+ 2
+ 3
+ 4
+Skewness
+Figure 3. Distribution of targets in the spectral skew–SNR
+plane, colored by the score assigned by the PU classifier.
+Confirmed δ Sct pulsators occupy a well-defined locus at high
+skew and high SNR, separated from the bulk of unlabelled
+targets clustered at low values of both quantities.
+output of each fit is a posterior distribution over Teff ,
+log g, mass, radius, luminosity, and age, from which
+we adopted the median values as the point estimates
+and the 16th–84th percentile ranges as the uncertain-
+ties. We inflated the uncertainties of the temperature
+to be in agreement with the expected uncertainty from
+interferometry (∼ 300 K). These parameters form the
+basis of the analysis presented in the remainder of this
+paper, and we list them in Table 1.
+4. IDENTIFYING δ SCUTI PULSATORS
+Our goal is to identify δ Sct pulsators, in order to map
+the pulsator distribution across the instability strip and
+to compute the pulsator fraction. In contrast to the
+multi-class classification scheme of D. Hey & C. Aerts
+(2024), which simultaneously identified γ Dor, eclipsing,
+and other OBAF variables using a random forest, here
+we attempt only to classify whether a target shows δ Sct-
+like pulsation or not.
+A challenge with this classification is the absence of
+a curated negative class. Catalogues of manually vet-
+ted known δ Sct pulsators are extensive (A.-Y. Zhou
+2023, 2025), but no comparably comprehensive list of
+confirmed non-pulsators within the instability strip ex-
+ists, beyond extrapolation of S. J. Murphy et al. (2019).
+Any star not labelled as a δ Sct in the literature could
+equally be a genuine non-pulsator, an undetected low-
+amplitude pulsator, or simply a target that has never
+stars
+ 5
+been inspected. Standard supervised classification as-
+sumes both positive and negative training labels are
+reliable, and treating unlabelled stars as negatives in
+this setting biases the resulting classifier toward under-
+predicting the positive class.
+4.1. Positive–Unlabelled classification
+We address this with a Positive–Unlabelled (PU)
+learning approach, recently introduced to asteroseismic
+classification by M. Kliapets et al. (2025). In the PU
+framework, a labelled set of confirmed positives is com-
+bined with a large unlabelled set containing an unknown
+mixture of true positives and true negatives. The clas-
+sifier can then rank candidates without requiring every
+unlabelled target to be treated as a secure negative. This
+makes PU learning well suited to our problem, where the
+positive class (δ Sct variables) is well characterised but
+the unlabelled population mixes genuine non-pulsators
+with currently unclassified pulsators.
+We classified these stars with the bagging PU algo-
+rithm of F. Mordelet & J.-P. Vert (2010), using a sup-
+port vector machine (SVM; C. Cortes & V. Vapnik 1995)
+from scikit-learn (F. Pedregosa et al. 2011) as the
+base estimator.
+4.2. Features
+For each target we computed a small set of features
+summarising the Fourier spectrum and light-curve mor-
+phology, loosely based on those used by D. Hey & C.
+Aerts (2024). We used (i) the amplitude and frequency
+of the dominant Fourier peak above 5 d−1 ; (ii) the
+signal-to-noise ratio (SNR) of that peak relative to the
+95th-percentile noise floor; (iii) the number of signifi-
+cant, independent peaks exceeding a false-alarm level of
+1%; (iv) the skewness of the amplitude spectrum above
+5 d−1 ; and (v) the skewness of the light curve. The first
+two capture the presence and location of coherent power
+in the δ Sct range, the third captures the multiperiodic
+character of the class, and the last two discriminate be-
+tween the heavy-tailed amplitude distribution of a pul-
+sator and the approximately symmetric distribution of
+a pure-noise spectrum.
+Figure 3 illustrates the separability of the δ Sct class
+in the spectral-skew–SNR plane, which is a typical diag-
+nostic (i.e., S. J. Murphy et al. 2019; S. Dholakia et al.
+2024; A. K. Read et al. 2024). Confirmed pulsators oc-
+cupy a well-defined region at high values of both quan-
+tities, while the bulk of unlabelled targets cluster at low
+skew and low SNR. The two populations overlap in a
+transition region that includes low-amplitude pulsators,
+where the PU classifier relies on the remaining features
+to make a decision.
+4.3. Training and validation
+The positive training set was taken from the manually-
+vetted TESS δ Sct catalogues of A.-Y. Zhou (2023,

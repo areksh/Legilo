@@ -1,0 +1,51 @@
+3.
+ 
+Method
+
+3.1.
+ 
+Participants and context
+
+This quasi-experimental study involved 108 second-year non-English major undergraduates (aged between 18–22) in a
+
+south China university, with 54 in the experimental class (EC) and 54 in the control class (CC) under the instruction of the
+
+same teacher. To contextualize the scale and significance of English language learning in China, it is noteworthy that the
+
+country had already surpassed 390 million English learners and users by 2000 [
+42
+], and subsequent research (e.g.[
+43
+],)
+
+indicates continued growth in the English learning population. However, despite over ten years of English instruction, the
+
+participants in this study exhibited lower to intermediate proficiency, with nearly half having only just passed the College
+PLOS One
+ 
+|
+ 
+https://doi.org/10.1371/journal.pone.0357895
+ 
+October 14, 2026
+ 
+5 / 17
+
+English Test Band 4 (CET4, approximately equivalent to A2 on the CEFR). This proficiency profile is common among
+
+a substantial segment of English learners in China, highlighting the practical relevance of this study for understanding
+
+instructional interventions in large-scale, compulsory English education contexts. Such contextualization enhances the
+
+transferability of the findings to similar educational settings, both within and beyond China.
+
+The course under investigation was
+ 
+College English III
+, which was also the only English-related course they had across
+
+the semester. This course was 80 minutes long per week, comprised of English reading, listening, speaking and writing,
+
+and annotated reading mainly took place in the reading part. With a few students’ major switch and absence on the tests,
+
+42 students in the CC and 51 in the EC attended the whole learning process.
