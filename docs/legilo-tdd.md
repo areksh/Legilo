@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.13
+- Status: Draft 0.14
 - Date: 30 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -373,6 +373,7 @@ public:
 - Known risk: trixie ships Frameworks 6.13, which uses the wlroots data-control protocol. Later versions moved to ext-data-control and fixed threading issues. Test it in the stage 0 spike (12).
   - Contingency: a `WlPasteTextSource` that runs `wl-paste --primary --no-newline` with a 1 s timeout, selected at run time if `KSystemClipboard` fails (6.1).
   - The contingency adds a dependency on `wl-clipboard` in the `.deb`.
+- **Selections made from the keyboard may not reach the primary selection.** Found in stage 2: Ctrl+A in Firefox's PDF viewer and in Okular selected the text but did not change the primary selection, which only selecting with the mouse did. Speak-selection would then read whatever was selected before, without saying so. In stage 3, check select-all and Shift with the arrow keys in each application of the 9.4 checklist. If they do not set it, the notification must make clear what was read (FR-03), and the clipboard fallback (Ctrl+C, then speak-clipboard) covers it.
 
 #### 7.1.3 Windows
 
@@ -1157,6 +1158,12 @@ public:
     - precision at least 98%, because false positives damage text
     - recall at least 90%
 - Start the corpus from the inputs you already tested the scripts with.
+- **As built (`tests/corpus/`, stage 2):** 185 samples, 93 positive and 92 negative.
+  - Labels follow what the detector decides: positive means the line breaks are layout that reflow should undo. A menu, a table or a poem copied from a PDF is negative, because reflowing it would damage it.
+  - Positives are excerpts, cut with `pdftotext` (poppler, as Okular uses), of six arXiv papers and two PLOS ONE articles (CC BY 4.0), NIST SP 800-12 (public domain), and ten documents typeset for the corpus with LibreOffice, whose clean text is known exactly and gives six clean-up pairs. Fourteen samples were selected by hand in Firefox and Okular.
+  - Negatives are written for the corpus, plus public-domain poems and book prose.
+  - The held-out third is fixed by `detection/split.txt` and keeps each PDF's excerpts together. `tests/corpus/local/`, which git ignores, holds samples of private documents, for local tuning only.
+  - The tools that make it all, and the licences, are in `tests/corpus/README.md`.
 
 ### 9.3 Integration tests
 
@@ -1436,6 +1443,27 @@ Against the exit criteria, on 30 October 2026:
   - Detection reaches at least 98% precision and 90% recall on the held-out set (9.2).
   - Output is at least as good as `speak-tts --clean-only` on all of your samples.
   - The 5 MB performance budget is met in the benchmark job (9.6).
+
+#### Stage 2 results (30 October 2026, in progress)
+
+Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, and the regression corpus (9.2).
+
+**Real selections differ from `pdftotext`.** Text selected by hand in Firefox and Okular, compared with `pdftotext`'s excerpts of the same kind of text (aggregate figures only; private samples included):
+
+| Source | Mean line length | Blank lines | Lines under 20 characters |
+|---|---|---|---|
+| `pdftotext` | 63 | 7.9% | 20% |
+| Okular | 57 | 0% | 24% |
+| Firefox | 46 | 38.6% | 40% |
+
+- **Okular** keeps no blank lines: paragraph breaks are lost, so reflow would join a whole selection into one paragraph, broken only by its heading rule.
+- **Firefox** puts a blank line between many lines, and they are not paragraph breaks: the line before ends mid-sentence in 877 of 1080 cases, and half of its hyphenated breaks have a blank line between the halves.
+- Reflow (7.2.4) and detection (7.2.3) both read a blank line as a paragraph break. They have to change, test-first against these samples, when the detector is built:
+  - In PDF mode, a blank line inside a sentence (the line before ends without terminal punctuation and the next continues it) is not a paragraph break, and de-hyphenation works across it.
+  - Where a copy has lost its paragraph breaks, a paragraph ends after a line that ends a sentence and is clearly shorter than the text's usual line length.
+  - Detection's features must not depend on blank lines marking paragraphs.
+- `pdftotext` itself sometimes merges two lines into one, leaves a space inside a hyphenated word ("ac count"), and runs a word hyphenated at the foot of a page into the footer ("somePage 1 of 5"). The corpus keeps these as found.
+- Keyboard selections may not reach the primary selection (7.1.2).
 
 ### Stage 3 - Linux tray app: speak selection and clipboard (M)
 
@@ -1755,6 +1783,12 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.14 (30 October 2026)
+
+- The regression corpus is built and described (9.2).
+- Real selections from Firefox and Okular break the assumption that a blank line marks a paragraph; reflow and detection are to change accordingly (12, stage 2 results).
+- Keyboard selections may not set the primary selection, which speak-selection reads (7.1.2).
 
 ### Draft 0.13 (30 October 2026)
 
