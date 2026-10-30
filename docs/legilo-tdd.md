@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.12
+- Status: Draft 0.13
 - Date: 30 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -190,7 +190,7 @@ Each requirement has an ID and the stage that delivers it (section 12).
 | Signature check | Monocypher (vendored) | BSD-2-Clause or CC0-1.0 | Both | 4 | Verifies the signed voice catalogue (7.10) |
 | Text diff (preview) | diff-match-patch (C++/Qt port, vendored) | Apache-2.0 | Both | 7 | Character diff of original against cleaned text; also maps positions between texts (7.11.5, 7.12). The port predates Qt 6 and needs updating (`QRegExp`, `midRef`) |
 | Audio file writing | libsndfile | LGPL-2.1+ | Both | 8 | WAV, FLAC, Ogg Vorbis, Opus, and MP3 (MP3 since libsndfile 1.1) |
-| Word list | Bundled English word list derived from SCOWL | MIT-like | Both | 2 | Used for de-hyphenation; replaces `/usr/share/dict/words` |
+| Word list | SCOWL 2020.12.07, standard size, British and American lists merged | SCOWL (permissive, notice required) | Both | 2 | Used for de-hyphenation; replaces `/usr/share/dict/words`. Compiled in as a resource from Debian's `wbritish` and `wamerican` on Linux; the same release pinned on Windows (stage 5). The larger sizes add fragments ("co", "pre") that would upset the keep-the-hyphen rule (7.2.4) |
 | PDF extraction | MuPDF (preferred) or Poppler | AGPL-3.0 / GPL-2.0+ | Both | 10 | Decision point at stage 10, see section 7.15 |
 | Windows selection | UI Automation (system COM API) | Platform | Windows | 5 | Fallback: simulated Ctrl+C |
 | Tests | Qt Test, CTest | LGPL-3.0 | Both | 0 | |
@@ -202,6 +202,7 @@ build-essential cmake ninja-build pkg-config
 qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 libkf6globalaccel-dev libkf6guiaddons-dev extra-cmake-modules
 libarchive-dev libsndfile1-dev libespeak-ng-dev libonnxruntime-dev libminiaudio-dev
+wbritish wamerican
 debhelper devscripts
 ```
 
@@ -566,7 +567,7 @@ Rules (English):
 7. A segment shorter than 3 characters merges into the previous segment in the same paragraph. If it starts a paragraph, it merges into the next one. A paragraph shorter than 3 characters in total stays as its own segment. Merging never crosses a paragraph break (rule 1).
    - A segment of a single word merges the same way, whatever its length. Even in Piper's own runtime, cori babbles on some isolated short words: about one call in five for "Eight." and nearly every call for "Yes." (12). The short first chunk (7.5) never splits off a single word either.
 
-Qt's `QTextBoundaryFinder` (Unicode sentence boundaries) is not sufficient on its own: it breaks after "Mr." and "Dr.". The custom rules run as a refinement layer on top of it, or replace it entirely; whichever tests better.
+Qt's `QTextBoundaryFinder` (Unicode sentence boundaries) is not sufficient on its own: it breaks after "Mr." and "Dr.". The custom rules replace it entirely (`core/text/Segmenter`, stage 2); they cover every case in the tests without it.
 
 #### 7.2.8 Data model
 
@@ -1273,7 +1274,7 @@ Cache the sherpa-onnx build and the test model between runs.
 
 - **Legilo's own code:** GPL-3.0-or-later. This is required, because Legilo links espeak-ng (GPL-3.0-or-later) for phonemisation (7.3.1).
 - **If MuPDF is chosen at stage 10:** no relicensing is needed. Section 13 of the GPLv3 explicitly allows a GPLv3 work to be combined with AGPLv3 code. Legilo's own code stays GPL-3.0-or-later, and the MuPDF part of the combination keeps its AGPL terms. The AGPL's network clause has no practical effect on an offline desktop app.
-- **Third-party notices:** a `THIRD-PARTY-NOTICES` file is generated from a list maintained in the repository, and shown in the About dialog. Until then, `debian/copyright` records the code compiled into the private libraries: sherpa-onnx and its dependencies, under Apache-2.0, MPL-2.0, Expat, BSD-2/3-Clause, Zlib and the Unicode data licence, all compatible with GPL-3.0-or-later.
+- **Third-party notices:** a `THIRD-PARTY-NOTICES` file is generated from a list maintained in the repository, and shown in the About dialog. Until then, `debian/copyright` records the code compiled into the private libraries: sherpa-onnx and its dependencies, under Apache-2.0, MPL-2.0, Expat, BSD-2/3-Clause, Zlib and the Unicode data licence, all compatible with GPL-3.0-or-later. It also carries SCOWL's notice, which its licence requires with every copy, for the word lists compiled into Legilo.
 - **Voice licences:** shown in the model manager (7.10) and written into each voice's directory. Non-commercial voices are flagged.
   - Voices trained or fine-tuned on the lessac dataset are flagged in the same way. Its licence (Blizzard Challenge 2013) is for research use only. This covers lessac itself and voices fine-tuned from it, such as alba and joe. Each voice's model card says how it was trained.
 
@@ -1754,6 +1755,13 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.13 (30 October 2026)
+
+Stage 2, first steps:
+
+- The word list is SCOWL 2020.12.07 at the standard size, from Debian's `wbritish` and `wamerican`, with its notice in `debian/copyright` (5, 11).
+- The segmenter's custom rules replace `QTextBoundaryFinder` rather than refine it (7.2.7).
 
 ### Draft 0.12 (30 October 2026)
 
