@@ -11,6 +11,10 @@ add_library(legilo_core STATIC
     models/ModelInstaller.h
     playback/FirstChunk.cpp
     playback/FirstChunk.h
+    playback/PlaybackController.cpp
+    playback/PlaybackController.h
+    playback/SynthesisWorker.cpp
+    playback/SynthesisWorker.h
     tts/Phonemiser.cpp
     tts/Phonemiser.h
     tts/SherpaTtsEngine.cpp

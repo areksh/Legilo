@@ -7,6 +7,8 @@ function(legilo_add_unit_test name)
     cmake_parse_arguments(ARG "" "" "SOURCES;LIBS" ${ARGN})
     add_executable(${name} ${ARG_SOURCES})
     target_link_libraries(${name} PRIVATE Qt6::Test ${ARG_LIBS})
+    # Shared test doubles, as "fakes/FakeTtsEngine.h".
+    target_include_directories(${name} PRIVATE ${PROJECT_SOURCE_DIR}/tests)
     legilo_set_warnings(${name})
     target_compile_definitions(${name} PRIVATE
         LEGILO_FIXTURES_DIR="${PROJECT_SOURCE_DIR}/tests/fixtures")
@@ -22,6 +24,7 @@ legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_phonemiser SOURCES tst_phonemiser.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_voiceregistry SOURCES tst_voiceregistry.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_sherpattsengine SOURCES tst_sherpattsengine.cpp LIBS legilo_core)
+legilo_add_unit_test(tst_playbackcontroller SOURCES tst_playbackcontroller.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_firstchunk SOURCES tst_firstchunk.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_audioqueue SOURCES tst_audioqueue.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_modelinstaller SOURCES tst_modelinstaller.cpp
