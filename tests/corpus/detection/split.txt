@@ -35,6 +35,11 @@ tuning	positive/arxiv-2610.40656-3.txt
 tuning	positive/arxiv-2610.40656-4.txt
 tuning	positive/arxiv-2610.40656-5.txt
 tuning	positive/arxiv-2610.40656-6.txt
+tuning	positive/copy-chromium-papers-2.txt
+tuning	positive/copy-chromium-papers-3.txt
+tuning	positive/copy-chromium-papers-4.txt
+tuning	positive/copy-chromium-papers-5.txt
+tuning	positive/copy-chromium-papers-6.txt
 heldout	positive/copy-firefox-papers-1.txt
 heldout	positive/copy-firefox-papers-2.txt
 heldout	positive/copy-firefox-papers-3.txt

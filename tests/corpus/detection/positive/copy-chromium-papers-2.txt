@@ -1,0 +1,258 @@
+Draft version October 30, 2026
+Typeset using LATEX twocolumn style in AASTeX7.0.1
+The δ Scuti instability strip and period–luminosity relation as seen by TESS and Gaia DR3
+Daniel Hey ,
+1 Simon Murphy ,
+2 Timothy R. Bedding ,
+3 Anuj Gautam ,
+2 Daniel Huber ,
+1 Yaguang Li ,
+1
+Ian Berry ,
+1 Hyde Kenney ,
+4, 1 Prasad Mani ,
+3 Tom Love ,
+2 and Mykyta Kliapets 5
+1
+Institute for Astronomy, University of Hawai‘i, 2680 Woodlawn Drive, Honolulu, HI 96822, USA
+2Centre for Astrophysics, University of Southern Queensland, Toowoomba, QLD 4350, Australia
+3Sydney Institute for Astronomy, School of Physics, University of Sydney, NSW 2006, Australia
+4Department of Astronomy, University of Florida, Gainesville, FL 32611, USA
+5
+Institute of Astronomy, KU Leuven, Celestijnenlaan 200D, bus 2401, 3001 Leuven, Belgium
+ABSTRACT
+We present an asteroseismic survey of 1,526,218 A- and F-type stars in and around the δ Sct instability strip using TESS 10-minute cadence data, which resolve the full δ Sct pulsation spectra across
+nearly the entire sky. We derive homogeneous stellar parameters from Gaia DR3 parallaxes and
+archival photometry, with temperatures that agree with interferometry to within ∼300 K. A Positive–
+Unlabelled classifier identifies 156,706 δ Sct pulsators, which on average rotate significantly faster than
+non-variable A-type stars. Within the instability strip in the Teff–log L plane, the pulsator fraction
+peaks at ∼ 30% over the full sample and rises to ∼ 80% in the brightest magnitude bins. Detection sensitivity therefore accounts for much, but not all, of the apparent impurity of the strip. Our
+period–luminosity relation agrees with previous determinations, and we recast it as a scale-invariant
+period–density relation that connects directly to the pulsation constant. We find that the secondary
+ridge in these relations is probably a combination of several overtone modes. The δ Sct stars closest
+to the fundamental ridge have systematically lower rotational velocities and occupy a distinct region
+of the instability strip. Finally, a cross-match with a Gaia catalog of open clusters reveals a correlation between the mean pulsation frequency of δ Sct stars and cluster age, suggesting a new ensemble
+asteroseismic age indicator for young stellar populations.
+Keywords: Asteroseismology (73) — Stellar oscillations (1617) — Delta Scuti variable stars (370) —
+Stellar astronomy (1583)
+1. INTRODUCTION
+The δ Scuti variables are intermediate-mass (1.5–
+2.3 M⊙) main-sequence stars located within the classical
+instability strip (M. Breger 1979, 2000; K. Uytterhoeven
+et al. 2011). They exhibit low radial-order pressure (p)
+modes driven primarily by the κ mechanism believed
+to be acting in the second helium ionisation zone, with
+pulsation frequencies typically spanning 5–70 d−1 and
+effective temperatures in the range 6500–10 000 K (G.
+Houdek 2000; V. Antoci et al. 2019; D. Kurtz 2022). As
+intermediate-mass main-sequence pulsators, the δ Sct
+stars are progenitors of the bulk of the white-dwarf mass
+distribution (J. D. Cummings et al. 2018) and provide
+an important link between the well-studied solar-like oscillators and the more massive β Cephei and slowly pulsating B stars.
+Despite their potential as asteroseismic probes, the
+δ Sct stars have long resisted systematic mode identifiEmail: dhey@hawaii.edu
+cation routinely applied to the solar-like oscillators. In
+stars cooler than the Kraft break (R. P. Kraft 1967;
+A. C. Beyer & R. J. White 2024), stochastic excitation
+by near-surface convection drives (and damps) the full
+range of modes within a resonant envelope, producing
+the regular comb of frequencies used for solar-like asteroseismology (e.g. W. J. Chaplin et al. 2011). Pulsations
+in δ Sct stars, by contrast, are driven by a heat-engine
+mechanism and only an apparently pseudo-random subset of modes are excited across much wider frequency
+ranges. Their mode selection mechanism thus remains
+poorly understood (M. Breger et al. 2009; D. M. Bowman & D. W. Kurtz 2018).
+Mode identification is further complicated by the
+rapid rotation typical of A-type stars (J. Zorec & F.
+Royer 2012), which lifts the degeneracy of azimuthal
+mode components and produces dense, asymmetric
+splitting (C. Aerts et al. 2010; C. Aerts & A. Tkachenko
+2024; Z. Guo et al. 2024). Only with the high-cadence,
+all-sky coverage of the Transiting Exoplanet Survey
+Satellite (TESS; G. R. Ricker et al. 2015) mission has a
+arXiv:2610.40656v1 [astro-ph.SR] 29 Oct 2026
+2 Hey et. al
+subset of so-called “nice” δ Sct variables been identified
+that show regular, identifiable modes with a clear frequency spacing (∆ν) that is a good diagnostic of stellar
+density (T. R. Bedding et al. 2020). These targets usually lie close to the zero-age main sequence and pulsate
+at high frequencies (≥ 40 d−1
+), and they have provided
+the first robust mode identifications in this class, marking a pathway towards the asteroseismic exploitation of
+the larger population of δ Sct stars with more complicated pulsation spectra.
+A closely related question is whether all stars within
+the δ Sct instability strip pulsate and, if not, what mechanisms distinguish the pulsators from their quiescent
+counterparts. It is now well established, largely through
+the Kepler mission, that the instability strip is not pure:
+even after accounting for the reduced detection sensitivity at fainter magnitudes, the pulsator fraction peaks
+at only ∼70% at the centre of the observational strip
+(S. J. Murphy et al. 2019), and around half of the stars
+in the δ Sct temperature range show no detectable pulsation (L. A. Balona & W. A. Dziembowski 2011; L. A.
+Balona et al. 2015). Conversely, a small population of
+δ Sct variables has recently been identified lying outside
+the classical strip (K. Thomson-Paressant et al. 2025),
+blurring its boundaries in the opposite sense. A limitation of the large Kepler population studies was that
+most A/F targets were observed at 30-minute cadence,
+placing the nominal Nyquist frequency at ≈ 24 d−1
+,
+well below the upper end of the δ Sct pulsation range.
+The slightly irregular observing cadence of Kepler, once
+barycentric time corrections had been made, allowed
+intrinsic super-Nyquist frequencies to be distinguished
+from their aliases (S. J. Murphy et al. 2013; H. Shibahashi & S. J. Murphy 2018; D. R. Hey et al. 2019), although the non-zero integration times attenuated their
+observed amplitudes and complicated population-level
+selection and amplitude comparisons.
+Subsequent work has highlighted the dominant role
+played by rotation in shaping the δ Sct population. K.
+Gootkin et al. (2024) classified ∼16,000 δ Sct variables
+using TESS 30-minute FFI photometry and showed that
+the pulsator fraction within the instability strip is a
+strong function of rotational velocity, traced by the Gaia
+vbroad line-broadening parameter. S. J. Murphy et al.
+(2024a) and J. Wang et al. (2025) reached a similar
+conclusion using independent data. Recently, I. Berry
+et al. (2026) further suggest a correlated age dependence. These findings are consistent with the expectation that the partial ionisation zone responsible for
+the κ mechanism is more efficiently maintained against
+gravitational settling in rapidly rotating stars, providing
+an explanation for the lower pulsator fraction among the
+slowly rotating, chemically peculiar Am stars (M. Breger
+1979; D. W. Kurtz et al. 1989; O. D¨urfeldt-Pedros et al.
+2024). However, the existence of a small population
+of slowly-rotating δ Sct pulsators within the instability
+strip remains poorly understood, pointing towards an
+-150° -120° -90° -60° -30° 0° 30° 60° 90° 120° 150°
+-75°
+-60°
+-45°
+-30°
+-15°
+0°
+15°
+30°
+45°
+60°
+75°
+Figure 1. Sky distribution of the A/F sample (Section 2.1)
+in Galactic coordinates, colored by the density of points.
+Note the dearth of targets in certain regions caused by the
+absence of TESS pointings in Sectors 27 through 55 used in
+this study.
+alternative excitation mechanism such as the turbulent
+pressure invoked by V. Antoci et al. (2014).
+The TESS mission now provides the data needed to
+address these questions on a homogeneous basis. The
+10-minute FFI cadence available from TESS Cycle 3
+(Sector 27) onwards (J. M. Jenkins et al. 2021) places
+the Nyquist frequency at 72 d−1
+, bringing most of the
+δ Sct pulsation range below the nominal Nyquist limit
+and substantially reducing the aliasing encountered in
+30-minute data. Combining with the precise parallaxes
+and photometry of Gaia DR3 (G. Collaboration et al.
+2023) allows us to calculate luminosities and effective
+temperatures for over a million A and F stars across the
+sky to a precision previously available only for the small
+Kepler sample.
+In this paper, we combine TESS 10-minute FFI photometry from Sectors 27 through 55 (Cycle 3 and 4) with
+Gaia DR3 parallaxes to construct a nearly all-sky sample of 1,526,218 A- and F-type stars (Figure 1). We use
+this sample to characterise the δ Sct population across
+the HRD, investigate the period–luminosity relation, investigate the effects of rotation, and produce a catalogue
+of δ Sct variables in open clusters.
+2. DATA
+2.1. Target selection
+We selected our targets from the TESS Input Catalog (TIC; K. G. Stassun et al. 2018) because of its
+all-sky homogeneity. We applied a temperature cut
+of 6300 ≤ Teff ≤ 10,000 K and a magnitude cut of
+T < 13.5 mag. The temperature range encompasses the
+classical δ Sct instability strip (S. J. Murphy et al. 2019;
+M. A. Dupret et al. 2004) with a buffer of ∼200 K on
+the cool side, sufficient to capture pulsators whose catalogued temperatures are systematically biased. Stars
+hotter than 10,000 K are predominantly B-type pulsators (β Cep, SPB) and lie outside the scope of this
+work, while genuine δ Sct stars cooler than 6300 K are
+TESS δ Scuti stars 3
+rare and probably result from inaccurate photometric
+temperatures.
+We further required each target to have a Gaia DR3
+source match with a fractional parallax uncertainty
+σπ/π < 0.2, which removed 12,714 targets and ensured
+that distances (and hence luminosities) are well constrained. Applying these cuts yielded a parent sample
+of 1,526,218 A- and F-type stars, shown in Figure 1.
+2.2. TESS photometry
+We used TESS 10-minute full-frame image (FFI) light
+curves, which became available from Cycle 3 (Sector 27)
+onwards (G. R. Ricker et al. 2015; J. M. Jenkins et al.
+2021). The 10-min cadence places the Nyquist frequency
+at 72 d−1
+, bringing most of the expected δ Sct pulsation
+range below the nominal Nyquist limit and greatly reducing the aliasing affecting Kepler long-cadence studies
+(S. J. Murphy et al. 2013; H. Shibahashi & S. J. Murphy
+2018; D. R. Hey et al. 2019) and earlier TESS studies
+based on 30-minute FFIs (K. Gootkin et al. 2024). Although shorter-cadence FFIs of 200 s are now available
+from Cycle 5 onwards, we restricted our work to the
+10-min FFIs in Cycles 3 and 4 in order to produce a
+homogeneous all-sky sample.
+We used light curves produced by the TGLC pipeline
+(TESS–Gaia Light Curve T. Han & T. D. Brandt 2023),
+which performs PSF photometry on the TESS FFIs using a forward model of the local stellar field constructed
+using Gaia DR3 as a prior. For each target, we stitched
+together all available 10-minute FFI sectors and applied a high-pass filter to remove instrumental systematics and long-term trends. This high-pass filtering was
+achieved by smoothing the light curve with a Gaussian
+with FWHM 1 d−1 and subtracting this smoothed version from the original. We utilized the internal crossmatch provided in the TGLC bulk download scripts,
+which maps the Gaia DR3 IDs to a corresponding TIC
+ID. When this work was done, bulk downloads for the
+TGLC photometry were only available up to Sector 58.
+Because of this, we restricted our analysis to Sectors 27
+through 55 inclusive, covering TESS cycles 3 and 4.
+The TESS pixel scale is 21′′, so light from neighbouring stars can enter the photometric aperture of a given
+target. This is of some concern for our sample because
+the majority of it lies close to the Galactic plane (Section 2.3). The flux of a neighbour can both dilute the
+variability of a target and raise the noise level. Likewise, since TGLC light curves model neighbours as constant sources, any nearby variability can also enter the
+aperture of the target. We quantify these effects, and
+test how our results depend on Galactic latitutde in Appendix B. From this, we identify probable blends in Table 1, and find that excluding them does not change our
+results.
+We computed the Lomb–Scargle periodogram (N. R.
+Lomb 1976; J. D. Scargle 1982; J. T. VanderPlas 2018)
+of each light curve up to the nominal Nyquist frequency
+of 72 d−1
+. This provides unaliased frequency measurements for most δ Sct modes, although modes intrinsically above 72 d−1
+remain aliased and the amplitudes of
+modes approaching the Nyquist limit are attenuated by
+the non-zero integration time.
+2.3. Gaia DR3 parallaxes and photometry
+For each target we retrieved Gaia DR3 parallaxes,
+broadband G, GBP, and GRP photometry, and the
+vbroad line-broadening parameter where available (G.
+Collaboration et al. 2023). We found that 94% of our
+sample have σπ/π < 0.05. The distances of the parent sample range from 8 pc to ∼18 kpc, with a median
+of 820 pc and 90% of the stars lying between 290 and
+2250 pc. The δ Sct pulsators identified in Section 4 follow a similar distribution, with a median distance of
+860 pc and 90% between 250 and 1920 pc. At these
+distances the A and F stars are concentrated towards
+the Galactic disk, with around 60% of the parent sample lying within 10◦ of the Galactic plane (Figure 1).
+We made no further selection on photometric quality
+but we did require that the Gaia DR3 ruwe flag was
+< 1.4, to exclude probable astrometric binaries whose
+parallaxes may be biased (L. Lindegren 2018), which
+excludes 16.8% of our sample. While this high RUWE
+sample is excluded from analysis (Sec. 5 onwards), it
+is still present in our final table (Table 1) and flagged
+accordingly.
+The vbroad parameter was available for 434,987 of
+our targets. This provides a measure of spectral line
+broadening that combines contributions from rotation,
+micro- and macroturbulence, and unresolved binarity.
+While not exactly equivalent to the projected rotational
+velocity, vbroad has been shown to correlate well with
+v sin i for A- and F-type stars (Y. Fr´emat et al. 2023).
+We note that vbroad carries known temperature- and
+magnitude-dependent systematics and is least reliable
+at low broadening (Y. Fr´emat et al. 2023), however S. J.
+Murphy et al. (2024a) showed that it is moderately reliable for the A/F stars in most rotation regimes.
+3. STELLAR PROPERTIES
+We derived homogeneous stellar properties for our full
+sample using the isoclassify package (D. Huber et al.
+2017), which has been validated against asteroseismic
+and interferometric benchmarks for FGK stars (T. A.
+Berger et al. 2020, 2026). Here, we extend its use to
+the considerably hotter A- and early F-type regime, and
+verify the reliability of the stellar parameters using interferometry.
+isoclassify provides two modes of operation. In direct mode, effective temperatures are derived from empirical surface-brightness–color relations (L. Casagrande
+et al. 2010; D. Graczyk et al. 2017), and the stellar radius is then obtained directly from the angular diameter, parallax, and bolometric flux. In grid mode, observed quantities (parallax, apparent magnitudes, spec-
