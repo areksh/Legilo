@@ -18,6 +18,8 @@ add_library(legilo_core STATIC
     document/Segment.h
     text/Normaliser.cpp
     text/Normaliser.h
+    text/Reflow.cpp
+    text/Reflow.h
     text/Segmenter.cpp
     text/Segmenter.h
     text/WordList.cpp
