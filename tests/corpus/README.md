@@ -57,17 +57,21 @@ downloaded PDFs are not committed; `sources.json` pins each by SHA-256.
 
 pdftotext shares poppler with Okular, so the excerpts stand in for an
 Okular copy. Firefox, Chromium and Adobe Reader copy text differently, so
-the corpus needs real copies from them too. Select some text in a PDF,
-copy it, and run:
+the corpus needs real samples from them too. Start the helper, then
+select a passage in the reader, switch back and press Enter; it saves
+what is selected (the primary selection, which Legilo's speak-selection
+reads) and asks for the next, until you type q:
 
 ```
-python3 -I tests/corpus/tools/save_copy.py firefox paper-introduction
-python3 -I tests/corpus/tools/save_copy.py okular menu-page --negative
-python3 -I tests/corpus/tools/save_copy.py firefox policy-1 --local
+python3 -I tests/corpus/tools/save_copy.py firefox papers
+python3 -I tests/corpus/tools/save_copy.py okular menu --negative
+python3 -I tests/corpus/tools/save_copy.py firefox policy --local
 ```
 
-`--local` keeps the sample out of git, for documents that must not be
-committed. Then run `tools/split.py`.
+Selecting anything in the terminal replaces the selection, so start the
+helper first. `--local` keeps the samples out of git, for documents that
+must not be committed; `--clipboard` reads the Ctrl+C clipboard instead.
+Then run `tools/split.py`.
 
 ## The split
 
