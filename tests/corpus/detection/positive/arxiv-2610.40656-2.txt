@@ -1,0 +1,14 @@
+therefore used grid mode for our primary analysis.
+3.1. Validation against interferometry
+To verify that grid mode is suitable for our sample,
+we compared its output against interferometric effective
+temperatures. We assembled a comparison sample of 60
+stars hotter than 5500 K that have published interfero-
+metric angular diameters from the CHARA array (T. S.
+Boyajian et al. 2012a,b, 2013; T. R. White et al. 2013,
+2018), restricted to single, non-variable stars with Gaia
+DR3 counterparts. We used the published Fbol and θLD
+values to calculate interferometric temperatures.
+Figure 2 compares the isoclassify direct- and grid-
+mode temperatures against the interferometric values.
+Direct mode shows a clear systematic deviation that

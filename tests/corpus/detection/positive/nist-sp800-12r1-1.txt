@@ -1,0 +1,32 @@
+Managerial decisions on information security issues vary greatly. To differentiate various kinds
+of policy, this chapter categorizes them into three basic types: Program Policy, Issue-specific
+Policy, and System-specific Policy.
+Policy controls are addressed by the “-1” controls for every security control family found in
+NIST SP 800-53. The “-1” controls establish policy and procedures for the effective
+implementation of the selected security control and control enhancement.
+5.1 Standards, Guidelines, and Procedures
+
+Because policy is written at a broad level, organizations also develop standards, guidelines, and
+procedures that offer users, managers, system administrators, and others a clearer approach to
+implementing policy and meeting organizational goals. Standards and guidelines specify
+technologies and methodologies to be used to secure systems. Procedures are yet more detailed
+steps to be followed to accomplish security-related tasks. Standards, guidelines, and procedures
+may be promulgated throughout an organization via handbooks, regulations, or manuals.
+•
+
+Organizational standards (not to be confused with American National Standards, FIPS,
+Federal Standards, or other national or international standards) specify uniform use of
+specific technologies, parameters, or procedures when such uniform use will benefit an
+organization. Standardization of organization-wide identification badges is a typical
+example, providing ease of employee mobility and automation of entry/exit systems.
+Standards are normally compulsory within an organization.
+
+•
+
+Guidelines assist users, systems personnel, and others in effectively securing their
+systems. The nature of guidelines, however, immediately recognizes that systems vary
+considerably, and imposition of standards is not always achievable, appropriate, or costeffective. For example, an organizational guideline may be used to help develop systemspecific standard procedures. Guidelines are often used to help ensure that specific
+security measures are not overlooked, although they can be implemented, and correctly
+so, in more than one way.
+
+26

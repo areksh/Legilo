@@ -1,0 +1,25 @@
+deciles, revealing how interaction patterns—such as factual
+reflection and problem solving—vary across different stages
+of the counselling session.
+A semantic analysis employs embedding-based representa-
+tions, where embeddings for each message are generated us-
+ing the GBERT classifier and visualised via t-distributed
+Stochastic Neighbour Embedding (t-SNE) [11]. The result-
+ing projections uncover clusters corresponding to various
+categories, such as “Analysis & Clarification of Problems”
+and “Formalities,” thereby elucidating the semantic struc-
+ture of both human and LLM-generated responses.
+5. RESULTS
+This section presents the findings of a comparative anal-
+ysis of Human-Human and Human-LLM counselling role-
+plays. It examines differences in communication patterns
+using three complementary approaches: (1) Pattern Distri-
+bution Analysis, which quantifies the frequency of differ-
+ent counselling behaviours across both interaction types; (2)
+Temporal Analysis, which investigates how interaction pat-
+terns evolve over the course of a conversation; and (3) Se-
+mantic Analysis, which visualises conversational similarities
+and differences using embedding-based representations.
+5.1 Pattern Distribution Analysis
+The distribution of the client pattern shows a significant
+difference between Human-Human and Human-LLM inter-

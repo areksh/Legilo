@@ -1,0 +1,11 @@
+2. Methods
+The aim of this study is to examine the difference and relationship between two raters by evaluating the legibility level of
+fourth-grade elementary school students’ handwriting using both a human researcher and artificial intelligence (ChatGPT).
+In line with this objective, the study was conducted using the descriptive survey model, one of the quantitative research
+approaches. Descriptive survey research aims to describe an existing situation as it is. In this study, the data source is
+defined within its existing conditions, and no intervention efforts are made [28].
+2.1. Participants
+The study sample consists of 67 fourth-grade students attending a public elementary school in the Central District
+of Tokat Province. The school, which serves children from families of moderate socioeconomic status, has eight
+fourth-grade classes. Following interviews with teachers, four classes were included in the study after the students
+volunteered and their families submitted fully signed data consent forms. Of the participants, 32 are female fourth-

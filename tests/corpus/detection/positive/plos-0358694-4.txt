@@ -1,0 +1,48 @@
+ChatGPT was provided with the Multidimensional Legibility Scale and necessary introductory information about the study.
+Subsequently, specific instructions were given, and ChatGPT was asked to analyze a handwriting sample not used in the
+current study according to the Multidimensional Legibility Scale. Since the score assigned by ChatGPT to the relevant
+handwriting matched the score given by the researcher, the process of evaluating the fourth-grade students’ handwriting
+was initiated. The same handwriting samples were also scored by another researcher (İsmail Yaşartürk) according to the
+Multidimensional Legibility Scale. To ensure the researcher was not influenced by the AI, two separate scoring processes
+were conducted by two researchers, and the data collection process was completed.
+The prompts given to ChatGPT are as follows:
+You are a researcher specializing in Turkish language education who focuses on handwriting legibility. Your task is to
+objectively and scientifically analyze handwriting samples from fourth-grade elementary school students. Using the Mul-
+tidimensional Legibility Scale described below, you will score the student handwriting samples provided to you based on
+the dimensions of slant, spacing, form, and line tracking. The Multidimensional Legibility Scale is as follows.
+• Slant
+1 point: Letters are quite irregular. The writing exhibits both right and left slant (mixed).
+2 points: Although the letters do not conform to exact measurements, the writing is slanted to the right or left, and this
+slant continues partially throughout the text.
+3 points: The letters are written neatly and completely at a 90-degree angle throughout the text.
+
+PLOS One | https://doi.org/10.1371/journal.pone.0358694 September 21, 2026 6 / 14
+• Spacing
+1 point: Spacing between letters, words, and sentences is inconsistent and insufficient throughout the text.
+2 points: There are some inconsistencies in the spacing between letters, words, and sentences. Spacing is not consis-
+tent throughout the text.
+3 points: Spacing between letters, words, and sentences is appropriate and consistent throughout the text.
+• Size
+1 point: The letters are too small to read and irregular in size. The ratio of uppercase to lowercase letters is also unbal-
+anced and inconsistent.
+2 points: Although the letters are larger or smaller than normal, their size is consistent. There are also imbalances in
+the ratio of uppercase to lowercase letters.
+3 points: The letters are of a readable size, and this size is consistent throughout the text. The uppercase-to-lowercase
+ratio is entirely appropriate.
+• Form
+1 point: The letters are written irregularly, and the starting and ending points of the ascenders and descenders are
+inadequate.
+2 points: There are some deficiencies in the starting and ending points of the letters, as well as in the proportions of
+the ascenders and descenders.
+3 points: The letters are written in full compliance with the rules. Start and end points are properly and correctly exe-
+cuted. Ascenders and descenders are proportionate.
+• Line Tracking
+1 point: Line tracking is quite inadequate. Constant slippage downward or upward occurs. Line-end overhangs and
+spacing irregularities are excessive.
+2 points: Occasional slippage downward or upward occurs in line tracking. Line-end overflows and spacing irregulari-
+ties are visible, albeit to a lesser extent.
+3 points: Line spacing is quite consistent. There is no text extending above or below the line. Spacing at the end of
+lines is consistent, and there are no overflows.
+Rules to follow: Evaluate each text independently, remain objective, and justify the score you assign for each sub-criterion.
+ChatGPT evaluations were conducted using a standardized set of prompts based on the Multidimensional Legibility
+Scale. All dimensions included in the scale (slant, spacing, size, form, and line tracking) were explicitly presented to the

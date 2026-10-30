@@ -1,0 +1,33 @@
+students’ achievements and thinking processes in elementary school. Analyzing
+students’ writing provides insights into the level of complex thinking they possess,
+and these analyses contribute to deepening learning processes [1,11]. In all these
+respects, writing is not merely a language skill but a fundamental pedagogical tool for
+monitoring, analyzing, guiding, and supporting students’ academic development.
+1.1. Artificial intelligence in education
+The use of artificial intelligence in education is not limited to course content or skill
+areas. It is also utilized for its multifaceted functions, such as instructional design,
+organizing learning processes, and making educational decisions. Chassignol and
+colleagues [12] note that artificial intelligence in education fulfills three core functions:
+administrative functions, instructional and teaching functions, and learning functions.
+Within the administrative function the focus of this study artificial intelligence is used
+in assessment processes such as checking, grading, and providing feedback on
+students’ written assignments. Additionally, in conjunction with smart and adaptive
+
+PLOS One | https://doi.org/10.1371/journal.pone.0358694 September 21, 2026
+
+2 / 14
+
+
+instructional systems, artificial intelligence facilitates the personalization of instructional processes by taking into account
+students’ individual learning paces, prior knowledge, and performance patterns [13]. Thanks to these AI-supported systems, students’ difficulties are identified at an early stage, while simultaneously providing teachers with evidence-based
+feedback to help them adjust their teaching strategies [14]. In addition, artificial intelligence can process and interpret
+large-scale educational data to provide detailed insights for teachers and educational administrators. This enables systematic analysis of educational gaps and students’ strengths and weaknesses, thereby increasing the potential for timely,
+planned interventions [15]. By streamlining time-intensive and focus-demanding tasks such as content creation, question
+generation, and instructional material preparation, it ensures that this time can be redirected toward pedagogical planning [16]. Indeed, it has been reported that AI-supported applications enhance student motivation and learning continuity
+through adaptability, personalized learning opportunities, and feedback [17]. In this context, AI should not be perceived as
+an element that can replace the teacher. Artificial intelligence is a complementary tool that supports learning and teaching
+processes and the sustainability of education. This framework establishes a foundation focused on how artificial intelligence can be structured in various areas of education (e.g., writing assessment).
+1.2. Artificial intelligence and the assessment of writing
+The critical role that the assessment of writing legibility plays in educational processes raises the question of how this process can be made more accurate, effective, consistent, and sustainable. The workload teachers face in assessing, grading, and providing feedback on writing legibility limits the time available for teaching writing [18,19]. In this context, artificial
+intelligence (AI) applications, which have become increasingly widespread in the field of education in recent years, are
+being used as a tool to support the evaluation intensity in educational processes through human-like reasoning skills.

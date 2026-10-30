@@ -1,0 +1,12 @@
+evaluated after the reduced density matrix is averaged
+over reset histories [Eq. (12)], the trajectory-averaged
+entropy S̄A , evaluated before this average is taken
+[Eq. (13)], and the Wootters concurrence C(ρ̄∞ ) of the
+two-qubit stationary state [31–33]. These measures characterize different properties. The concurrence measures
+entanglement in the stationary mixture, while S̄A is the
+mean entanglement of the pure realizations in the ideal
+reset protocol. The averaged-state entropy S(ρ̄A ) measures the mixedness of the reduced stationary state and
+also includes the effect of averaging over reset ages. Its
+excess over S̄A , which is called the the Jensen gap of
+the von Neumann entanglement entropy, is the extra uncertainty about subsystem A that comes only from not
+knowing the time since the last reset. It equals the Holevo

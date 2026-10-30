@@ -1,0 +1,35 @@
+the parameters in the extended algorithm for the binary
+of HD 189739 and HD 189760. The right panel shows
+the PDFs of the parameters in the K.-H. Chae (2026)
+algorithm. In that algorithm, a is a dependent variable
+that is determined by
+a = sobs
+1 + e cos(ϕ − ϕ0)
+(1 − e2)
+p
+cos2 ϕ + cos2 i sin2
+ϕ
+(15)
+
+Proper 3D Modeling of Wide Binary Orbits 5
+Figure 2. This figure shows posterior PDFs of parameters for the binary of HD 189739 and HD 189760. The left panel is based
+on the extended algorithm of this work in which the semi-major axis (a) is fitted simultaneously with the other parameters,
+while the right panel is based on the K.-H. Chae (2026) algorithm in which a is not a free parameter but a variable dependent
+on the other parameters through a mathematical constraint. The inset compares the distributions of a in both cases, which
+agree well with each other. The dotted curve in the inset shows the distribution of a with the prior of Equation (14) imposed.
+for the observed sobs (ignoring the tiny measurement
+error) and the other fitted parameters. The PDFs of
+the fitted parameters with the extended algorithm are
+consistent with those of the K.-H. Chae (2026) algo-
+rithm. Also, as the inset in the right panel shows, the
+distribution of directly fitted a agrees well with that in-
+ferred with Equation (15) for the parameters fitted with
+the K.-H. Chae (2026) algorithm. If the prior given by
+Equation (14) is imposed on a in using the extended al-
+gorithm, the inferred distribution is mildly changed as
+shown by the dotted curve.
+Because all parameters are equivalently constrained
+whether a is fitted explicitly or implicitly, the inference
+of Γ is also unaffected, as shown in Figure 3. Newton
+is completely inconsistent with this system because the
+PDF declines more sharply than a Gaussian curve (the

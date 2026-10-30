@@ -1,0 +1,5 @@
+1. Open **Settings**
+2. Choose *Accounts*
+3. Click **Add account** and follow the steps
+
+See the [help page](https://example.com/help) for details.

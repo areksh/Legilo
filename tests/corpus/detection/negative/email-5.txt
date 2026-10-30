@@ -1,0 +1,12 @@
+Hi team,
+
+Quick update on the release:
+
+- The build is green on all platforms
+- Two bugs left in the installer, both assigned
+- Docs are being reviewed by Anna
+
+If nothing else comes up, we ship on Wednesday.
+
+Thanks,
+Lee

@@ -1,0 +1,5 @@
+date,station,temperature,rainfall
+2026-10-01,Northgate,12.4,0.0
+2026-10-02,Northgate,11.8,3.2
+2026-10-03,Northgate,10.9,7.5
+2026-10-04,Northgate,13.1,0.4

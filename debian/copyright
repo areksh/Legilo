@@ -56,6 +56,27 @@ Files: third_party/downloads/json-*.tar.gz
 Copyright: 2013-2025 Niels Lohmann
 License: Expat
 
+Files: tests/corpus/detection/positive/arxiv-*
+ tests/corpus/detection/positive/plos-*
+Copyright: The authors of the papers listed in tests/corpus/sources.json
+License: CC-BY-4.0
+Comment: Excerpts of the papers, attributed in tests/corpus/sources.json.
+
+Files: tests/corpus/detection/negative/poem-*
+ tests/corpus/detection/negative/web-*
+Copyright: none
+License: public-domain
+ Text from Project Gutenberg books in the public domain: Emily Dickinson's
+ Poems, Jane Austen's Pride and Prejudice, Charles Darwin's On the Origin of
+ Species and Herman Melville's Moby-Dick.
+
+Files: tests/corpus/detection/positive/nist-*
+Copyright: none (a work of the United States government)
+License: public-domain
+ NIST Special Publication 800-12 Revision 1 is a work of the United States
+ government and is not subject to copyright in the United States.
+
+
 License: GPL-3+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -218,3 +239,8 @@ License: SCOWL
  supporting documentation. Kevin Atkinson makes no representations
  about the suitability of this array for any purpose. It is provided
  "as is" without express or implied warranty.
+
+License: CC-BY-4.0
+ On Debian systems, the full text of the Creative Commons Attribution 4.0
+ International licence can be found in
+ "/usr/share/common-licenses/CC-BY-4.0".

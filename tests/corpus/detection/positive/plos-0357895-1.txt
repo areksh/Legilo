@@ -1,0 +1,22 @@
+Mann-Whitney U
+
+942.50
+
+Wilcoxon W
+
+1845.50
+
+Z-score
+
+−1.00
+
+Asymptotic Significance (Two – tailed)
+
+p = 0.32
+
+Effect size (r)
+
+r = 0.10
+
+a. Grouping variable: Class
+https://doi.org/10.1371/journal.pone.0357895.t006

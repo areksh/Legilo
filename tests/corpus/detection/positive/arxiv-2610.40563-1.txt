@@ -1,0 +1,32 @@
+not escalate as much over time. Another noticeable trend is
+in category Generating Motivation, which remains relatively
+low throughout the interview but increases slightly towards
+the end. This could indicate that counsellors are making
+an effort to introduce motivational interventions before the
+end of the counselling.
+In the client interaction patterns (Figure 3), Analysis and
+
+Clarification of Problems is the predominant category, especially at the beginning of the conversation. This trend
+is much more pronounced in Human-Human interactions,
+where problem elaboration starts high (over 8%) and gradually decreases over time. In contrast, LLM-simulated clients
+disclose their problems more immediately but with less intensity, which is consistent with the results of the overall
+distribution that showed a lower percentage for this pattern
+in LLM-generated conversations. A key difference between
+human and LLM clients is the increase in helping, problem
+solving, and resource activation in the second half of the conversation, especially in the Human-LLM interactions. This
+suggests that LLM-generated clients are more inclined to
+shift to problem-solving and resource-orientated discussions
+as the conversation progresses, whereas human clients may
+continue to reflect on their problems. In addition, formality at the beginning is higher of Human-LLM interactions
+but quickly decreases, while formality at the end increases
+sharply in the last decile. This reflects the structured nature
+of LLM-generated responses, which tend to adhere to clear
+opening and closing conventions.
+
+5.3
+
+Semantic Analysis
+
+To further examine differences in conversational patterns, we
+applied embedding-based representations using the GBERTLarge Client and Counsellor Classifiers. These models, initially trained for sentence classification, were also used to
+generate embeddings for client and counsellor messages. The

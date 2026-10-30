@@ -1,0 +1,14 @@
+of information resident on the system (retrieved from FIPS 199).
+
+43
+
+
+NIST SP 800-12 REV. 1
+
+AN INTRODUCTION TO INFORMATION SECURITY
+
+(with a justification based on risk) or to add compensating or supplemental controls to strengthen
+the security posture of a specific system.
+Care needs to be taken to ensure that deviations from the baseline are based on an assessment of
+the associated risk as the changes may be appropriate for the system's particular environment or
+technical constraints.

@@ -1,0 +1,25 @@
+following implementation; and (iii) identify risk-impacting changes to
+organizational systems and the environments in which the systems operate.
+To help organizations manage information security risk at the system level, NIST developed the
+Risk Management Framework (RMF). The RMF promotes the concepts of near real-time risk
+management and ongoing system authorization through the implementation of robust continuous
+monitoring processes. The RMF also provides senior leaders the necessary information to make
+cost-effective, risk-based decisions with regard to the organizational systems supporting their
+core missions and business functions, and integrates information security into the enterprise
+architecture and system development life cycle (SDLC). See NIST SP 800-160.
+The six steps that comprise the RMF include:
+1. System Categorization;
+2. Security Control Selection;
+3. Security Control Implementation;
+4. Security Control Assessment;
+5. System Authorization; and
+6. Security Control Monitoring
+
+NIST SP 800-12 REV. 1 AN INTRODUCTION TO INFORMATION SECURITY
+36
+This
+publication
+is
+available
+free
+of

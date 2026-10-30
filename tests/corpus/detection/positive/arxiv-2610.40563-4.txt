@@ -1,0 +1,49 @@
+Analysis/Clarification (Factual) category. An interactive
+plot analysis reveals that when engaging with human
+clients, counsellors tend to provide more detailed follow-up
+questions regarding past solution attempts. Examples
+include inquiries such as ”How did he join your circle of
+friends?” or ”What was it like when you weren’t arguing so
+often?” This pattern is evident in the lower-right region of
+the t-SNE plot. Another significant finding is the clustering
+of Moderation statements, which appear more frequently
+in Human-Human conversations. These messages include
+procedural clarifications such as ”The chat has a time frame
+of 60 minutes” or ”Let’s take turns writing so there is no
+confusion.” This suggests that Human-Human counselling
+requires more explicit structuring, possibly because human
+clients exhibit less adherence to a predefined conversational
+flow compared to LLM-simulated clients. Additionally, the
+use of emojis was not possible on the learning platform,
+Figure 5: t-SNE Projection of Counsellor Sentences
+which may have influenced the nature of moderation-related
+messages.
+5.4 Educational Implications
+Learning counselling with an LLM has its upsides and
+downsides. On the upside, LLM-simulated clients offer
+a highly structured and consistent environment that can
+streamline training. Their immediate disclosure of issues
+and solution-focused responses allow trainees to quickly
+engage in problem-solving and to improve their factual re-
+flection skills. This consistency can be especially beneficial
+in early training stages or in scenarios where repeated prac-
+tice is essential for skill development. On the downside, the
+structured nature of LLM-generated responses may limit
+exposure to the rich, spontaneous, and emotionally nuanced
+interactions that characterise human counselling. The
+reduced emphasis on elaborate problem clarification and
+emotional attunement may not fully prepare trainees for
+the unpredictability of real-world counselling sessions. Con-
+sequently, while LLM-based role-plays serve as a valuable
+supplement by enhancing efficiency and standardization,
+they also risk oversimplifying the complex interpersonal
+dynamics necessary for comprehensive counselling training.
+In summary, integrating LLMs into counselling education
+presents a promising opportunity to expand training ac-
+cessibility and consistency, but it should be balanced with
+traditional human interactions to ensure the development
+of both technical and interpersonal competencies.
+6. LIMITATIONS
+While our study offers insightful comparisons between
+Human-Human and Human-LLM counselling interactions,
+several limitations should be acknowledged. First, the

@@ -1,0 +1,29 @@
+However, despite its prosperity, there also exist findings reporting deficiencies of
+solely relying on online annotated reading. Paper-based annotated reading demonstrated merits over its online counterpart for it gives readers the opportunity to slow
+down and add their own thoughts and comments, raise questions for further investigation, and challenge ideas within the text [17] while relieving the burden of hardware
+requirement [18]. Furthermore, both Aydogdu and Winder [19], and Chen and Chen
+[20] reported that face-to-face interaction was superior because it fostered better
+group dynamics, participation, motivation, and deeper learning compared to online
+modes.
+To make full use of the pedagogical benefits of paper-based annotated reading, offline group interaction and social reading, we designed a blended four-stage
+annotated reading instructional framework. A quasi-experiment with mixed research
+methods was conducted in an EFL context to verify its impact on students’ reading
+competence as well as explore students’ perceptions of and actualization of their
+annotated reading practices. The findings would have implications on annotated
+reading instruction and it is also our hope that this instructional design will help inform
+future studies.
+
+2. Literature review
+2.1. Annotated reading and pedagogical frameworks
+Annotated reading, also known as close reading, is a deliberate interaction with a text
+with the aim of helping the reader to understand it more fully [17]. Sustained attention can be conceptualized as the core cognitive underpinning for annotated reading.
+Öksüz et al. [21] demonstrate that sustained attention serves as a “cognitive bridge”
+during reading—it not only directly predicts comprehension levels but also acts as
+a full mediator, transforming the efficacy of verbal working memory into accessible reading comprehension ability. Thus, the practice of annotated reading—which
+requires readers to continuously select, mark, and reflect on text segments—can be
+seen as a natural behavioral expression of sustained attention, training the very process of consistently and strategically allocating attention to key information.
+Over the past two decades, although social annotated reading has been widely
+integrated into educational settings, its instructional design has often been limited to
+providing learners with basic annotation tools, such as highlighting, underlining, or
+
+PLOS One | https://doi.org/10.1371/journal.pone.0357895 October 14, 2026

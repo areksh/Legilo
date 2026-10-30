@@ -1,0 +1,29 @@
+AI USE STATEMENT
+In this work, we used generative AI tools to help provide feedback on research methodology, implement methods through the writing of code, clean and reformat datasets through scripts for one-off
+runs, and, at times, interpret results.
+We did not use generative AI tools to help develop theoretical models or conceptual frameworks,
+formulate mathematical claims, propose or refine hypotheses, or support qualitative and thematic
+data analysis. Generation of synthetic datasets, assistance with translation, assistance in writing
+proofs, and providing critical ingredients for or proving mathematical claims were not applicable to
+this work.
+Additionally, we used generative AI tools to help create scientific figures or images, suggest experimental parameters, create or edit software code with human review, summarize existing literature,
+brainstorm, edit our paper to improve readability, and identify relevant literature. Most of the AI
+usage for this project was to aid in writing code, always with human review. It was also used frequently to make language more concise to fit within the page limitations. We have reviewed all
+AI-assisted work. We take responsibility for the final content of this work, including text, claims, or
+artifacts produced with the aid of generative AI.
+R EPRODUCIBILITY STATEMENT
+To make our work easily reproducible we have provided our code at
+https://github.com/thefinnlab/low-rank-alignment. In our docs folder is a guide for reproducing which specifies all of the steps necessary to rebuild our results from scratch. All of the data is
+already open-source and free to download and thus can be easily utilized by any researcher. We
+have also provided descriptions of our methods in detailed prose in the appendix which should be
+useful for discerning the specifics of our approach at a high level.
+ACKNOWLEDGMENTS
+We thank Clara Sava- Segal, Katie O’Nell, Tommy Botch, and Kay Liang for their thoughtful comments during the drafting process of this paper.
+
+R EFERENCES
+AI@Meta. Llama 3 model card, 2024. URL https://github.com/meta-llama/llama3/
+blob/main/MODEL_CARD.md.
+Richard Antonello and Emily Cheng. Evidence from fMRI Supports a Two-Phase Abstraction Process in Language Models. In NeurIPS 2024 Workshops: UniReps, 2024.
+Richard Antonello and Alexander Huth. Predictive Coding or Just Feature Discovery? An Alternative Account of Why Language Models Fit Brain Data. Neurobiology of Language, 5(1):64–79,
+April 2024. ISSN 2641-4368. doi: 10.1162/nol a 00087.
+Richard Antonello, Javier S Turek, Vy Vo, and Alexander Huth. Low-dimensional Structure in

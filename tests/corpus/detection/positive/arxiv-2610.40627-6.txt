@@ -1,0 +1,44 @@
+requiring no model in the loop, and the gradient never reaches the response.
+Shallow alignment. A complementary line of work locates the mechanism of these failures: align-
+ment behavior concentrates in the first few output tokens (Qi et al., 2024a), which is why pre-
+filled affirmative openers (Andriushchenko et al., 2025; Vega et al., 2023), decoding-parameter ex-
+ploits (Huang et al., 2024), and fine-tuning perturbations of early positions (Qi et al., 2024b) defeat
+refusal. Proposed remedies deepen the alignment, e.g., by augmenting training with recovery-from-
+harmful-prefix data (Qi et al., 2024a; Zhang et al., 2025a).
+6 CONCLUSION
+We present Assess → Decide → Respond, a multi-turn defense in which the defender commits to an
+explicit, parseable safety decision before it replies, trained by reinforcement learning at the payload
+turn. Rather than repairing shallow alignment, the framework repurposes it: the short span that
+decides the fate of a response, ordinarily the attacker’s target, becomes a commitment the defender
+controls. Because the decision is a token span, a rule can reward it against the conversation’s known
+nature with no judge and no annotation, and the same format also supports a judge-based reward with
+safe redirection. Across two model families and fourteen benchmarks, our defenders achieve the
+strongest multi-turn safety in a controlled comparison, hold that lead under six judges, and preserve
+utility, with over-refusal as the cost. KL analysis, interventional probes, and ablations agree that the
+defense operates through the committed decision. More broadly, our results suggest that structural
+properties of alignment, often treated as weaknesses, can be engineered into defenses, and that
+commitments offer a scalable alternative to judge-based supervision for conversational safety.
+9
+
+Preprint
+REFERENCES
+Sandhini Agarwal, Lama Ahmad, Jason Ai, Sam Altman, Andy Applebaum, Edwin Arbus, Rahul K
+Arora, Yu Bai, Bowen Baker, Haiming Bao, et al. gpt-oss-120b & gpt-oss-20b model card. arXiv
+preprint arXiv:2508.10925, 2025.
+Ahmad Alobaid, Martı́ Jordà Roca, Carlos Castillo, and Joan Vendrell. The echo chamber multi-turn
+llm jailbreak. arXiv preprint arXiv:2601.05742, 2026.
+Maksym Andriushchenko, Nicolas Flammarion, et al. Jailbreaking leading safety-aligned llms with
+simple adaptive attacks. In International Conference on Learning Representations, volume 2025,
+pp. 40116–40143, 2025.
+Ge Bai, Jie Liu, Xingyuan Bu, Yancheng He, Jiaheng Liu, Zhanhui Zhou, Zhuoran Lin, Wenbo Su,
+Tiezheng Ge, Bo Zheng, et al. Mt-bench-101: A fine-grained benchmark for evaluating large
+language models in multi-turn dialogues. In Proceedings of the 62nd Annual Meeting of the
+Association for Computational Linguistics (Volume 1: Long Papers), pp. 7421–7454, 2024.
+Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn
+Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, et al. Training a helpful and harmless
+assistant with reinforcement learning from human feedback. arXiv preprint arXiv:2204.05862,
+2022.
+Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz Kaiser,
+Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, et al. Training verifiers to
+solve math word problems. arXiv preprint arXiv:2110.14168, 2021.
+Hoagy Cunningham, Jerry Wei, Zihan Wang, Andrew Persic, Alwin Peng, Jordan Abderrachid, Raj

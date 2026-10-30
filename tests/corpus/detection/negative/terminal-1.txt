@@ -1,0 +1,5 @@
+$ ls -l
+total 12
+-rw-r--r-- 1 jo jo  220 Oct 30 09:00 notes.txt
+drwxr-xr-x 2 jo jo 4096 Oct 29 18:22 photos
+-rwxr-xr-x 1 jo jo  512 Oct 28 11:05 backup.sh

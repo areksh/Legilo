@@ -1,0 +1,47 @@
+spacing irregularities are excessive.
+2 points: Occasional slippage downward or upward occurs in line tracking. Line-end overflows and spacing irregularities are visible, albeit to a lesser extent.
+3 points: Line spacing is quite consistent. There is no text extending above or below the line. Spacing at the end of
+lines is consistent, and there are no overflows.
+Rules to follow: Evaluate each text independently, remain objective, and justify the score you assign for each sub-criterion.
+ChatGPT evaluations were conducted using a standardized set of prompts based on the Multidimensional Legibility
+Scale. All dimensions included in the scale (slant, spacing, size, form, and line tracking) were explicitly presented to the
+model, and the evaluations were instructed to be based solely on the characteristics reflected in the text. Additionally, an
+academic persona was assigned to ChatGPT to standardize its decisions.
+2.4. Data analysis
+Data collected from fourth-grade elementary school students was analyzed using the SPSS 24 software package (IBM
+Corp., 2016). In the study, skewness and kurtosis values were first examined to determine whether the data met the
+assumption of normality. The results of the analysis indicated that the data followed a normal distribution. This is because
+
+PLOS One | https://doi.org/10.1371/journal.pone.0358694 September 21, 2026
+
+6 / 14
+
+
+all variables in the study fell within the ± 2 range in terms of skewness and kurtosis. For this reason, it was assumed that
+the data followed a normal distribution [32]. The assessments were derived from two independent scorers (a human
+assessor and an artificial intelligence modelling system). The aim here is not to compare individual paper-based scoring discrepancies, but rather to compare the averages of the overall score distributions produced by these two systems.
+In other words, the focus of the present study is not on the writing skills of the students from whom the writing samples
+were taken, but on comparing the assessors. For this reason, and given that the data followed a normal distribution, an
+independent samples t-test was used, whilst a Pearson correlation test was employed to assess the level of correlation
+between the two assessors.
+2.5. Ethics statement
+Prior to data collection for this study, the necessary permissions for the research were obtained from the Scientific
+Research and Publication Ethics Committee of Tokat Gaziosmanpaşa University at its meeting No. 03 held on 26 March
+2026 (Decision No. 706861 dated 5 March 2026 – application by Ramazan DENİZ). All procedures were carried out in
+accordance with the ethical standards of the Declaration of Helsinki.
+
+3. Results
+This section presents descriptive statistics for the study, normality statistics for the variables, and tests conducted to compare two different raters (ChatGPT versus the researcher).
+The students’ writings—produced by looking at a text, dictation, and free writing—were scored by the researcher (İsmail
+Yaşartürk), and the resulting data are presented in Table 1. According to the table, it was determined that the data follow a
+normal distribution, as the skewness and kurtosis values fall within the ± 2 range.
+The students’ written work—produced through copying, dictation, and free writing—was scored by ChatGPT, and the
+resulting data are presented in Table 2. According to the table, the data were found to follow a normal distribution, as the
+skewness and kurtosis values fell within the ± 2 range. Based on the normality data obtained, an Independent Samples
+t-Test was applied to compare the writing skills of students graded by two different graders, and the results are presented
+in Tables 3–5.
+The findings regarding the comparison of scores obtained from the evaluation of students’ copying skills by the
+researcher and ChatGPT, based on the Multidimensional Legibility Scale, in terms of subscales and total scores are
+presented in Table 3. According to the paired samples t-test results, no significant differences were detected between
+the researcher’s and ChatGPT’s evaluations in terms of slant (t(66)=−1.903, p > .05), spacing (t(66)=−1.448, p > .05),
+size (t(66)=.643, p > . 05), form (t(66)=−1.459, p > .05), line tracking (t(66)=−.336, p > .05), and total score (t(66)=−1.345,

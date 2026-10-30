@@ -1,0 +1,27 @@
+Vn−1 (t) + Vn+1 (t)
+2
+
+Only contacts with both consecutively numbered neighbors available after corrupted-contact removal were retained. We applied notch filters at 60, 120, and 180 Hz with 2-Hz notch widths,
+followed by a fourth-order Butterworth band-pass filter from 70 to 200 Hz. High-gamma amplitude
+was defined as the magnitude of the analytic signal obtained through the Hilbert transform.
+A.1.3
+
+W ORD ALIGNMENT AND EPOCH CONSTRUCTION .
+
+We reconstructed transcript words by matching the dataset’s transcript entries to the corresponding
+sentence text, recovering punctuation and contractions where applicable. When multiple separately
+timed entries mapped to a single sentence word, we retained the separately timed entries. Each
+resulting word received a persistent transcript index linking its embedding to its neural epoch.
+Movie timestamps were mapped separately to each subject’s neural recording using the supplied
+synchronization triggers. Words lacking valid onset or offset times, or beginning after the final
+synchronization trigger, were excluded from neural alignment.
+For each remaining word, we rounded its recording-relative onset to the nearest sample on the 512Hz preprocessing grid and extracted a high-gamma epoch covering [-2,2) seconds relative to onset.
+When multiple words mapped to the same onset sample, we retained the first; epochs extending
+beyond the recording boundaries were discarded. Each extracted epoch was then independently
+resampled to 32 Hz using FFT resampling with a Hamming window, yielding 128 samples per
+contact at 31.25-ms intervals. Consequently, every epoch used a sampling grid anchored to its own
+word onset.
+We stored the retained transcript indices alongside the epochs and used these indices to select the
+corresponding word embeddings. Analyses combining subjects used the intersection of their retained word indices. The iEEG analyses additionally restricted words to those covered by the 300dimensional GloVe vocabulary, ensuring a common vocabulary across model comparisons.
+A.2
+A.2.1

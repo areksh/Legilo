@@ -1,0 +1,45 @@
+In testing the effects of treating a as a free parameter,
+the prior of Equation (14) will not be implemented for
+a consistent comparison with the results based on the
+algorithm of K.-H. Chae (2026).
+The numerical procedure to derive the posterior dis-
+tribution p(Θ) is the same as described in K.-H. Chae
+(2026): Markov chain Monte Carlo (MCMC) procedure
+is performed with the public Python package emcee (D.
+Foreman-Mackey et al. 2013).
+3. RESULTS WITH THE EXTENDED
+ALGORITHM AND COMPARISON WITH
+OTHER RESULTS
+For the purpose of testing the effects of how the semi-
+major axis a is treated, I consider binary systems for
+which detailed orbit solutions are available from inde-
+pendent studies. First, I consider the binary of stars
+HD 189739 and HD 189760 (Binary #24 from R. Saglia
+et al. (2025)). This is one of the systems from the re-
+cent compilation by K.-H. Chae et al. (2026) that does
+not allow bound Newtonian orbits and indicates Γ > 0
+based on the K.-H. Chae (2026) algorithm that uses the
+sky-projected separation sobs as a numerical constant
+and treats a as a dependent variable. It is interesting
+whether the extended algorithm can modify the K.-H.
+Chae (2026) inference in a meaningful way. Second,
+I consider the α-Cen AB - Proxima system that has
+exceptional-quality data and thus provides an ideal sys-
+tem to compare results with various algorithms.
+The left panel of Figure 2 shows posterior PDFs of
+the parameters in the extended algorithm for the binary
+of HD 189739 and HD 189760. The right panel shows
+the PDFs of the parameters in the K.-H. Chae (2026)
+algorithm. In that algorithm, a is a dependent variable
+that is determined by
+a = sobs
+1 + e cos(ϕ − ϕ0)
+(1 − e2)
+p
+cos2 ϕ + cos2 i sin2
+ϕ
+(15)
+
+Proper 3D Modeling of Wide Binary Orbits 5
+Figure 2. This figure shows posterior PDFs of parameters for the binary of HD 189739 and HD 189760. The left panel is based
+on the extended algorithm of this work in which the semi-major axis (a) is fitted simultaneously with the other parameters,

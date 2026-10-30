@@ -1,0 +1,6 @@
+TODO
+[x] renew passport
+[ ] book dentist
+[ ] fix bike puncture
+[ ] send invoice to Hartley & Co
+[x] call the bank

@@ -1,0 +1,5 @@
+me: did you book the train
+Dan: not yet, the 8:15 or the 9:40?
+me: 8:15 is cheaper
+Dan: booked
+me: legend

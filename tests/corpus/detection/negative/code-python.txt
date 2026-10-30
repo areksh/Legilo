@@ -1,0 +1,11 @@
+def read_config(path):
+    """Read a key=value file into a dict."""
+    config = {}
+    with open(path) as file:
+        for line in file:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            key, value = line.split("=", 1)
+            config[key.strip()] = value.strip()
+    return config

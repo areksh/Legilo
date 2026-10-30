@@ -1,0 +1,4 @@
+2026-10-30 09:12:01 INFO  Starting service on port 8080
+2026-10-30 09:12:02 INFO  Connected to database
+2026-10-30 09:14:37 WARN  Slow query took 2.4s
+2026-10-30 09:15:10 ERROR Connection reset by peer

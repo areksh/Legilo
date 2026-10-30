@@ -1,0 +1,48 @@
+S. M. Saad & Y.-S. Ting (2026) have recently questioned the K.-H. Chae (2026) algorithm for using a
+mathematical relation of parameters including a fixed
+s to reduce the number of free parameters. They argue
+that treating a as a free parameter along with an empirical prior rather than letting it be determined by the
+mathematical relation can dramatically change gravity
+inference. Their claim is unexpected because the mathematics of Keplerian orbits is fixed and the tiny measurement error of s ensures that it can be used as a fixed
+input into the mathematics, as pointed out above.
+Considering the unexpected claim by S. M. Saad
+& Y.-S. Ting (2026), here I consider a purposely extended algorithm in which the semi-major axis is explicitly treated as a free parameter and the measured
+sky-projected separation s (along with its measurement
+uncertainty) is included in a likelihood (but not used
+
+Chae
+as a constant in a mathematical relation), and present
+Bayesian results for example binary systems including
+the α-Cen - Proxima system and systems from the K.H. Chae et al. (2026).
+In this work, I carefully address the question of what
+the proper modeling of wide binary orbits should be in
+the posed problem of inferring gravity at low acceleration and testing gravity models using wide binaries. It
+turns out that the introduction of a free parameter for
+the semi-major axis has negligible effects in the Bayesian
+inference of orbit parameters and Γ compared with the
+implicit-a algorithm of K.-H. Chae (2026). I will then
+show that the S. M. Saad & Y.-S. Ting (2026) claim of a
+Newtonian result from the K.-H. Chae et al. (2026) sample may be a consequence of arbitrarily enlarged errors
+for the measured quantities, in particular the relative
+radial velocity between the two stars. In this work, I
+will also explicitly show that the parameters of Proxima’s orbit inferred with the K.-H. Chae (2026) algorithm fully agrees with the P. Kervella et al. (2017) inference although two studies use completely independent
+algorithms and work in different reference frames. Then,
+I will present orbits obtained for MOND (M. Milgrom
+1983, 2010) gravities.
+The outline is as follows. I start with a brief description of the extended algorithm that includes the semimajor axis as a free parameter, highlighting only the
+difference from the K.-H. Chae (2026) algorithm (Section 2). In Section 3, I present results with the extended
+algorithm and compare them with other results including those with the K.-H. Chae (2026) algorithm and
+Proxima’s orbit inferred by P. Kervella et al. (2017).
+I discuss and conclude in Section 4. In Appendix A, I
+discuss how the perspective effects of the spherical geometry can be accurately accounted for through coordinate transformations. The extended algorithm treating
+the semi-major axis as a free parameter will be available
+on Zenodo.
+2. AN EXTENDED ALGORITHM WITH A FREE
+
+SEMI-MAJOR AXIS
+Figure 1 shows a general 3D configuration of an elliptical orbit of a binary system in the equatorial frame.
+Under the assumption that the system is gravitationally
+bound and the orbit is Newtonian or pseudo-Newtonian
+with a general gravitational parameter G, the six components of the relative displacement r = (x′ , y ′ , z ′ ) and the
+relative velocity v = (vx′ , vy′ , vz′ ) in the observer’s x′ y ′ z ′
+frame may be related by six mathematical relations to

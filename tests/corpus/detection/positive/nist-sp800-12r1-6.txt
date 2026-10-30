@@ -1,0 +1,32 @@
+prevent damage to the organization, personnel, and other organizations.
+2.6 Information security requires a comprehensive and integrated approach
+Providing effective information security requires a comprehensive approach that considers a
+variety of areas both within and outside of the information security field. This approach applies
+throughout the entire system life cycle.
+For example, defense-in-depth is a security principle used to protect organizational information
+and systems from threats by implementing multi-layered security countermeasures. Defense-in-
+depth utilizes administrative defenses (e.g., policies, procedures) and security technologies (e.g.,
+intrusion detection systems, firewalls, configuration settings, and antivirus software) in tandem
+with physical security defenses (e.g., gates, guards) to minimize the probability of a successful
+
+NIST SP 800-12 REV. 1 AN INTRODUCTION TO INFORMATION SECURITY
+10
+This
+publication
+is
+available
+free
+of
+charge
+from:
+https://doi.org/10.6028/NIST.SP.800-12r1
+attack on the system. These measures not only help reduce the likelihood that a security breach
+will compromise access to system assets or have detrimental effects on confidentiality, integrity,
+or availability, but also give the organization near-real time notification once an attack has been
+initiated.
+2.6.1 Interdependencies of security controls
+Security controls are seldom put in place as stand-alone solutions to a problem. They are
+typically more effective when paired with another control or set of controls. Security controls,
+when selected properly, can have a synergistic effect on the overall security of a system. Each
+security control in NIST SP 800-53 has a related controls section listing security control(s) that
+compliment that specific control. If users do not understand these interdependencies, the results

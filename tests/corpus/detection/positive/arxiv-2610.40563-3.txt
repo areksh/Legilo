@@ -1,0 +1,25 @@
+2.43
+
+Total Words
+
+59805
+
+82587
+
+Avg. Words per Msg
+
+24.81
+
+28.56
+
+4.
+
+METHOD
+
+Central to our analytical approach is the GeCCo (German
+E-Counselling Conversation Dataset) category system [1], a
+specialised framework designed for analysing online counselling conversations. Structured hierarchically across up to
+five layers of abstraction, GeCCo enables a highly granular
+classification of both counsellor and client communications.
+In its fifth layer, the system details 40 distinct counsellor
+categories and 28 client categories, capturing both broad

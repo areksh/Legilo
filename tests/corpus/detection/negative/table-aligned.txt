@@ -1,0 +1,5 @@
+Team          P   W   D   L  Pts
+Riverside    10   7   2   1   23
+Hill Rovers  10   6   3   1   21
+Northgate    10   5   2   3   17
+Old Town     10   2   1   7    7

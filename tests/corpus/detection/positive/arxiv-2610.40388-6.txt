@@ -1,0 +1,45 @@
+sons to be clear soon.
+Any inference of the orbit and orientation parameters
+is based on the above six relations or equivalent ones.
+For ideal data with negligible errors for all six quanti-
+ties of r and v, the above relations provide the equations
+that uniquely determine all six parameters and no statis-
+tical analysis is necessary. For real data with uncertain-
+ties, the only issue is how to implement the six relations.
+Here, it is important to note that if any of the six quan-
+tities in the left side of Equations (3) and (4) is(are)
+essentially exact (i.e. extremely precise with negligible
+error(s)), the relation(s) including that quantity(-ies)
+provide(s) the mathematical constraint(s) (i.e., consis-
+tency relation(s)) for the involved parameters, and the
+quantity(-ies) need(s) not be included in a likelihood of
+the fitting problem. This means that the mathematical
+constraint(s) reduce the number(s) of free parameters
+because one parameter per constraint is automatically
+determined from the other parameters.
+Let αI and δI denote the measured R.A. and the decl.
+of star I (I = A, B hereafter) in units of degrees and
+dI denote the measured distance of star I in units of
+parsec(pc), then we have the observed ratio
+bobs = −
+∆δ
+∆α
+
+cos
+
+δA + δB
+360/π
+−1
+, (6)
+and the observed sky-projected separation of B from A
+in the plane defined in Figure 1
+sobs =
+18
+5
+dA
+s
+cos2
+
+δA + δB
+360/π
+

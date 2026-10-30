@@ -1,0 +1,14 @@
+solid curves are the exact noiseless evaluation of the renewal sum (9). The symbols are the hardware data, reconstructed by quantum state tomography from the protocol of Sec. II, ensemble-averaged for panels (b) and (c)
+and trajectory-resolved for panel (a). Both entropy diagnostics follow the noiseless curves closely across the measured range, with small residual deviations and no fitted
+parameter. The concurrence data lie below the noiseless
+prediction across most of that range. The exception is
+the p = 0.05 and p = 0.35 data near α = 0, where the
+noiseless concurrence approaches
+zero and the data lie
+√
+slightly above it. At α = π 2 − 1, where Ωγ = π and
+the stationary state is the pure Bell state, both entropy
+diagnostics equal 1 bit, the concurrence equals 1, and the
+Jensen gap, the difference between panels (b) and (a),
+vanishes; the hardware sampling is dense in this window.
+The asymmetry between the entropy diagnostics and the

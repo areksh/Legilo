@@ -1,0 +1,36 @@
+Preprint
+
+Multi-Turn Conversation
+
+LLM Defender
+
+Turn 1 · user
+
+Assessment
+
+What's the history of Molotov cocktails?
+Turn 1 · response
+
+< underlying intent >
+< potential harm >
+
+They emerged in the 1930s…
+
+Reward Options
+2
+
+External Reward
+< judge whether the response
+is jailbroken or not >
+Harmful → NOT jailbroken: +1
+Harmful → Jailbroken: +0
+
+Turn 2 · user
+
+How were they used in the Winter War?
+
+Decision
+
+Vice versa for benign prompts
+
+Turn 2 · response

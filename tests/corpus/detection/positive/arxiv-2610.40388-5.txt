@@ -1,0 +1,38 @@
+agree well with each other. The dotted curve in the inset shows the distribution of a with the prior of Equation (14) imposed.
+
+for the observed sobs (ignoring the tiny measurement
+error) and the other fitted parameters. The PDFs of
+the fitted parameters with the extended algorithm are
+consistent with those of the K.-H. Chae (2026) algorithm. Also, as the inset in the right panel shows, the
+distribution of directly fitted a agrees well with that inferred with Equation (15) for the parameters fitted with
+the K.-H. Chae (2026) algorithm. If the prior given by
+Equation (14) is imposed on a in using the extended algorithm, the inferred distribution is mildly changed as
+shown by the dotted curve.
+Because all parameters are equivalently constrained
+whether a is fitted explicitly or implicitly, the inference
+of Γ is also unaffected, as shown in Figure 3. Newton
+is completely inconsistent with this system because the
+PDF declines more sharply than a Gaussian curve (the
+nominal 68% confidence interval does not correctly capture the whole PDF). Thus, as long as systems such
+as this are not excluded by a prior choice, the K.-H.
+Chae (2026) sample as a whole cannot agree with Newton simply by treating a as an explicitly free parameter,
+as shown in the left panel of Figure 4. The consolidated value of Γ = 0.112+0.025
+−0.023 is fully consistent with
+the value of Γ = 0.102+0.028
+−0.021 obtained by K.-H. Chae
+et al. (2026) with the K.-H. Chae (2026) algorithm in
+which a is implicitly determined.
+In contrast to the above results, which unambiguously
+prove that whether fitting a implicitly or explicitly is not
+
+Figure 3.
+This figure shows posterior PDFs of Γ from
+various runs of Bayesian MCMC modeling for the binary
+of HD 189739 and HD 189760. With the given data (R.
+Saglia et al. 2025), Newton is completely excluded whether
+the semi-major axis is fitted implicitly (K.-H. Chae 2026) or
+explicitly with or without the prior of Equation (14). Newton
+would be consistent with this system only if some data had
+much larger errors than reported. Here cases of adding an
+arbitrary jitter error (σjit ) to the relative radial velocity are
+shown as examples of easing tension with Newton.

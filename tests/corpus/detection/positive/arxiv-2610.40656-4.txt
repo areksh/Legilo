@@ -1,0 +1,45 @@
+1
+2
+0
+0
+1
+6
+0
+0
+2
+0
+0
+0
+a
+(ppm)
+4
+0
+0
+8
+0
+0
+1
+2
+0
+0
+1
+6
+0
+0
+2
+0
+0
+0
+a (ppm)
+a (ppm) = 400.08+780.63
+−224.35
+Figure 8. Joint distribution of extracted frequency f and
+amplitude a for all significant peaks prewhitened from the
+δ Sct sample with classifier score ≥ 0.9. The marginal distri-
+butions and their medians with 16th–84th percentile ranges
+are shown in the upper and right panels.
+on a median amplitude of ∼ 400 ppm. There is a weak
+correlation between frequency and amplitude across the
+population, with increasing frequencies corresponding to
+lower amplitudes, indicating that the amplitude distri-
+bution of excited modes is weakly dependent of where

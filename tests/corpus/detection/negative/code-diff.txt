@@ -1,0 +1,9 @@
+--- a/src/main.c
++++ b/src/main.c
+@@ -10,7 +10,7 @@ int main(void)
+ {
+-    int count = 0;
++    size_t count = 0;
+     while (read_line(buffer)) {
+         count++;
+     }

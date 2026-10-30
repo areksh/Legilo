@@ -1,0 +1,11 @@
+services:
+  web:
+    image: nginx:1.27
+    ports:
+      - "8080:80"
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: example

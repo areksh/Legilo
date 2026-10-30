@@ -1,0 +1,9 @@
+Q1. What is the capital of Australia?
+A) Sydney
+B) Canberra
+C) Melbourne
+
+Q2. How many sides has a hexagon?
+A) 5
+B) 6
+C) 8

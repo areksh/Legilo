@@ -1,0 +1,9 @@
+{
+  "name": "weather-station",
+  "version": "2.1.0",
+  "sensors": [
+    {"id": "t1", "type": "temperature", "unit": "C"},
+    {"id": "h1", "type": "humidity", "unit": "%"}
+  ],
+  "interval": 60
+}

@@ -1,0 +1,28 @@
+λ
+(∞)
++
+
+with
+h(x) ≡ −x log2 x − (1 − x) log2(1 − x). (29)
+The two eigenvalues sum to unity, λ
+(∞)
++ +λ
+(∞)
+− = 1, since
+ρ̄
+(∞)
+A has unit trace, and h(x) = h(1−x), so either eigen-
+value may be inserted and λ
+(∞)
++ is chosen only for defi-
+niteness. Entropies are in bits throughout.
+The Wootters concurrence of a two-qubit state ρ is
+C(ρ) = max(0, µ1 − µ2 − µ3 − µ4) , (30)
+where µ1 ≥ µ2 ≥ µ3 ≥ µ4 are the eigenvalues of
+R =
+q
+√
+ρ ρ̃
+√
+ρ , (31)
+with the spin-flipped state

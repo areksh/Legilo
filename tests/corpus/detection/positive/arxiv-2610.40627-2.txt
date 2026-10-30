@@ -1,0 +1,43 @@
+Guangming Sheng, Chi Zhang, Zilingfeng Ye, Xibin Wu, Wang Zhang, Ru Zhang, Yanghua Peng,
+Haibin Lin, and Chuan Wu. Hybridflow: A flexible and efficient rlhf framework. arXiv preprint
+arXiv: 2409.19256, 2024.
+Aaditya Singh, Adam Fry, Adam Perelman, Adam Tart, Adi Ganesh, Ahmed El-Kishky, Aidan
+McLaughlin, Aiden Low, AJ Ostrow, Akhila Ananthram, et al. Openai gpt-5 system card. arXiv
+preprint arXiv:2601.03267, 2025.
+Jialin Song, Xiaodong Liu, Weiwei Yang, Wuyang Chen, Mingqian Feng, Xuekai Zhu, and Jianfeng
+Gao. Multibreak: A scalable and diverse multi-turn jailbreak benchmark for evaluating llm safety.
+arXiv preprint arXiv:2605.01687, 2026.
+Alexandra Souly, Qingyuan Lu, Dillon Bowen, Tu Trinh, Elvis Hsieh, Sana Pandey, Pieter Abbeel,
+Justin Svegliato, Scott Emmons, Olivia Watkins, et al. A strongreject for empty jailbreaks. Ad-
+vances in Neural Information Processing Systems, 37:125416–125440, 2024.
+Jason Vega, Isha Chaudhary, Changming Xu, and Gagandeep Singh. Bypassing the safety training
+of open-source llms with priming attacks. arXiv preprint arXiv:2312.12321, 2023.
+Zixuan Weng, Xiaolong Jin, Jinyuan Jia, and Xiangyu Zhang. Foot-in-the-door: A multi-turn jail-
+break for llms. In Proceedings of the 2025 Conference on Empirical Methods in Natural Language
+Processing, pp. 1939–1950, 2025.
+Siyu Yan, Long Zeng, Xuecheng Wu, Chengcheng Han, Kongcheng Zhang, Chong Peng, Xuezhi
+Cao, Xunliang Cai, and Chenjuan Guo. Muse: Mcts-driven red teaming framework for enhanced
+multi-turn dialogue safety in large language models. In Proceedings of the 2025 Conference on
+Empirical Methods in Natural Language Processing, pp. 21293–21314, 2025.
+An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu,
+Chang Gao, Chengen Huang, Chenxu Lv, et al. Qwen3 technical report. arXiv preprint
+arXiv:2505.09388, 2025.
+Erxin Yu, Jing Li, Ming Liao, Siqi Wang, Gao Zuchen, Fei Mi, and Lanqing Hong. Cosafe: Evalu-
+ating large language model safety in multi-turn dialogue coreference. In Proceedings of the 2024
+Conference on Empirical Methods in Natural Language Processing, pp. 17494–17508, 2024.
+Shuzhou Yuan, Ercong Nie, Yinuo Sun, Chenxuan Zhao, William LaCroix, and Michael Färber.
+Beyond over-refusal: Scenario-based diagnostics and post-hoc mitigation for exaggerated refusals
+in llms. arXiv preprint arXiv:2510.08158, 2025.
+Rowan Zellers, Ari Holtzman, Yonatan Bisk, Ali Farhadi, and Yejin Choi. Hellaswag: Can a ma-
+chine really finish your sentence? In Proceedings of the 57th annual meeting of the association
+for computational linguistics, pp. 4791–4800, 2019.
+12
+
+Preprint
+Yi Zeng, Hongpeng Lin, Jingwen Zhang, Diyi Yang, Ruoxi Jia, and Weiyan Shi. How johnny
+can persuade llms to jailbreak them: Rethinking persuasion to challenge ai safety by humanizing
+llms. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics
+(Volume 1: Long Papers), pp. 14322–14350, 2024.
+Yiming Zhang, Jianfeng Chi, Hailey Nguyen, Kartikeya Upasani, Daniel Bikel, Jason E Weston,
+and Eric Michael Smith. Backtracking improves generation safety. In International Conference
+on Learning Representations, volume 2025, pp. 41156–41173, 2025a.

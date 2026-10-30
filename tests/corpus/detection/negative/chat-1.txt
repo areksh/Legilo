@@ -1,0 +1,6 @@
+[09:14] alex: morning! anyone seen the new build?
+[09:15] sam: yeah, the login page is broken on firefox
+[09:15] alex: ugh. on it
+[09:21] sam: thanks
+[09:40] alex: fixed in 1.4.2, can you check?
+[09:41] sam: works now :)

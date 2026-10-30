@@ -1,0 +1,41 @@
+short span at the front of the response sets the trajectory of everything that follows, that span is the
+highest-leverage place to intervene, and the defender can occupy it first, not with an implicit refusal
+prefix but with an explicit commitment.
+We instantiate this idea as Assess → Decide → Respond. At every turn the defender briefly assesses
+the user’s underlying intent, commits to a parseable safety decision, and only then writes a reply
+conditioned on that decision. The commitment is the heart of the design. It is externalized: a token
+span in the model’s own output that a rule can read. It is binding: because it precedes the reply
+within the same generation, the reply is produced conditioned on it, so changing the commitment
+changes the response. And it is early: it occupies exactly the trajectory-setting positions that shallow
+alignment leaves exposed. We train the commitment with reinforcement learning, rewarding only
+the final turn of each conversation, where the attack delivers its payload and the defense must hold.
+Externalizing the decision is what makes the reward simple. Training dialogues are grown from
+seed prompts whose nature is known in advance, so every trajectory carries a ground-truth label for
+free, and the reward reduces to a string comparison: REFUSE on conversations grown from harmful
+seeds, COMPLY on benign ones. No judge, no annotation, no model in the loop: a verifiable reward
+for conversational safety in the spirit of RLVR (Shao et al., 2024; Lightman et al., 2024). Where a
+judge is available, the same format supports the prevailing judge-scored design (Inan et al., 2023;
+Guo et al., 2025; Ding et al., 2025), with a graded decision space that adds SAFE - REDIRECT. And
+because the decision conditions the reply, training the decision span alone is enough to change endto-end behavior.
+Experiments on two model families (Grattafiori et al., 2024; Yang et al., 2025) and fourteen benchmarks spanning safety, utility, and helpfulness show that both variants match or exceed every baseline trained on the same data, that the lead holds under six independent judges, and that the selfverified variant achieves this with no judge in the loop and a recipe that runs unchanged across
+backbones. Utility is preserved, at a modest cost in helpfulness that we quantify. We summarize our
+contributions as follows:
+• A multi-turn defense framework: Assess → Decide → Respond turns shallow alignment from
+a vulnerability into an explicit, trainable control point for safety alignment.
+• Two complementary rewards: a self-verified reward that checks the committed label against the
+conversation’s known nature, requiring no judge and no annotation, and an external LLM-as-judge
+reward over a graded decision space with safe redirection.
+• Comprehensive experiments and analysis: the strongest multi-turn safety in a controlled comparison across two model families, fourteen benchmarks, and six judges, achieved without perbackbone tuning, with KL and interventional analyses confirming that the defense operates
+through the committed decision.
+2
+
+
+Preprint
+
+Multi-Turn Conversation
+
+LLM Defender
+
+Turn 1 · user
+
+Assessment

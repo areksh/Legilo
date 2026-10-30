@@ -1,0 +1,12 @@
+Under these conditions, the coherence between the two
+eigenstates survives the averaging over reset histories in
+full, provided the reset state overlaps with both of them,
+⟨Ei|ψ0⟩ ⟨ψ0|Ej⟩ ̸= 0 (Sec. III B).
+The same condition also appears in the first-passage
+problem of quantum systems monitored by repeated mea-
+surements at a fixed time interval T. If the starting site
+of a quantum walk is measured once per interval un-
+til the walker is first found there, the mean number of
+measurements is an integer [10, 11], as first observed on
+a quantum computer for a single qubit [12]. This in-
+teger drops abruptly at values of T for which Eq. (1)

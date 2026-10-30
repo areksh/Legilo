@@ -1,0 +1,6 @@
+Before you start:
+1. Switch off the power at the fuse box.
+2. Remove the old fitting.
+3. Note which wire goes where.
+4. Connect the new fitting in the same way.
+5. Switch the power back on and test.

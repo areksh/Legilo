@@ -1,0 +1,37 @@
+2.1 LANGUAGE ENCODING MODELS
+Encoding models test whether a candidate representational space captures information present in
+neural responses. In language neuroscience, this approach has progressed from investigator-defined
+semantic features to contextual representations learned by neural language models, which predict ac-
+tivity across fMRI, MEG, and intracranial recordings (Huth et al., 2016; Jain & Huth, 2018; Toneva
+& Wehbe, 2019; Schrimpf et al., 2021; Goldstein et al., 2022; Caucheteux & King, 2022).
+LLM representations are effective encoding spaces because they capture many aspects of language
+simultaneously, but this also complicates their interpretation. A single layer may contain thousands
+of distributed features reflecting lexical, syntactic, semantic, contextual, and predictive information,
+any combination of which may support neural prediction. Thus, successful encoding establishes
+that neurally relevant information is linearly accessible from the representation but does not reveal
+which components carry that signal.
+Prior work has related neural predictivity to properties including next-word prediction performance,
+model scale, layer depth, representational generality, intrinsic dimensionality, and particular linguis-
+tic or computational features (Schrimpf et al., 2021; Antonello & Huth, 2024; Antonello & Cheng,
+2024; Kumar et al., 2024; Mischler et al., 2024). These results constrain possible explanations of
+LLM–brain alignment but primarily characterize representations globally rather than identifying the
+specific directions responsible for prediction.
+2.2 BRAIN-PREDICTIVE SUBSPACES
+Prior work suggests that both language representations and their relationship to neural activity ex-
+hibit low-dimensional structure. Antonello et al. (2021) identified low-dimensional organization
+in linguistic representations related to fMRI predictivity, while Lewis et al. (2025) used low-rank
+constraints to factorize LLM-to-MEG encoding models into interpretable semantic, temporal, and
+spatial components.
+These approaches motivate a more direct question: how much of an individual LLM representation
+is actually required to recover its neural predictivity? Reduced-rank regression provides a super-
+vised way to answer this question by identifying low-dimensional directions chosen specifically for
+their ability to predict neural responses. This distinguishes the brain-predictive subspace from un-
+supervised low-dimensional structure, such as the principal variance directions identified by PCA,
+and provides a representation whose dimensionality, generalization, and linguistic content can be
+studied directly.
+2
+
+Preprint.
+Figure 1: (a) We view alignment as a measure of the linear features shared by the LLM embedding
+space and the neural response space. Our goal is to selectively extract the intersection of the two
+spaces. (b) Our pipeline. We learn two low-rank representations of the model embeddings and use

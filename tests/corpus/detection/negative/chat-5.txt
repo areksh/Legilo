@@ -1,0 +1,6 @@
+<jim> the deploy failed again
+<carla> which step?
+<jim> migrations
+<carla> try running them by hand first
+<jim> ok that worked
+<carla> nice, it was the lock timeout then

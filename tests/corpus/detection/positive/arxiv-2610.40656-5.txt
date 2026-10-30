@@ -1,0 +1,44 @@
+the considerably hotter A- and early F-type regime, and
+verify the reliability of the stellar parameters using interferometry.
+isoclassify provides two modes of operation. In direct mode, effective temperatures are derived from empirical surface-brightness–color relations (L. Casagrande
+et al. 2010; D. Graczyk et al. 2017), and the stellar radius is then obtained directly from the angular diameter, parallax, and bolometric flux. In grid mode, observed quantities (parallax, apparent magnitudes, spec-
+
+
+4
+
+Hey et. al
+
+3.1. Validation against interferometry
+To verify that grid mode is suitable for our sample,
+we compared its output against interferometric effective
+temperatures. We assembled a comparison sample of 60
+stars hotter than 5500 K that have published interferometric angular diameters from the CHARA array (T. S.
+Boyajian et al. 2012a,b, 2013; T. R. White et al. 2013,
+2018), restricted to single, non-variable stars with Gaia
+DR3 counterparts. We used the published Fbol and θLD
+values to calculate interferometric temperatures.
+Figure 2 compares the isoclassify direct- and gridmode temperatures against the interferometric values.
+Direct mode shows a clear systematic deviation that
+grows with increasing temperature, with a standard deviation of 477 K about the one-to-one line and a tendency to under-predict Teff for the hottest stars in the
+sample, with fractional discrepancies exceeding ∼40%.
+This is the expected consequence of the aforementioned
+diminishing color–temperature sensitivity, confirming
+that direct mode is unsuitable for this sample. Grid
+mode, by contrast, shows no significant temperature
+trend and a standard deviation of 274 K, comparable
+to typical A-type spectroscopic temperature uncertainties (S. J. Murphy et al. 2019). We therefore adopt
+grid-mode parameters throughout the remainder of this
+paper.
+As a separate check of the grid-mode radius scale, we
+converted the isoclassify-derived radius R and Gaia
+distance d into an implied angular diameter,
+θiso =
+
+2R
+,
+d
+
+(1)
+
+which we compared with the measured θLD . We found
+good agreement between θLD and θiso for the grid-mode

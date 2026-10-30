@@ -1,0 +1,40 @@
+from the line-of-sight V -band extinction AV , as returned
+by the isoclassify posterior. Because the Gaia passband is broad, the ratio AG /AV is not constant but depends on the intrinsic color (and reddening) of the star.
+We thus adopted the polynomial coefficients of K. L.
+Luhman & T. L. Esplin (2020) who fitted AG,BP,RP /AV
+as functions of the de-reddened Gaia color. We detail
+the process of obtaining AG in Appendix A.
+Given our values of temperature, luminosity, and MG ,
+we fitted both sequences simultaneously with a linear
+relation in log space, using a common slope while each
+ridge has its own zero point. Each measurement uncertainty was added in quadrature to the corresponding intrinsic scatter. Quoted statistical intervals are the
+16th–84th percentiles of 100 bootstrap resamples.
+The fitted G-band relations are
+ 
+
+P
+F
+MG
+= −3.041+0.012
+log
+− 1.542+0.014
+10
+−0.015
+−0.017 ,
+d
+ 
+
+P
+S
+MG
+= −3.041+0.012
+log
+− 2.486+0.017
+10
+−0.015
+−0.019 , (14)
+d
+
+2.0
+
+Fundamental

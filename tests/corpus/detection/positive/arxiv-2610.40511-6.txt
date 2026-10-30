@@ -1,0 +1,30 @@
+ber 2023. Association for Computational Linguistics. doi: 10.18653/v1/2023.conll-1.31.
+Martin Schrimpf, Idan Asher Blank, Greta Tuckute, Carina Kauf, Eghbal A. Hosseini, Nancy Kan-
+wisher, Joshua B. Tenenbaum, and Evelina Fedorenko. The neural architecture of language:
+Integrative modeling converges on predictive processing. Proceedings of the National Academy
+of Sciences, 118(45):e2105646118, November 2021. doi: 10.1073/pnas.2105646118.
+C. E. Shannon. A mathematical theory of communication. The Bell System Technical Journal, 27
+(3):379–423, July 1948. ISSN 0005-8580. doi: 10.1002/j.1538-7305.1948.tb01338.x.
+Robyn Speer. wordfreq: v3.0, 2022.
+12
+
+Preprint.
+Mariya Toneva and Leila Wehbe. Interpreting and improving natural-language processing (in ma-
+chines) with natural language-processing (in the brain). In Advances in Neural Information Pro-
+cessing Systems, volume 32. Curran Associates, Inc., 2019.
+Ben Wang and Aran Komatsuzaki. GPT-J-6B: A 6 Billion Parameter Autoregressive Language
+Model. https://github.com/kingoflolz/mesh-transformer-jax, May 2021.
+Christopher Wang, Adam Yaari, Aaditya K. Singh, Vighnesh Subramaniam, Dana Rosenfarb, Jan
+DeWitt, Pranav Misra, Joseph R. Madsen, Scellig Stone, Gabriel Kreiman, Boris Katz, Ignacio
+Cases, and Andrei Barbu. Brain Treebank: Large-scale intracranial recordings from naturalistic
+language stimuli. Advances in Neural Information Processing Systems, 37:96505–96540, Decem-
+ber 2024. doi: 10.52202/079017-3060.
+Zaid Zada, Ariel Goldstein, Sebastian Michelmann, Erez Simony, Amy Price, Liat Hasenfratz,
+Emily Barham, Asieh Zadbood, Werner Doyle, Daniel Friedman, Patricia Dugan, Lucia Mel-
+loni, Sasha Devore, Adeen Flinker, Orrin Devinsky, Samuel A. Nastase, and Uri Hasson. A
+shared model-based linguistic space for transmitting our thoughts from brain to brain in nat-
+ural conversations. Neuron, 112(18):3211–3222.e5, September 2024. ISSN 0896-6273. doi:
+10.1016/j.neuron.2024.06.025.
+Zaid Zada, Samuel A. Nastase, Bobbi Aubrey, Itamar Jalon, Sebastian Michelmann, Haocheng
+Wang, Liat Hasenfratz, Werner Doyle, Daniel Friedman, Patricia Dugan, Lucia Melloni, Sasha
+Devore, Adeen Flinker, Orrin Devinsky, Ariel Goldstein, and Uri Hasson. The “Podcast” ECoG

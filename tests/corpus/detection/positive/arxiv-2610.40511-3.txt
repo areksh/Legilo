@@ -1,0 +1,26 @@
+LLM embeddings. We find that there is a mismatch between the directions of principal variance
+in the embeddings as learned from an unsupervised PCA and the directions most useful for neural prediction; suggesting differences in the representational geometry of the two systems. Finally,
+feature-decoding analyses reveal interpretable differences in the linguistic information emphasized
+by these subspaces across datasets and recording modalities. Together, these results show that LLM–
+brain alignment is supported by a compact, structured subset of model representations and provide
+a framework for identifying which components of those representations drive neural predictivity.
+
+2
+
+BACKGROUND AND M OTIVATION
+
+2.1
+
+L ANGUAGE E NCODING M ODELS
+
+Encoding models test whether a candidate representational space captures information present in
+neural responses. In language neuroscience, this approach has progressed from investigator-defined
+semantic features to contextual representations learned by neural language models, which predict activity across fMRI, MEG, and intracranial recordings (Huth et al., 2016; Jain & Huth, 2018; Toneva
+& Wehbe, 2019; Schrimpf et al., 2021; Goldstein et al., 2022; Caucheteux & King, 2022).
+LLM representations are effective encoding spaces because they capture many aspects of language
+simultaneously, but this also complicates their interpretation. A single layer may contain thousands
+of distributed features reflecting lexical, syntactic, semantic, contextual, and predictive information,
+any combination of which may support neural prediction. Thus, successful encoding establishes
+that neurally relevant information is linearly accessible from the representation but does not reveal
+which components carry that signal.
+Prior work has related neural predictivity to properties including next-word prediction performance,

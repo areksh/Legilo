@@ -1,0 +1,47 @@
+eigenvalues of the step unitary coincide. For eigenstates
+|Ei⟩ and |Ej⟩ of H, with eigenenergies Ei and Ej, this
+is the condition e−iEiT
+= e−iEj T
+, or equivalently, with Z
+the set of integers,
+(Ei − Ej) T ∈ 2πZ. (1)
+Under these conditions, the coherence between the two
+eigenstates survives the averaging over reset histories in
+full, provided the reset state overlaps with both of them,
+⟨Ei|ψ0⟩ ⟨ψ0|Ej⟩ ̸= 0 (Sec. III B).
+The same condition also appears in the first-passage
+problem of quantum systems monitored by repeated mea-
+surements at a fixed time interval T. If the starting site
+of a quantum walk is measured once per interval un-
+til the walker is first found there, the mean number of
+measurements is an integer [10, 11], as first observed on
+a quantum computer for a single qubit [12]. This in-
+teger drops abruptly at values of T for which Eq. (1)
+holds for two eigenstates that overlap the starting site
+[13]. Restarting the walk broadens these drops by an
+amount set by a time-energy uncertainty relation [14].
+Related degeneracies produce fractionally quantized re-
+currence times in interacting spin systems, which has also
+been demonstrated experimentally on a superconducting
+processor [15]. We show that the entropies of the reset
+stationary state have resonances at the same condition.
+As the exchange coupling strength or the transverse field
+of the Hamiltonian is varied at fixed step duration, both
+entropy diagnostics show narrow peaks and dips along
+the loci where Eq. (1) holds (Sec. IV D). An entropy, a
+quantity not usually associated with periodic dynamics,
+therefore marks where two eigenvalues of the step unitary
+coincide, as the mean return time does.
+In classical stochastic processes, resetting is known to
+speed up search [3, 4]. For example, the mean first-
+passage time of a diffusing particle to a target, which
+diverges for free diffusion, becomes finite under reset-
+ting to the initial position and passes through a mini-
+mum as the resetting rate is varied [3]. This observation
+has been developed into a general theory of first pas-
+sage under restart [4, 16]. Restarting also reduces the
+mean detection time in monitored quantum walks [17],
+and related restart effects are found in a quantum walk
+with flat-band localization [18]. In a monitored quantum
+search on a complete graph, resetting the walker when-
+ever the detector has not fired within a set interval can

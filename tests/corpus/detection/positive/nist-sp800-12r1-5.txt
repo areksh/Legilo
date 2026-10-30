@@ -1,0 +1,17 @@
+•
+
+Access Controls. System-specific policy is often implemented using access controls. For
+example, it may be a policy decision that only two individuals in an organization are
+authorized to run a check-printing program. Access controls are used by the system to
+implement or enforce this policy.
+
+•
+
+Links to Broader Organizational Policies. It is important to understand that information
+security policies are often extensions of other organizational policies. Support and
+32
+
+
+NIST SP 800-12 REV. 1
+
+AN INTRODUCTION TO INFORMATION SECURITY

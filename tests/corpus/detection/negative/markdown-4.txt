@@ -1,0 +1,5 @@
+| Name  | Role      | Start date |
+|-------|-----------|------------|
+| Anna  | Designer  | 2026-02-01 |
+| Ben   | Developer | 2026-03-15 |
+| Chloe | Tester    | 2026-04-02 |

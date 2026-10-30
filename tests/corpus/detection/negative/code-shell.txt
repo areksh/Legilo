@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+for file in *.jpg; do
+    convert "$file" -resize 50% "small/$file"
+done
+echo "Done: $(ls small | wc -l) images"

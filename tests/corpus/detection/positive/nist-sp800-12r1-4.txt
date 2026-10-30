@@ -1,0 +1,8 @@
+4.2 Examples of Non-Adversarial Threat Sources and Events
+4.2.1 Errors and Omissions
+Errors and omissions can be inadvertently caused by system operators who process hundreds of
+transactions daily or by users who create and edit data on organizational systems. These errors
+and omissions can degrade data and system integrity. Software applications, regardless of the
+level of sophistication, are not capable of detecting all types of input errors and omissions.
+Therefore, it is the responsibility of the organization to establish a sound awareness and training
+program to reduce the number and severity of errors and omissions.

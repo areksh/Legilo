@@ -1,0 +1,4 @@
+Sample  Mass (g)  Volume (ml)  Density
+A       12.41     10.0         1.241
+B       11.98     10.0         1.198
+C       13.07     10.0         1.307

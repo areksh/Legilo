@@ -1,0 +1,4 @@
+Item	Qty	Price
+Notebook	3	2.50
+Pens (box)	1	4.99
+Stapler	1	7.25

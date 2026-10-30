@@ -1,0 +1,16 @@
+Pattern Distribution Analysis
+
+The distribution of the client pattern shows a significant
+difference between Human-Human and Human-LLM interactions in the category Analysis & Clarification of problems
+(Figure 1). Human clients use this pattern significantly more
+often (59.07%) than LLM-simulated clients (45.47%). This
+discrepancy results from the fact that LLM-simulated clients
+tend to disclose the problems embedded in the prompt more
+readily, which enables a faster transition to problem solving.
+In addition, category Help, Problem-Solving occurs more
+frequently with LLM-simulated clients (17.63%) than
+with human clients (10.67%), suggesting that simulated
+clients take a more solution-focused approach. Similarly,
+Formalities at the End are more common in LLM-generated
+clients (11.95%) than in human clients (5.95%), probably
+reflecting structured conversation patterns typical of LLM

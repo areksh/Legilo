@@ -1,0 +1,11 @@
+.card {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}

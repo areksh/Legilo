@@ -1,0 +1,12 @@
+The more responsive and knowledgeable system support and operation staff personnel are, the
+less user support will be provided informally. The support other users provide can be valuable,
+but they may not be aware of all the issues across the organization or how they are related.
+8.2 Software Support
+Software is the heart of an organization's system operations, whatever the size and complexity of
+the system. Therefore, it is essential that software function correctly and be protected from
+corruption. There are many elements of software support.
+The first element is controlling what software is used on a system. If users or systems personnel
+can install and execute any software on a system, the system is more vulnerable to viruses,
+unexpected software interactions, and software that may subvert or bypass security controls. One
+method of controlling software is to inspect or test software before it is installed (e.g., determine
+compatibility with custom applications, identify other unforeseen interactions). This can apply to

@@ -1,0 +1,8 @@
+## Changelog
+
+### 1.3.0
+- Added dark mode
+- Fixed crash when opening empty files
+
+### 1.2.1
+- Fixed typo in the settings dialog
