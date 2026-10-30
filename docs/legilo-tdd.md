@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.10
+- Status: Draft 0.11
 - Date: 30 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -1404,6 +1404,21 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
 - Kokoro's British speaker `bf_emma` sounds better with British phonemes (`en`) than with the `en-us` in the model's metadata, so the catalogue sets `espeakVoice` for Kokoro's British speakers (7.3.2).
 - Unplugging wired headphones stops playback, which does not move to the speakers: PipeWire reports the change as a reroute, which miniaudio passes on (7.4).
 
+**Playback.** `SynthesisWorker`, `PlaybackController`, the short first chunk (7.5) and `legilo --speak` / `--speak-file` are done. The controller is tested through fakes of `TtsEngine` and `AudioOutput` (9.1). Two simplifications, to revisit when later stages need them:
+
+- There is no Stopping state: `stop()` stops the device at once and returns to Idle, and the flush discards the queue when the device next runs.
+- Text is split by a stand-in for the Segmenter (`app/SimpleSegmenter`): paragraphs, sentence ends and no one-word segments, without abbreviations. Stage 2's Segmenter replaces it, with the stage 1 commands.
+
+Against the exit criteria, on 30 October 2026:
+
+| Criterion | Result |
+|---|---|
+| Speaks a long text file smoothly | Met for a four-paragraph file: the queue never ran dry, and the listener heard no gaps. cori's prosody, with uneven pitch between words, is the voice's own (stage 4 chooses voices). |
+| First audio within NFR-01 with a warm voice | Met: the first chunk was queued 60 to 260 ms after start, within the 500 ms budget. |
+| Pause and stop silence playback within 100 ms | Met by measurement: the device stops at once, with 75 ms of buffering downstream. |
+| Speed changes heard within one sentence | Met in the controller's tests; the command line cannot change speed while speaking, so not yet heard. |
+| Works on both platforms | **Not met.** The Windows build has not been set up: espeak-ng, ONNX Runtime and miniaudio need Windows sources (5, 10.1). |
+
 **Installer.** `ModelInstaller` and `legilo --install-voice` are done, with stricter extraction than planned and tests on malicious archives built as the tests run (7.10). cori-medium installs in about a second, Kokoro in about 27 s.
 
 ### Stage 2 - Text clean-up and PDF detection (M)
@@ -1737,6 +1752,10 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.11 (30 October 2026)
+
+- Stage 1 playback and the `--speak` commands are done; the exit criteria are assessed, and the Windows one is not met (12).
 
 ### Draft 0.10 (30 October 2026)
 

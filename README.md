@@ -5,10 +5,17 @@ reads the selected text, the clipboard, or a plain-text file aloud with
 neural voices (Piper and Kokoro, through sherpa-onnx) that run entirely on
 your machine. Text copied from PDFs is cleaned up before it is spoken.
 
-**Status:** early development (stage 1 of the delivery plan). The binary
-can install a voice from one of sherpa-onnx's model archives
-(`legilo --install-voice vits-piper-en_GB-cori-medium.tar.bz2`), but does
-not speak yet.
+**Status:** early development (stage 1 of the delivery plan). From the
+command line, Legilo installs a voice from one of sherpa-onnx's model
+archives and reads text aloud:
+
+```
+legilo --install-voice vits-piper-en_GB-cori-medium.tar.bz2
+legilo --speak "Hello from Legilo."
+legilo --speak-file notes.txt --speed 1.2
+```
+
+There is no tray app or window yet; those come in later stages.
 
 The design, requirements and staged plan are in
 [docs/legilo-tdd.md](docs/legilo-tdd.md).
