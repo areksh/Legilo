@@ -56,8 +56,8 @@ Files: third_party/downloads/json-*.tar.gz
 Copyright: 2013-2025 Niels Lohmann
 License: Expat
 
-Files: tests/corpus/detection/positive/arxiv-*
- tests/corpus/detection/positive/plos-*
+Files: tests/corpus/detection/*/arxiv-*
+ tests/corpus/detection/*/plos-*
 Copyright: The authors of the papers listed in tests/corpus/sources.json
 License: CC-BY-4.0
 Comment: Excerpts of the papers, attributed in tests/corpus/sources.json.
@@ -66,9 +66,9 @@ Files: tests/corpus/detection/positive/copy-*
  tests/corpus/detection/negative/copy-*
 Copyright: The authors of the papers listed in tests/corpus/sources.json, and Arek
 License: CC-BY-4.0
-Comment: Text selected by hand in Firefox and Okular from the arXiv and PLOS
- papers in tests/corpus/sources.json, which are under CC BY 4.0, and from the
- corpus's own documents (tools/build_documents.py).
+Comment: Text selected by hand in Firefox, Chromium and Okular from the
+ arXiv and PLOS papers in tests/corpus/sources.json, which are under CC BY
+ 4.0, and from the corpus's own documents (tools/build_documents.py).
 
 Files: tests/corpus/detection/negative/poem-*
  tests/corpus/detection/negative/web-*
@@ -78,7 +78,7 @@ License: public-domain
  Poems, Jane Austen's Pride and Prejudice, Charles Darwin's On the Origin of
  Species and Herman Melville's Moby-Dick.
 
-Files: tests/corpus/detection/positive/nist-*
+Files: tests/corpus/detection/*/nist-*
 Copyright: none (a work of the United States government)
 License: public-domain
  NIST Special Publication 800-12 Revision 1 is a work of the United States
