@@ -20,6 +20,8 @@ add_library(legilo_core STATIC
     text/LineRules.h
     text/Normaliser.cpp
     text/Normaliser.h
+    text/PdfDetector.cpp
+    text/PdfDetector.h
     text/Reflow.cpp
     text/Reflow.h
     text/Segmenter.cpp

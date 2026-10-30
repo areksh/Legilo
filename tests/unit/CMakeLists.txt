@@ -22,6 +22,7 @@ endfunction()
 
 legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_normaliser SOURCES tst_normaliser.cpp LIBS legilo_core)
+legilo_add_unit_test(tst_pdfdetector SOURCES tst_pdfdetector.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_reflow SOURCES tst_reflow.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_wordlist SOURCES tst_wordlist.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_segmenter SOURCES tst_segmenter.cpp LIBS legilo_core)
