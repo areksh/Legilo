@@ -20,6 +20,9 @@ compile_commands.json
 /third_party/test-voices/
 /third_party/corpus-sources/
 
+# Python bytecode, from running the corpus tools
+__pycache__/
+
 # Editor and OS cruft
 .vscode/
 .idea/
