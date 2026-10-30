@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.11
+- Status: Draft 0.12
 - Date: 30 October 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -1366,7 +1366,7 @@ Each stage ends in something usable or testable and has explicit exit criteria. 
   - First audio arrives within the NFR-01 budget with a warm voice.
   - Pause and stop silence playback within 100 ms.
   - Speed changes are heard within one sentence.
-  - Works on both platforms.
+  - Windows moved to stage 5 (decided 30 October 2026, see the stage 1 results).
 
 #### Stage 1 results (29 October 2026)
 
@@ -1417,7 +1417,7 @@ Against the exit criteria, on 30 October 2026:
 | First audio within NFR-01 with a warm voice | Met: the first chunk was queued 60 to 260 ms after start, within the 500 ms budget. |
 | Pause and stop silence playback within 100 ms | Met by measurement: the device stops at once, with 75 ms of buffering downstream. |
 | Speed changes heard within one sentence | Met in the controller's tests; the command line cannot change speed while speaking, so not yet heard. |
-| Works on both platforms | **Not met.** The Windows build has not been set up: espeak-ng, ONNX Runtime and miniaudio need Windows sources (5, 10.1). |
+| Works on both platforms | Moved to stage 5. The Windows build has not been set up: espeak-ng, ONNX Runtime and miniaudio need Windows sources (5, 10.1), and there is no Windows machine or CI to build on yet. Stage 1 closes on Linux. |
 
 **Installer.** `ModelInstaller` and `legilo --install-voice` are done, with stricter extraction than planned and tests on malicious archives built as the tests run (7.10). cori-medium installs in about a second, Kokoro in about 27 s.
 
@@ -1473,6 +1473,7 @@ Against the exit criteria, on 30 October 2026:
 
 - **Goal:** feature parity with stage 4 on Windows.
 - **Scope:**
+  - The Windows build itself, moved here from stage 1: espeak-ng built from source with its data bundled, a prebuilt ONNX Runtime for sherpa-onnx, miniaudio and the other archives pinned in `cmake/Dependencies.cmake`, vcpkg for libarchive (10.1). The stage 1 exit criteria (speech core and command line) then hold on Windows too.
   - `Win32Shortcuts` (7.6.4), with the Windows defaults checked against reserved combinations (7.6.2).
   - `UiaTextSource` with `IUIAutomation2` timeouts, the simulated-copy fallback, the excluded-apps list and console detection (7.1.3).
   - Clipboard owner hint.
@@ -1481,6 +1482,7 @@ Against the exit criteria, on 30 October 2026:
   - Inno Setup installer (10.4) with Open With for `.txt`.
   - Windows defaults for shortcuts.
 - **Exit criteria:**
+  - The stage 1 speech core passes its tests and reads a long file smoothly on Windows 11.
   - Section 9.4 checklist passes on Windows 11.
   - Selection reading works in Notepad, Word, Edge, Firefox and Adobe Reader.
   - The fallback is correctly skipped in Windows Terminal.
@@ -1752,6 +1754,10 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.12 (30 October 2026)
+
+- The Windows build moves from stage 1 to stage 5, so stage 1 closes on Linux (12).
 
 ### Draft 0.11 (30 October 2026)
 
