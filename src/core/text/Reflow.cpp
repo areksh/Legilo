@@ -72,6 +72,34 @@ QString removeRunningHeaders(const QString &text)
     return kept.join(u'\n');
 }
 
+// Firefox puts a blank line between many lines of one paragraph, so in
+// PDF text a blank line is a paragraph break only where a sentence could
+// end: after terminal punctuation, or before a line that does not run on
+// with a lowercase letter.
+QString joinBlankLinesInSentences(const QString &text)
+{
+    const QStringList lines = text.split(u'\n');
+    QStringList kept;
+    for (qsizetype i = 0; i < lines.size(); ++i) {
+        if (!isBlank(lines[i]) || kept.isEmpty() || isBlank(kept.last())) {
+            kept.append(lines[i]);
+            continue;
+        }
+        qsizetype next = i;
+        while (next < lines.size() && isBlank(lines[next])) {
+            ++next;
+        }
+        const bool insideSentence = next < lines.size() && !endsSentence(kept.last().trimmed()) &&
+                                    lines[next].trimmed().front().isLower();
+        if (insideSentence) {
+            i = next - 1; // drop the blank run
+        } else {
+            kept.append(lines[i]);
+        }
+    }
+    return kept.join(u'\n');
+}
+
 // Rule 3: a word hyphenated across a line break.
 QString dehyphenate(const QString &text, bool pdf, const WordList *words)
 {
@@ -170,6 +198,7 @@ QString reflow(QStringView text, const ReflowOptions &options, const WordList *w
         if (options.removeRunningHeaders) {
             result = removeRunningHeaders(result);
         }
+        result = joinBlankLinesInSentences(result);
     }
     result = dehyphenate(result, options.pdf, words);
     if (options.pdf) {

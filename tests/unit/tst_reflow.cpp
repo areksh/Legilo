@@ -56,6 +56,15 @@ void TestReflow::pdfMode_data()
         u"The quick brown fox jumps over the lazy dog."_s);
     row("blank line stays a paragraph break", u"First paragraph here.\n\nSecond one here."_s,
         u"First paragraph here.\n\nSecond one here."_s);
+    // Firefox puts a blank line between many lines of one paragraph.
+    row("blank line inside a sentence is no break",
+        u"The quick brown\n\nfox jumps over\n\nthe lazy dog."_s,
+        u"The quick brown fox jumps over the lazy dog."_s);
+    row("hyphenated break across a blank line", u"The re-\n\nsults are in."_s,
+        u"The results are in."_s);
+    row("blank line before a capital stays a break",
+        u"A heading without a stop\n\nThe body begins here."_s,
+        u"A heading without a stop\n\nThe body begins here."_s);
     row("Arabic page number", u"End of the page text\n12\nand the next page."_s,
         u"End of the page text and the next page."_s);
     row("page of", u"End of the page text\nPage 3 of 10\nand the next page."_s,
@@ -125,6 +134,8 @@ void TestReflow::plainText_data()
     QTest::newRow("line breaks kept")
         << u"Roses are red\nViolets are blue"_s << u"Roses are red\nViolets are blue"_s;
     QTest::newRow("page-number-like line kept") << u"Lines\n12\nhere"_s << u"Lines\n12\nhere"_s;
+    QTest::newRow("blank line inside a sentence kept")
+        << u"The quick brown\n\nfox jumps."_s << u"The quick brown\n\nfox jumps."_s;
     QTest::newRow("confirmed join") << u"The re-\nsults are in."_s << u"The results are in."_s;
     QTest::newRow("hyphen and break kept when both halves are words")
         << u"a well-\nknown fact"_s << u"a well-\nknown fact"_s;
