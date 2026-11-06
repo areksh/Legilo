@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.16
+- Status: Draft 0.17
 - Date: 6 November 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -444,23 +444,23 @@ These run on all text and should never damage normal prose:
 
 The selection and clipboard do not reliably say where text came from, so detection is based on the shape of the text, plus weak hints from MIME types and, on Windows, the owning process.
 
-Features are computed on the normalised text, split into lines. Blank lines are ignored, because no PDF reader's copy marks paragraphs with them reliably (12, stage 2 results). A line's successor is the next non-empty line, and every non-empty line but the last is a body line. A body line **wraps** when it ends without terminal punctuation (`.!?:;` plus closing quotes or brackets) and the next line starts with a lowercase letter. The first draft also counted a leading digit or opening bracket, but in the corpus that marked logs, tables, chat and checklists far more often than prose.
+Features are computed on the normalised text, split into lines. Blank lines are ignored, because no PDF reader's copy marks paragraphs with them reliably (12, stage 2 results). A line's successor is the next non-empty line, and every non-empty line but the last is a body line. A body line **wraps** when it holds at least three words of two or more letters, ends without terminal punctuation (`.!?:;` plus closing quotes or brackets), and the next line starts with a lowercase letter. The word count keeps equations and table cells, copied a symbol or a cell to a line, from looking like prose running on. The first draft also counted a leading digit or opening bracket, but in the corpus that marked logs, tables, chat and checklists far more often than prose.
 
 | Feature | Definition | Weight |
 |---|---|---|
-| `wrap` | The longest run of body lines that wrap, as a fraction of eight lines (at most 1). A run, not a share of all lines, so that an address block or a table above wrapped prose does not hide it, and a few short lines of chat that happen to run on count for little | 3.11 |
-| `midline` | Fraction of lines in which one sentence ends and another begins: a lowercase word of two or more letters, or a closing bracket, then `.`, `!` or `?`, an optional closing quote or bracket, whitespace and a capital. "Dr. Smith" and initials do not count | 1.05 |
-| `hyphen` | 1 if a line ends with a letter followed by `-` and the next line starts with a lowercase letter, or a line holds "word- word", Chromium's form of a hyphenated break | 1.03 |
+| `wrap` | The longest run of body lines that wrap, as a fraction of eight lines (at most 1). A run, not a share of all lines, so that an address block or a table above wrapped prose does not hide it, and a few short lines of chat that happen to run on count for little | 4.89 |
+| `midline` | Fraction of lines in which one sentence ends and another begins: a lowercase word of two or more letters, or a closing bracket, then `.`, `!` or `?`, an optional closing quote or bracket, whitespace and a capital. "Dr. Smith" and initials do not count | 1.30 |
+| `hyphen` | 1 if a line ends with a letter followed by `-` and the next line starts with a lowercase letter, or a line holds "word- word", Chromium's form of a hyphenated break | 1.51 |
 | `ligature` | 1 if the raw text contained ligature characters (recorded during normalisation) | 0 |
-| `pagenum` | 1 if any line matches the page-number rule (section 7.2.4) | 0.36 |
+| `pagenum` | 1 if any line matches the page-number rule (section 7.2.4) | 0.41 |
 | `owner` | 1 if `ownerHint` is a known PDF reader (Windows only) | 0.22 |
-| `list` | Fraction of lines that start with a list marker (`-`, `*`, a bullet character, `1.`, `a)`) | 0.27 |
+| `list` | Fraction of lines that start with a list marker (`-`, `*`, a bullet character, `1.`, `a)`) | 0.29 |
 
 Negative signals subtract from the score:
 
 | Signal | Definition | Weight |
 |---|---|---|
-| `symbols` | Fraction of lines in which at least 5% of the characters are symbols: brackets of every kind, `=`, `;`, `$`, `#`, slashes, `&`, `*`, `_`, `~`, `^`, `@`, `%`, the vertical bar and the backtick. It marks code, shell sessions, markup and tables | -1.44 |
+| `symbols` | Fraction of lines in which at least 5% of the characters are symbols: brackets of every kind, `=`, `;`, `$`, `#`, slashes, `&`, `*`, `_`, `~`, `^`, `@`, `%`, the vertical bar and the backtick. It marks code, shell sessions, markup and tables | -1.36 |
 | `html` | 1 if the capture offered `text/html` (rich-text sources are rarely raw PDF text) | -0.11 |
 
 ```
@@ -1464,12 +1464,15 @@ Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, 
 |---|---|---|---|
 | First draft's features and weights | first held-out set | 0.82 | 0.43 |
 | Fitted features (7.2.3) | first held-out set | 1.00 | 0.86 |
-| Fitted features, refitted on the larger tuning set | fresh held-out set | **0.935** | **0.915** |
+| Fitted features, refitted on the larger tuning set | fresh held-out set | 0.935 | 0.915 |
+| `wrap` needs three words on the line, refitted | fresh held-out set | **0.915** | **0.915** |
 | Target (9.2) | | 0.98 | 0.90 |
 
 - The first held-out set came from about five documents, so one document decided a fifth of its recall, and its misses (a letter's address block above short paragraphs) were looked at while choosing the `wrap` feature. It moved to the tuning set, and seven documents in layouts the corpus lacked were added as a fresh held-out set, labelled by reading them before the detector ran on them.
 - On the fresh set every negative written for the corpus passes. The three false positives are non-prose inside the new PDFs: equation fragments from the thesis and two IRS tables. Their short lowercase fragments look like wrapped lines to `wrap`. One of the tables, whose cells wrap, was a borderline label.
-- The precision check is marked as an expected failure in `tst_detectioncorpus`, not lowered: Qt fails the test with XPASS once the target is met. The fix is next, test-first from the equation and table excerpts already in the tuning set. The fresh held-out set has now been scored, so the next score comes from another fresh set: selections saved during real use at stage 3, not another session of selecting by hand.
+- Requiring three words before a line can wrap was chosen on the tuning set, where it raised recall from 0.90 to 0.955 (and the private samples' from 0.74 to 0.82) at the same precision. On the held-out set it changed little: the thesis's equation fragments hold enough letter runs to pass, and the larger `wrap` weight took a fourth IRS table over the threshold. It is kept, since dropping it on that score would be choosing by the held-out set.
+- Adding the tuning PDFs' own tables, equations and charts as negatives (23 excerpts cut where short lines are densest) was tried and dropped on the tuning set's evidence: none had been a false positive, and the refit lost tuning recall. Their tables are numbers and short labels, while the held-out failures are tables of wrapped sentences and letter-heavy equations, which the tuning documents do not have. Finding documents that do would mean choosing them by the held-out failures.
+- The precision check is marked as an expected failure in `tst_detectioncorpus`, not lowered: Qt fails the test with XPASS once the target is met. Detection is left there for stage 2. The next data, both to tune on and to score, comes from selections saved during real use at stage 3, which will hold tables and equations as readers really select them, not chosen to match these failures.
 
 **More about how the viewers copy**, from the second round of selections:
 
@@ -1817,6 +1820,11 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.17 (6 November 2026)
+
+- `wrap` needs at least three words on the line; weights refitted (7.2.3).
+- Its held-out result, the layout-excerpt experiment that was dropped, and detection left at its current precision until stage 3 brings real selections (12, stage 2 results).
 
 ### Draft 0.16 (6 November 2026)
 
