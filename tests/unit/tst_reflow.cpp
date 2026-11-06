@@ -134,6 +134,19 @@ void TestReflow::pdfMode_data()
         u"to the end of it."_s,
         u"This line is nearly as long as the others are. The next sentence starts here and runs "
         u"on to the end of it."_s);
+    // Joining a hyphenated word must not merge its two lines into one
+    // twice as long, or every other line looks short.
+    row("hyphenated joins keep the usual line width",
+        u"The committee met in the old hall on Thursday evening to discuss at some length the re-\n"
+        u"sults of the survey, and after a long debate the members agreed to publish them in "
+        u"full.\n"
+        u"The secretary would write the report during the winter and send it out in the spring.\n"
+        u"Then every member would have a chance to read it before the annual general meeting."_s,
+        u"The committee met in the old hall on Thursday evening to discuss at some length the "
+        u"results of the survey, and after a long debate the members agreed to publish them in "
+        u"full. The secretary would write the report during the winter and send it out in the "
+        u"spring. Then every member would have a chance to read it before the annual general "
+        u"meeting."_s);
     row("heading without a stop stays apart",
         u"Method\nHeat the oven to two hundred degrees and wait\n"
         u"for it to warm up properly before you start."_s,

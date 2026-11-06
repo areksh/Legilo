@@ -124,35 +124,47 @@ Break judge(const QString &first, const QString &second, const WordList *words)
     return joinedIsWord ? Break::Join : Break::Unknown;
 }
 
-// Rule 3: a word hyphenated across a line break.
+// Rule 3: a word hyphenated across a line break. In PDF text the joined
+// word ends the first line and the rest of the second line stays on its
+// own: merging the two lines would make one twice the usual width, and
+// rule 5 judges paragraph ends by that width.
 QString dehyphenate(const QString &text, bool pdf, const WordList *words)
 {
-    static const QRegularExpression broken(u"(\\w+)-[ \\t]*\\n[ \\t]*(\\w+)"_s, Unicode);
+    static const QRegularExpression broken(u"(\\w+)-[ \\t]*\\n[ \\t]*(\\w+)(\\S*)"_s, Unicode);
     QString result;
     qsizetype last = 0;
     for (const auto &match : broken.globalMatch(text)) {
         const QString first = match.captured(1);
         const QString second = match.captured(2);
+        const QString rest = match.captured(3);  // punctuation after the word
         QString replacement = match.captured(0); // left as it is
         switch (judge(first, second, words)) {
         case Break::Join:
-            replacement = first + second; // confirmed: in every mode
+            replacement = first + second + rest; // confirmed: in every mode
             break;
         case Break::KeepHyphen:
             if (pdf) {
-                replacement = first + u'-' + second;
+                replacement = first + u'-' + second + rest;
             }
             break;
         case Break::Unknown:
         case Break::Ambiguous:
             if (pdf) {
-                replacement = first + second;
+                replacement = first + second + rest;
             }
             break;
         }
         result += QStringView(text).sliced(last, match.capturedStart() - last);
-        result += replacement;
         last = match.capturedEnd();
+        if (pdf && replacement != match.captured(0)) {
+            while (last < text.size() && (text[last] == u' ' || text[last] == u'\t')) {
+                ++last;
+            }
+            if (last < text.size() && text[last] != u'\n') {
+                replacement += u'\n';
+            }
+        }
+        result += replacement;
     }
     result += QStringView(text).sliced(last);
     return result;
@@ -224,10 +236,10 @@ QString joinLines(const QString &text)
     constexpr double Percentile = 0.9;
     const auto index =
         static_cast<qsizetype>(std::ceil(Percentile * static_cast<double>(lengths.size()))) - 1;
-    // Tuned on the clean-up corpus (9.2): from 0.8 to 0.95 recovers the
-    // same paragraphs, and 0.75 runs a newsletter's together.
-    constexpr double ParagraphEnd = 0.85;
-    // A heading without a stop must be shorter still.
+    // ParagraphEnd is tuned on the clean-up corpus (9.2), for the most
+    // paragraphs recovered exactly. A heading without a stop must be
+    // shorter still: under half, as the first draft had it.
+    constexpr double ParagraphEnd = 0.8;
     constexpr double Heading = 0.5;
     const auto usual = static_cast<double>(lengths.at(std::max<qsizetype>(index, 0)));
     const auto isHeading = [&](const QString &line, const QString &next) {
