@@ -147,6 +147,15 @@ void TestReflow::pdfMode_data()
         u"full. The secretary would write the report during the winter and send it out in the "
         u"spring. Then every member would have a chance to read it before the annual general "
         u"meeting."_s);
+    row("numbered clauses stay apart",
+        u"2. Subscriptions\n2.1 Annual subscriptions fall due on the first day of April\n"
+        u"each year.\n2.2 The committee may vary the rates of subscription."_s,
+        u"2. Subscriptions\n\n2.1 Annual subscriptions fall due on the first day of April each "
+        u"year.\n\n2.2 The committee may vary the rates of subscription."_s);
+    row("a decimal running on stays joined",
+        u"The length of the rope they bought was exactly\n3.5 metres, which was enough for the job."_s,
+        u"The length of the rope they bought was exactly 3.5 metres, which was enough for the "
+        u"job."_s);
     row("heading without a stop stays apart",
         u"Method\nHeat the oven to two hundred degrees and wait\n"
         u"for it to warm up properly before you start."_s,

@@ -63,8 +63,12 @@ bool isPageNumberLine(QStringView line)
 
 bool isListItemLine(QStringView line)
 {
+    // A clause number ("2.1") counts only before a capital, so a decimal
+    // running on from the line before ("3.5 metres") does not.
     static const QRegularExpression marker(
-        u"^\\s*([-*\\x{2022}\\x{2023}\\x{25E6}]|\\d{1,3}[.)]|[A-Za-z][.)])\\s"_s, Unicode);
+        u"^\\s*(([-*\\x{2022}\\x{2023}\\x{25E6}]|\\d{1,3}[.)]|[A-Za-z][.)])\\s|"
+        u"\\d{1,3}(\\.\\d{1,3})+\\s+\\p{Lu})"_s,
+        Unicode);
     return marker.matchView(line).hasMatch();
 }
 
