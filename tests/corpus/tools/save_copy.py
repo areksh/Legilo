@@ -3,15 +3,24 @@
 in for Okular, but Firefox, Chromium and Adobe Reader copy differently, so
 real selections keep the detector honest.
 
-Usage: python3 -I tests/corpus/tools/save_copy.py VIEWER NAME [--negative] [--local] [--clipboard]
+Usage: python3 -I tests/corpus/tools/save_copy.py VIEWER NAME [--negative] [--local]
+           [--clipboard] [--count N] [--from DIR]
 
 Start it, then select passages in the reader; there is no need to come
 back to the terminal. Each selection that stays unchanged for a moment is
 saved as copy-VIEWER-NAME-1.txt, then -2 and so on. A selection that
 extends or trims the one just saved replaces it: Chromium updates the
 selection while it is still being dragged, so a pause mid-drag would
-otherwise save part of it. Press Ctrl+C here when done. It reads the primary selection, which is what Legilo's
-speak-selection reads; --clipboard watches the Ctrl+C clipboard instead.
+otherwise save part of it. It stops after --count selections, or when
+you press Ctrl+C here. It reads the primary selection, which is what
+Legilo's speak-selection reads; --clipboard watches the Ctrl+C clipboard
+instead.
+
+The selection is shared by every program, so a helper left running
+would save whatever else is selected. A selection is saved only when at
+least half its runs of five words come from one of the PDFs in --from
+(by default the corpus's sources, third_party/corpus-sources/); anything
+else is ignored, and only that fact is printed.
 
 Focusing the terminal replaces the primary selection with the
 terminal's own, so the helper never waits for input. Selections shorter
@@ -27,18 +36,34 @@ import argparse
 import pathlib
 import re
 import subprocess
+import sys
 import time
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import identify_copies  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 POLL_SECONDS = 0.5
 STEADY_SECONDS = 2.5  # a selection still being dragged keeps changing
 MIN_CHARACTERS = 40
+MIN_SHARED = 0.5  # of a selection's five-word runs found in one source PDF
 
 
 def selected(clipboard):
     args = ["wl-paste", "--no-newline"] + ([] if clipboard else ["--primary"])
     result = subprocess.run(args, capture_output=True, text=True)
     return result.stdout if result.returncode == 0 else ""
+
+
+def document_runs(folder):
+    pdfs = sorted(folder.glob("*.pdf")) + sorted((folder / "made").glob("*.pdf"))
+    return [identify_copies.runs(subprocess.run(["pdftotext", str(pdf), "-"], capture_output=True,
+                                                text=True, check=True).stdout) for pdf in pdfs]
+
+
+def from_documents(text, documents):
+    runs = identify_copies.runs(text)
+    return bool(runs) and any(len(runs & document) >= MIN_SHARED * len(runs) for document in documents)
 
 
 def main():
@@ -48,7 +73,13 @@ def main():
     parser.add_argument("--negative", action="store_true")
     parser.add_argument("--local", action="store_true")
     parser.add_argument("--clipboard", action="store_true")
+    parser.add_argument("--count", type=int, help="stop after saving this many")
+    parser.add_argument("--from", dest="sources", type=pathlib.Path, default=ROOT / "third_party/corpus-sources",
+                        help="the PDFs selections must come from")
     args = parser.parse_args()
+    documents = document_runs(args.sources)
+    if not documents:
+        raise SystemExit(f"No PDFs in {args.sources}")
 
     base = ROOT / ("tests/corpus/local" if args.local else "tests/corpus/detection")
     folder = base / ("negative" if args.negative else "positive")
@@ -60,6 +91,7 @@ def main():
     # Whatever is selected already is not a new passage.
     last_saved = selected(args.clipboard)
     candidate, since = None, 0.0
+    ignored = None
     saved = 0
     last_path = None
     print(f"Watching the {'clipboard' if args.clipboard else 'selection'}. "
@@ -71,8 +103,12 @@ def main():
             if text != candidate:
                 candidate, since = text, time.monotonic()
                 continue
-            if (time.monotonic() - since < STEADY_SECONDS or text == last_saved
+            if (time.monotonic() - since < STEADY_SECONDS or text in (last_saved, ignored)
                     or len(text.strip()) < MIN_CHARACTERS or "save_copy.py" in text):
+                continue
+            if not from_documents(text, documents):
+                print("Ignored a selection that is not from the documents.")
+                ignored = text
                 continue
             # The same selection, dragged further or pulled back.
             revised = last_path is not None and (last_saved.strip() in text or text.strip() in last_saved)
@@ -83,6 +119,14 @@ def main():
             if not revised:
                 number += 1
                 saved += 1
+                if args.count and saved >= args.count:
+                    # A last pause, in case the selection is still growing.
+                    time.sleep(STEADY_SECONDS * 2)
+                    final = selected(args.clipboard)
+                    if final != text and (text.strip() in final) and from_documents(final, documents):
+                        path.write_text(final.rstrip("\n") + "\n", encoding="utf-8")
+                        print(f"Updated {len(final.splitlines())} lines as {path.relative_to(ROOT)}")
+                    break
     except KeyboardInterrupt:
         print()
     print(f"{saved} saved.")

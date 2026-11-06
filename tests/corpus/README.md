@@ -69,14 +69,21 @@ Okular copy. Firefox, Chromium and Adobe Reader copy text differently, so
 the corpus needs real samples from them too. Start the helper, then
 select passages in the reader; each selection that stays unchanged for a
 moment is saved, without going back to the terminal, until you press
-Ctrl+C there. It reads the primary selection, which Legilo's
-speak-selection reads:
+Ctrl+C there, or until it has saved `--count` of them. It reads the
+primary selection, which Legilo's speak-selection reads:
 
 ```
-python3 -I tests/corpus/tools/save_copy.py firefox papers
+python3 -I tests/corpus/tools/save_copy.py firefox papers --count 4
 python3 -I tests/corpus/tools/save_copy.py okular menu --negative
-python3 -I tests/corpus/tools/save_copy.py firefox policy --local
+python3 -I tests/corpus/tools/save_copy.py firefox policy --local --from ~/Documents/policies
 ```
+
+The selection belongs to the whole desktop, so the helper saves a
+selection only when most of it comes from one of the PDFs in `--from`
+(the corpus's sources by default) and ignores anything else, which it
+never prints. The name of a copy records the viewer the helper was told
+about; check that it matches the viewer that made it, whose habits the
+design document lists.
 
 Focusing the terminal replaces the primary selection with the terminal's
 own, which is why the helper watches instead of waiting for Enter.
