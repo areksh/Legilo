@@ -151,6 +151,32 @@ QString speakSymbols(QString text)
 
 } // namespace
 
+QStringList spokenSegments(const Document &document)
+{
+    QStringList spoken;
+    for (const Segment &segment : document.segments) {
+        const QStringView text =
+            QStringView(document.cleaned).sliced(segment.start, segment.end - segment.start);
+        spoken.append(speakable(text, document.settingsUsed, document.pdf));
+    }
+    return spoken;
+}
+
+QString spokenText(const Document &document)
+{
+    const QStringList spoken = spokenSegments(document);
+    QString text;
+    for (qsizetype i = 0; i < spoken.size(); ++i) {
+        if (i > 0) {
+            const bool newParagraph =
+                document.segments.at(i).paragraph != document.segments.at(i - 1).paragraph;
+            text += newParagraph ? u"\n\n"_s : u" "_s;
+        }
+        text += spoken.at(i);
+    }
+    return text;
+}
+
 QString speakable(QStringView text, const CleanupSettings &settings, bool pdf)
 {
     QString spoken = speakUrls(text.toString(), settings.urls);

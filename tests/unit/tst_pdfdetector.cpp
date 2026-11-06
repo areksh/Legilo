@@ -57,6 +57,7 @@ private slots:
     void symbolDenseLines();
     void sentencesEndingInsideLines();
     void scoreIsWeightedSumAgainstThreshold();
+    void explanationListsTheDecisionAndEveryFeature();
 };
 
 void TestPdfDetector::fewerThanThreeLinesIsNeverPdf()
@@ -248,6 +249,19 @@ void TestPdfDetector::scoreIsWeightedSumAgainstThreshold()
     QCOMPARE(above.score, 1.0);
     QVERIFY(above.isPdf);
     QVERIFY(!below.isPdf);
+}
+
+void TestPdfDetector::explanationListsTheDecisionAndEveryFeature()
+{
+    const auto result = detectPdf(LongProse);
+
+    const QStringList lines = legilo::explain(result, 1.0).split(u'\n');
+
+    QCOMPARE(lines.first(),
+             u"PDF text: yes (score %1, threshold 1.00)"_s.arg(result.score, 0, 'f', 2));
+    QCOMPARE(lines.size(), 1 + result.features.size());
+    QVERIFY(lines.contains(u"  wrap      1.00"_s));
+    QCOMPARE(legilo::explain({}, 1.0), u"PDF text: no (fewer than three lines)"_s);
 }
 
 QTEST_GUILESS_MAIN(TestPdfDetector)

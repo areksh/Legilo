@@ -1,4 +1,6 @@
+#include "core/text/CleanupPipeline.h"
 #include "core/text/SpeechRules.h"
+#include "core/text/WordList.h"
 
 #include <QTest>
 
@@ -6,6 +8,8 @@ using legilo::CitationRule;
 using legilo::CleanupSettings;
 using legilo::EmailRule;
 using legilo::speakable;
+using legilo::spokenSegments;
+using legilo::spokenText;
 using legilo::UrlRule;
 using namespace Qt::StringLiterals;
 
@@ -56,6 +60,7 @@ private slots:
     void authorYearCitationsStayByDefault();
     void superscriptsAreSpoken();
     void fractionsAfterADigitTakeAnd();
+    void documentIsSpokenSegmentBySegment();
 };
 
 void TestSpeechRules::urlsAreSpokenAsTheirHost_data()
@@ -189,6 +194,21 @@ void TestSpeechRules::fractionsAfterADigitTakeAnd()
 {
     QCOMPARE(plain(u"It took 2\u00BD hours and 3\u00BE days."_s),
              u"It took 2 and \u00BD hours and 3 and \u00BE days."_s);
+}
+
+// The rules apply per segment with the settings the document was cleaned
+// with; the spoken text keeps the document's paragraphs.
+void TestSpeechRules::documentIsSpokenSegmentBySegment()
+{
+    const legilo::WordList words({u"the"_s});
+    legilo::TextCapture capture;
+    capture.text = u"See https://example.com/a now. It works.\n\nNext [3] part."_s;
+    CleanupSettings settings = withCitations(CitationRule::Always);
+    const legilo::Document document = legilo::CleanupPipeline(words).run(capture, settings);
+
+    QCOMPARE(spokenSegments(document),
+             (QStringList{u"See a link to example.com now."_s, u"It works."_s, u"Next part."_s}));
+    QCOMPARE(spokenText(document), u"See a link to example.com now. It works.\n\nNext part."_s);
 }
 
 QTEST_GUILESS_MAIN(TestSpeechRules)

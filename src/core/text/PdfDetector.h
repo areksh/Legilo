@@ -75,4 +75,8 @@ struct DetectionResult
 DetectionResult detectPdf(QStringView text, const DetectionHints &hints = {},
                           const DetectorWeights &weights = {});
 
+// The decision, the score against threshold and each feature's value, a
+// line each, for --explain and the preview (7.12).
+QString explain(const DetectionResult &result, double threshold);
+
 } // namespace legilo

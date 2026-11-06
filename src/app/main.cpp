@@ -1,8 +1,8 @@
 #include "core/audio/MiniaudioOutput.h"
 #include "core/models/ModelInstaller.h"
 #include "core/playback/PlaybackController.h"
-#include "core/text/Normaliser.h"
-#include "core/text/Segmenter.h"
+#include "core/text/CleanupPipeline.h"
+#include "core/text/SpeechRules.h"
 #include "core/tts/SherpaTtsEngine.h"
 #include "core/tts/VoiceRegistry.h"
 
@@ -11,6 +11,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QThread>
+
+#include <optional>
 
 using namespace legilo;
 
@@ -48,7 +50,7 @@ int installVoice(const QString &archive)
 
 // Speaks text aloud and returns once it has been spoken. A stage 1 stand-in
 // for --speak-text and --read, which stage 3 brings with a running instance.
-int speak(QCoreApplication &app, const QString &text, const QString &voiceId, double speed)
+int speak(QCoreApplication &app, const TextCapture &capture, const QString &voiceId, double speed)
 {
     const VoiceRegistry registry(VoiceRegistry::defaultDirectory());
     if (registry.voices().isEmpty()) {
@@ -68,12 +70,8 @@ int speak(QCoreApplication &app, const QString &text, const QString &voiceId, do
         return ExitError;
     }
 
-    // Stage 2 builds the rest of the clean-up pipeline around these steps.
-    const QString cleaned = normalise(text).text;
-    QStringList segments;
-    for (const Segment &s : segment(cleaned)) {
-        segments.append(cleaned.sliced(s.start, s.end - s.start));
-    }
+    // Stage 3 reads the clean-up settings; until then the defaults apply.
+    const QStringList segments = spokenSegments(CleanupPipeline().run(capture, CleanupSettings{}));
     if (segments.isEmpty()) {
         return 0;
     }
@@ -90,6 +88,46 @@ int speak(QCoreApplication &app, const QString &text, const QString &voiceId, do
         return ExitError;
     }
     return QCoreApplication::exec();
+}
+
+// The text --clean-only and --explain work on: a file, or standard input.
+std::optional<QString> readInput(const QStringList &files)
+{
+    QFile file;
+    if (files.isEmpty()) {
+        if (!file.open(stdin, QIODevice::ReadOnly)) {
+            err() << "legilo: cannot read standard input" << Qt::endl;
+            return std::nullopt;
+        }
+    } else {
+        file.setFileName(files.first());
+        if (!file.open(QIODevice::ReadOnly)) {
+            err() << "legilo: cannot read " << file.fileName() << ": " << file.errorString()
+                  << Qt::endl;
+            return std::nullopt;
+        }
+    }
+    return QString::fromUtf8(file.readAll());
+}
+
+// Runs the clean-up pipeline on text as pasted, so Auto mode detects PDF
+// text in it, and prints the spoken text or the detection's explanation.
+int cleanOnly(const QStringList &files, bool explanation)
+{
+    const auto text = readInput(files);
+    if (!text) {
+        return ExitError;
+    }
+    TextCapture capture;
+    capture.text = *text;
+    capture.source = CaptureSource::Pasted;
+    const CleanupSettings settings;
+    const Document document = CleanupPipeline().run(capture, settings);
+    QTextStream out(stdout);
+    out << (explanation ? explain(document.detection, settings.detectThreshold)
+                        : spokenText(document))
+        << '\n';
+    return 0;
 }
 
 } // namespace
@@ -120,8 +158,26 @@ int main(int argc, char *argv[])
     const QCommandLineOption speedOption(QStringLiteral("speed"),
                                          QStringLiteral("The speed to speak at, from 0.5 to 2.5."),
                                          QStringLiteral("speed"), QStringLiteral("1.0"));
-    parser.addOptions({installVoiceOption, speakOption, speakFileOption, voiceOption, speedOption});
+    const QCommandLineOption cleanOnlyOption(
+        QStringLiteral("clean-only"),
+        QStringLiteral("Print the text as it would be spoken, from FILE or standard input."));
+    const QCommandLineOption explainOption(
+        QStringLiteral("explain"),
+        QStringLiteral("Print PDF detection's features and score, from FILE or standard input."));
+    parser.addOptions({installVoiceOption, speakOption, speakFileOption, voiceOption, speedOption,
+                       cleanOnlyOption, explainOption});
+    parser.addPositionalArgument(QStringLiteral("file"),
+                                 QStringLiteral("The text for --clean-only or --explain."),
+                                 QStringLiteral("[FILE]"));
     parser.process(app);
+
+    if (parser.isSet(cleanOnlyOption) || parser.isSet(explainOption)) {
+        if (parser.positionalArguments().size() > 1) {
+            err() << "legilo: give at most one file" << Qt::endl;
+            return ExitUsage;
+        }
+        return cleanOnly(parser.positionalArguments(), parser.isSet(explainOption));
+    }
 
     if (parser.isSet(installVoiceOption)) {
         return installVoice(parser.value(installVoiceOption));
@@ -134,7 +190,9 @@ int main(int argc, char *argv[])
             err() << "legilo: the speed must be a number from 0.5 to 2.5" << Qt::endl;
             return ExitUsage;
         }
-        QString text = parser.value(speakOption);
+        TextCapture capture;
+        capture.text = parser.value(speakOption);
+        capture.source = CaptureSource::Pasted;
         if (parser.isSet(speakFileOption)) {
             QFile file(parser.value(speakFileOption));
             if (!file.open(QIODevice::ReadOnly)) {
@@ -142,9 +200,10 @@ int main(int argc, char *argv[])
                       << Qt::endl;
                 return ExitError;
             }
-            text = QString::fromUtf8(file.readAll());
+            capture.text = QString::fromUtf8(file.readAll());
+            capture.source = CaptureSource::File;
         }
-        return speak(app, text, parser.value(voiceOption), speed);
+        return speak(app, capture, parser.value(voiceOption), speed);
     }
 
     // Nothing else is implemented yet, so a bare start shows the help.

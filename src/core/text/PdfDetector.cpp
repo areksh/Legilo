@@ -141,4 +141,21 @@ DetectionResult detectPdf(QStringView text, const DetectionHints &hints,
     return result;
 }
 
+QString explain(const DetectionResult &result, double threshold)
+{
+    if (result.features.isEmpty()) {
+        return u"PDF text: no (fewer than three lines)"_s;
+    }
+    constexpr int NameWidth = 10;
+    QStringList lines{
+        u"PDF text: %1 (score %2, threshold %3)"_s.arg(result.isPdf ? u"yes"_s : u"no"_s)
+            .arg(result.score, 0, 'f', 2)
+            .arg(threshold, 0, 'f', 2)};
+    for (auto it = result.features.cbegin(); it != result.features.cend(); ++it) {
+        lines.append(u"  "_s + it.key().leftJustified(NameWidth) +
+                     QString::number(it.value(), 'f', 2));
+    }
+    return lines.join(u'\n');
+}
+
 } // namespace legilo
