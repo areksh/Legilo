@@ -43,32 +43,111 @@ QString removePageNumbers(const QString &text)
     return kept.join(u'\n');
 }
 
-// Rule 2: short lines that repeat, digits aside, and are not sentences.
-QString removeRunningHeaders(const QString &text)
+// The lines of a text, with each line's key for spotting repeats: the
+// trimmed line with its digits as "#", so "Vol. 12" and "Vol. 13" match.
+struct RepeatedLines
+{
+    QStringList lines;
+    QStringList keys;
+    QHash<QString, QList<qsizetype>> positions; // of each key, in non-empty lines
+
+    explicit RepeatedLines(const QString &text)
+        : lines(text.split(u'\n'))
+    {
+        static const QRegularExpression digit(u"\\d"_s, Unicode);
+        qsizetype position = 0;
+        for (const QString &line : lines) {
+            keys.append(QString(line).replace(digit, u"#"_s).trimmed());
+            if (!isBlank(line)) {
+                positions[keys.last()].append(position++);
+            }
+        }
+    }
+
+    qsizetype skipBlank(qsizetype i, qsizetype step) const
+    {
+        while (i >= 0 && i < lines.size() && isBlank(lines[i])) {
+            i += step;
+        }
+        return i;
+    }
+};
+
+bool hasLetters(QStringView text)
+{
+    return std::ranges::any_of(text, [](QChar c) { return c.isLetter(); });
+}
+
+// Every occurrence at least half the shortest page from the next.
+bool aPageApart(const QList<qsizetype> &at)
+{
+    constexpr qsizetype MinGap = 15; // non-empty lines
+    for (qsizetype i = 1; i < at.size(); ++i) {
+        if (at[i] - at[i - 1] < MinGap) {
+            return false;
+        }
+    }
+    return at.size() >= 2;
+}
+
+// Lines that could be a header: short, not a sentence, repeated a page
+// apart. A header never starts lower case; a word Firefox split off at a
+// change of style ("and") can, and repeats by chance.
+QList<bool> headerCandidates(const RepeatedLines &text)
 {
     constexpr qsizetype MaxLength = 60;
     constexpr int MinLetters = 3;
-    static const QRegularExpression digit(u"\\d"_s, Unicode);
-    const auto keyOf = [](const QString &line) {
-        return QString(line).replace(digit, u"#"_s).trimmed();
+    QList<bool> candidates;
+    candidates.reserve(text.lines.size());
+    for (qsizetype i = 0; i < text.lines.size(); ++i) {
+        const QString &key = text.keys[i];
+        const auto letters = std::ranges::count_if(key, [](QChar c) { return c.isLetter(); });
+        candidates.append(!isBlank(text.lines[i]) && key.size() < MaxLength &&
+                          letters >= MinLetters && !key.front().isLower() &&
+                          aPageApart(text.positions.value(key)) && !endsSentence(key));
+    }
+    return candidates;
+}
+
+// Rule 2: short lines that repeat, digits aside, a page apart, and are
+// not sentences. A header is one line, or a footer and the next page's
+// header, and the text beside it changes from page to page. Content
+// repeats too, but closer (a list of amendments, a table's labels), or
+// as a longer run of lines, or with the lines beside it.
+QString removeRunningHeaders(const QString &text)
+{
+    constexpr qsizetype MaxRun = 3;
+    const RepeatedLines repeated(text);
+    const QList<bool> candidate = headerCandidates(repeated);
+    const QStringList &lines = repeated.lines;
+    const auto repeatedText = [&](qsizetype j) {
+        return j >= 0 && j < lines.size() && !candidate[j] && hasLetters(repeated.keys[j]) &&
+               repeated.positions.value(repeated.keys[j]).size() >= 2;
     };
 
-    const QStringList lines = text.split(u'\n');
-    QHash<QString, int> counts;
-    for (const QString &line : lines) {
-        if (!isBlank(line)) {
-            ++counts[keyOf(line)];
-        }
-    }
     QStringList kept;
-    for (const QString &line : lines) {
-        const QString key = keyOf(line);
-        const auto letters = std::ranges::count_if(key, [](QChar c) { return c.isLetter(); });
-        const bool header = !isBlank(line) && key.size() < MaxLength && letters >= MinLetters &&
-                            counts.value(key) >= 2 && !endsSentence(key);
-        if (!header) {
-            kept.append(line);
+    qsizetype i = 0;
+    while (i < lines.size()) {
+        if (!candidate[i]) {
+            kept.append(lines[i++]);
+            continue;
         }
+        qsizetype end = i; // the run's end, past blank lines between its lines
+        qsizetype run = 0;
+        for (qsizetype j = i; j < lines.size() && (candidate[j] || isBlank(lines[j])); ++j) {
+            if (candidate[j]) {
+                ++run;
+                end = j + 1;
+            }
+        }
+        const bool header = run <= MaxRun && !repeatedText(repeated.skipBlank(i - 1, -1)) &&
+                            !repeatedText(repeated.skipBlank(end, 1));
+        for (qsizetype j = i; j < end; ++j) {
+            if (!header || !candidate[j]) {
+                kept.append(lines[j]);
+            }
+        }
+        i = end;
     }
     return kept.join(u'\n');
 }

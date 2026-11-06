@@ -88,10 +88,56 @@ void TestReflow::pdfMode_data()
         u"Chapter IV begins here."_s);
     row("a column of numbers is a table", u"The values are\n12\n13\n14\nin all."_s,
         u"The values are 12 13 14 in all."_s);
+    // A header repeats a page apart, so the pages here are of a length
+    // a reader's selection would have.
+    const QString body = u"and the body of the page goes on\n"_s.repeated(15);
+    const QString joined = u"and the body of the page goes on "_s.repeated(15);
     row("running header (fix 12)",
-        u"Journal of Things, Vol. 12\nThe body of the first page\ngoes on here.\n\n"
-        u"Journal of Things, Vol. 13\nThe body of the second page\ngoes on too."_s,
-        u"The body of the first page goes on here.\n\nThe body of the second page goes on too."_s);
+        u"Journal of Things, Vol. 12\nThe first page begins\n"_s + body + u"and ends here.\n\n"_s +
+            u"Journal of Things, Vol. 13\nThe second page begins\n"_s + body + u"and ends too."_s,
+        u"The first page begins "_s + joined + u"and ends here.\n\nThe second page begins "_s +
+            joined + u"and ends too."_s);
+    // A running header repeats a page apart; content can repeat a few
+    // lines apart, as a list of amendments does.
+    row("lines repeated close together are content",
+        u"Additional amendments were adopted by the Court\nby an order dated the 30th of April "
+        u"1991.\n"
+        u"Additional amendments were adopted by the Court\nby an order dated the 22nd of April 1993."_s,
+        u"Additional amendments were adopted by the Court by an order dated the 30th of April "
+        u"1991. Additional amendments were adopted by the Court by an order dated the 22nd of "
+        u"April 1993."_s);
+    // A passage repeated a page apart, copied as short lines, is content:
+    // a header is one line, or two with a footer, not a run of them.
+    const QString passage =
+        u"If the child is presumed\nto have been taken by\nsomeone who is not a\n"
+        u"member of your family\n"_s;
+    const QString passageJoined = u"If the child is presumed to have been taken by someone who is "
+                                  u"not a member of your family "_s;
+    row("a passage repeated a page apart is content",
+        passage + body + u"and so it ends.\n\n"_s + passage + body + u"and so on."_s,
+        passageJoined + joined + u"and so it ends.\n\n"_s + passageJoined + joined +
+            u"and so on."_s);
+    // A sentence ending inside the passage splits it into short runs, but
+    // the lines beside each run repeat with it, as a header's do not.
+    const QString sentences = u"If the child is presumed\nto have been taken away by force.\n"
+                              u"Then you may claim the\nchild as a dependent\n"_s;
+    const QString sentencesJoined =
+        u"If the child is presumed to have been taken away by force. Then you may claim the child "
+        u"as a "
+        u"dependent "_s;
+    row("a passage with a sentence end repeated a page apart is content",
+        sentences + body + u"and so it ends.\n\n"_s + sentences + body + u"and so on."_s,
+        sentencesJoined + joined + u"and so it ends.\n\n"_s + sentencesJoined + joined +
+            u"and so on."_s);
+    // Firefox splits a word off at a change of style, so a lone "and" can
+    // repeat a page apart; a header never starts lower case.
+    row("a lowercase fragment repeated a page apart is content",
+        u"The first page begins with\nand\nthen a line of its own\n"_s + body +
+            u"and ends here.\n\nThe second page has\nand\nanother line of its own\n"_s + body +
+            u"and ends too."_s,
+        u"The first page begins with and then a line of its own "_s + joined +
+            u"and ends here.\n\nThe second page has and another line of its own "_s + joined +
+            u"and ends too."_s);
     row("a repeated sentence is no header",
         u"It is so.\nThe body of the text goes on.\n\nIt is so.\nAnd so does this part."_s,
         u"It is so.\n\nThe body of the text goes on.\n\nIt is so.\n\nAnd so does this part."_s);
