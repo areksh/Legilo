@@ -15,8 +15,13 @@ add_library(legilo_core STATIC
     playback/PlaybackController.h
     playback/SynthesisWorker.cpp
     playback/SynthesisWorker.h
+    document/Document.h
     document/Segment.h
+    document/TextCapture.h
     text/LineRules.cpp
+    text/CleanupPipeline.cpp
+    text/CleanupPipeline.h
+    text/CleanupSettings.h
     text/LineRules.h
     text/Normaliser.cpp
     text/Normaliser.h

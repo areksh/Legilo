@@ -27,6 +27,7 @@ legilo_add_unit_test(tst_detectioncorpus SOURCES tst_detectioncorpus.cpp LIBS le
 target_compile_definitions(tst_detectioncorpus PRIVATE
     LEGILO_CORPUS_DIR="${PROJECT_SOURCE_DIR}/tests/corpus")
 legilo_add_unit_test(tst_reflow SOURCES tst_reflow.cpp LIBS legilo_core)
+legilo_add_unit_test(tst_cleanuppipeline SOURCES tst_cleanuppipeline.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_wordlist SOURCES tst_wordlist.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_segmenter SOURCES tst_segmenter.cpp LIBS legilo_core)
 legilo_add_unit_test(tst_phonemiser SOURCES tst_phonemiser.cpp LIBS legilo_core)
