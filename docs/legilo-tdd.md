@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.18
+- Status: Draft 0.19
 - Date: 6 November 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -347,6 +347,8 @@ legilo/
 
 #### 7.1.1 Interface
 
+`TextCapture` and `CaptureSource` are defined in `core` (`core/document/TextCapture.h`), not with the interface, because the clean-up pipeline takes them and `core` depends on nothing above it.
+
 ```cpp
 enum class CaptureSource { Selection, Clipboard, File, Pasted };
 
@@ -454,7 +456,7 @@ Features are computed on the normalised text, split into lines. Blank lines are 
 | `ligature` | 1 if the raw text contained ligature characters (recorded during normalisation) | 0 |
 | `pagenum` | 1 if any line matches the page-number rule (section 7.2.4) | 0.41 |
 | `owner` | 1 if `ownerHint` is a known PDF reader (Windows only) | 0.22 |
-| `list` | Fraction of lines that start with a list marker (`-`, `*`, a bullet character, `1.`, `a)`) | 0.29 |
+| `list` | Fraction of lines that start with a list marker (`-`, `*`, a bullet character, `1.`, `a)`, or a clause number such as `2.1` before a capital) | 0.29 |
 
 Negative signals subtract from the score:
 
@@ -517,12 +519,16 @@ All rules apply in PDF mode only, except the confirmed join in rule 3, which app
    - Keep the hyphen if both halves are words in the word list and the joined form is not (for example, "well-known" stays).
    - **Confirmed join (all modes):** join the halves without the hyphen if the joined form is in the word list and at least one half is not (for example, "re-" + "sults").
    - **PDF mode only:** in every other case, join the halves without the hyphen. With no word list available, join.
+   - In PDF mode the joined word ends the first line, and the rest of the second line stays on a line of its own. Deleting the line break would merge two lines into one twice the usual width, and rule 5 judges paragraph ends by that width.
    - **Inside a line (PDF mode only):** "word- word", Chromium's form of a hyphenated break, is changed only where the word list settles it: joined without the hyphen for a confirmed join, and with it where both halves are words and the joined form is not. Anything else is left as it is, because a hyphen and a space can be meant ("pre- and post-tests").
 4. **Dash at line end.** For a line ending in an em or en dash (U+2014, U+2013), join to the next line without inserting a space.
 5. **Line joining.**
    - Blank lines that rule 3 left are paragraph breaks.
-   - Within a paragraph, a line break becomes a space, **except** before a line that starts with a list marker, or after a short line (under 50% of the 90th-percentile length) that ends with terminal punctuation. Those breaks become paragraph breaks.
-   - The exceptions preserve lists and headings that the script merged into the previous paragraph.
+   - Within a paragraph, a line break becomes a space, **except** in three cases, where it becomes a paragraph break:
+     - before a line that starts with a list marker (as in 7.2.3, clause numbers included);
+     - after a line under 80% of the 90th-percentile line length that ends with terminal punctuation: the last line of a paragraph, or a heading. Okular's and Chromium's copies have no blank lines, so this is how their paragraphs come back;
+     - after a line under 50% of that length that has letters and no terminal punctuation, when the next line starts with a capital: a heading without a full stop ("Method", "1. Introduction").
+   - The exceptions preserve lists and headings that the script merged into the previous paragraph. The 80% was tuned on the clean-up pairs (9.2), for the most paragraphs recovered exactly; the pairs are six documents typeset for the corpus, which is a reason to watch it in real use.
 
 #### 7.2.5 Speech rules (per segment, at synthesis)
 
@@ -1158,6 +1164,7 @@ public:
 ### 9.2 Regression corpus
 
 - `tests/corpus/cleanup/<name>/input.txt` and `expected.txt` pairs. The test runs the pipeline in Auto mode and compares the output exactly.
+  - **As built:** six pairs. The recipe and the terms and conditions match exactly. The other four cannot match from text alone, because a selection loses what showed their structure: a paragraph whose last line runs to the full width (the report, the novel), titles wrapped across lines in a large font (the paper, the newsletter), three columns (the newsletter), and, in the novel, a running header on its only page, which no rule can tell from a title. Their comparisons are expected failures with those reasons, and each pair must still recover at least as many paragraphs exactly as it did when the test was written (11 to 17 of 14 to 17), so a regression fails.
 - `tests/corpus/detection/positive/` and `negative/`: at least 150 samples in total.
   - **Positive:** text copied from real PDFs via Okular, Firefox, Chromium and Adobe Reader, covering single and two-column layouts, and justified and ragged text.
   - **Negative:** emails, web articles, chat, code, poems, addresses, lists, Markdown, subtitles, and tables of numbers.
@@ -1457,7 +1464,7 @@ Against the exit criteria, on 30 October 2026:
 
 #### Stage 2 results (6 November 2026, in progress)
 
-Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, the regression corpus (9.2) and PDF detection (7.2.3).
+Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, the regression corpus (9.2), PDF detection (7.2.3), `CleanupSettings`, the `Document` model and `CleanupPipeline` (7.2.1, 7.2.8), and the clean-up pair test (9.2). Still to do: the speech rules (7.2.5), `--clean-only` and `--explain`, the comparison with `speak-tts --clean-only`, and the 5 MB benchmark.
 
 **PDF detection meets its recall target but not its precision target.**
 
@@ -1498,7 +1505,7 @@ Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, 
 - Reflow (7.2.4) and detection (7.2.3) both read a blank line as a paragraph break. They have to change, test-first against these samples, when the detector is built:
   - In PDF mode, a blank line inside a sentence (the line before ends without terminal punctuation and the next continues it) is not a paragraph break, and de-hyphenation works across it. Done (7.2.4, rule 3).
   - In PDF mode, "word- word" inside a line (Chromium's form of a hyphenated break) joins when the word list confirms the joined word. Done (7.2.4, rule 3).
-  - Where a copy has lost its paragraph breaks, a paragraph ends after a line that ends a sentence and is clearly shorter than the text's usual line length.
+  - Where a copy has lost its paragraph breaks, a paragraph ends after a line that ends a sentence and is clearly shorter than the text's usual line length. Done (7.2.4, rule 5), with headings that have no full stop and clause numbers. Building it showed that de-hyphenation merged two lines into one, which made every other line look short; that is fixed too (rule 3).
   - Detection's features must not depend on blank lines marking paragraphs. Done: detection ignores blank lines (7.2.3).
 - `pdftotext` itself sometimes merges two lines into one, leaves a space inside a hyphenated word ("ac count"), and runs a word hyphenated at the foot of a page into the footer ("somePage 1 of 5"). The corpus keeps these as found.
 - Keyboard selections may not reach the primary selection (7.1.2).
@@ -1718,7 +1725,7 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 | `voice/firstChunkChars` | int | 80 | Target length of the short first chunk (7.5) |
 | `voice/rewindOnResume` | bool | false | Rewind to the start of the sentence on resume (7.4) |
 | `cleanup/reflowMode` | enum | `auto` | `auto`, `always`, `never` |
-| `cleanup/detectThreshold` | double | 0.45 | Advanced |
+| `cleanup/detectThreshold` | double | 1.0 | Advanced. The fitted weights are scaled so that 1 is the threshold (7.2.3) |
 | `cleanup/pageNumbers` | bool | true | PDF mode |
 | `cleanup/repeatedLines` | bool | true | PDF mode |
 | `cleanup/dehyphenate` | bool | true | PDF mode |
@@ -1821,6 +1828,12 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.19 (6 November 2026)
+
+- Reflow keeps a joined word's two lines apart in PDF text, ends a paragraph after a sentence under 80% of the usual width and after a short heading without a stop, and counts clause numbers as list markers (7.2.4, 7.2.3).
+- `TextCapture` lives in `core` (7.1.1). The clean-up pipeline and the pair test are built; four pairs cannot match from text alone and are expected failures with a paragraph floor (9.2, 12).
+- `cleanup/detectThreshold` defaults to 1.0 (Appendix A).
 
 ### Draft 0.18 (6 November 2026)
 
