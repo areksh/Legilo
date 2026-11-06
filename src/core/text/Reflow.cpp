@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 
 using namespace Qt::StringLiterals;
 
@@ -100,6 +101,29 @@ QString joinBlankLinesInSentences(const QString &text)
     return kept.join(u'\n');
 }
 
+// What the word list says about a word broken by a hyphen.
+enum class Break : std::uint8_t
+{
+    Unknown,    // no word list, or nothing it confirms ("foo-" + "barz")
+    Join,       // "re-" + "sults": only the joined word is a word
+    KeepHyphen, // "well-" + "known": both halves are words, the joined one not
+    Ambiguous,  // "re-" + "cover": all three are words
+};
+
+Break judge(const QString &first, const QString &second, const WordList *words)
+{
+    if (words == nullptr) {
+        return Break::Unknown;
+    }
+    const bool firstIsWord = words->contains(first);
+    const bool secondIsWord = words->contains(second);
+    const bool joinedIsWord = words->contains(first + second);
+    if (firstIsWord && secondIsWord) {
+        return joinedIsWord ? Break::Ambiguous : Break::KeepHyphen;
+    }
+    return joinedIsWord ? Break::Join : Break::Unknown;
+}
+
 // Rule 3: a word hyphenated across a line break.
 QString dehyphenate(const QString &text, bool pdf, const WordList *words)
 {
@@ -110,24 +134,52 @@ QString dehyphenate(const QString &text, bool pdf, const WordList *words)
         const QString first = match.captured(1);
         const QString second = match.captured(2);
         QString replacement = match.captured(0); // left as it is
-        if (words != nullptr) {
-            const bool firstIsWord = words->contains(first);
-            const bool secondIsWord = words->contains(second);
-            const bool joinedIsWord = words->contains(first + second);
-            const bool keepHyphen = firstIsWord && secondIsWord && !joinedIsWord;   // "well-known"
-            const bool confirmed = joinedIsWord && (!firstIsWord || !secondIsWord); // "results"
-            if (keepHyphen) {
-                if (pdf) {
-                    replacement = first + u'-' + second;
-                }
-            } else if (confirmed || pdf) {
-                // A confirmed join applies in every mode. Any other, such
-                // as "re-" + "cover", where all three are words, only to
-                // PDF text.
+        switch (judge(first, second, words)) {
+        case Break::Join:
+            replacement = first + second; // confirmed: in every mode
+            break;
+        case Break::KeepHyphen:
+            if (pdf) {
+                replacement = first + u'-' + second;
+            }
+            break;
+        case Break::Unknown:
+        case Break::Ambiguous:
+            if (pdf) {
                 replacement = first + second;
             }
-        } else if (pdf) {
+            break;
+        }
+        result += QStringView(text).sliced(last, match.capturedStart() - last);
+        result += replacement;
+        last = match.capturedEnd();
+    }
+    result += QStringView(text).sliced(last);
+    return result;
+}
+
+// Chromium copies a hyphenated break as one line, "inter- ferometric".
+// Inside a line the hyphen and space can also be meant ("pre- and
+// post-tests"), so only what the word list confirms is joined.
+QString dehyphenateInLines(const QString &text, const WordList *words)
+{
+    static const QRegularExpression broken(u"(\\p{L}+)- (\\p{Ll}+)"_s, Unicode);
+    QString result;
+    qsizetype last = 0;
+    for (const auto &match : broken.globalMatch(text)) {
+        const QString first = match.captured(1);
+        const QString second = match.captured(2);
+        QString replacement = match.captured(0);
+        switch (judge(first, second, words)) {
+        case Break::Join:
             replacement = first + second;
+            break;
+        case Break::KeepHyphen:
+            replacement = first + u'-' + second;
+            break;
+        case Break::Unknown:
+        case Break::Ambiguous:
+            break;
         }
         result += QStringView(text).sliced(last, match.capturedStart() - last);
         result += replacement;
@@ -202,6 +254,7 @@ QString reflow(QStringView text, const ReflowOptions &options, const WordList *w
     }
     result = dehyphenate(result, options.pdf, words);
     if (options.pdf) {
+        result = dehyphenateInLines(result, words);
         result = joinDashes(result);
         result = joinLines(result);
     }

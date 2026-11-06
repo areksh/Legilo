@@ -103,6 +103,15 @@ void TestReflow::pdfMode_data()
     row("unconfirmed break joined in PDF mode", u"The foo-\nbarz thing."_s,
         u"The foobarz thing."_s);
     row("ambiguous break joined in PDF mode", u"They re-\ncover it."_s, u"They recover it."_s);
+    // Chromium copies a hyphenated break as one line, with a space after
+    // the hyphen.
+    row("confirmed break inside a line", u"The re- sults are in."_s, u"The results are in."_s);
+    row("compound broken inside a line", u"It is a well- known fact."_s,
+        u"It is a well-known fact."_s);
+    row("unconfirmed break inside a line stays", u"The foo- barz thing."_s,
+        u"The foo- barz thing."_s);
+    row("ambiguous break inside a line stays", u"They re- cover it."_s, u"They re- cover it."_s);
+    row("suspended hyphen stays", u"Use pre- and post-tests."_s, u"Use pre- and post-tests."_s);
     row("dash at line end joins without a space (fix 13)",
         u"It was the end\u2014\nand then more."_s, u"It was the end\u2014and then more."_s);
     row("list items stay apart (fix 7)", u"Buy these things\n- eggs\n- milk\n- bread"_s,
@@ -134,6 +143,8 @@ void TestReflow::plainText_data()
     QTest::newRow("line breaks kept")
         << u"Roses are red\nViolets are blue"_s << u"Roses are red\nViolets are blue"_s;
     QTest::newRow("page-number-like line kept") << u"Lines\n12\nhere"_s << u"Lines\n12\nhere"_s;
+    QTest::newRow("break inside a line kept")
+        << u"The re- sults are in."_s << u"The re- sults are in."_s;
     QTest::newRow("blank line inside a sentence kept")
         << u"The quick brown\n\nfox jumps."_s << u"The quick brown\n\nfox jumps."_s;
     QTest::newRow("confirmed join") << u"The re-\nsults are in."_s << u"The results are in."_s;

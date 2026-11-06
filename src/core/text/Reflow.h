@@ -18,10 +18,13 @@ struct ReflowOptions
 // Pipeline step 3 (design 7.2.4). In PDF mode, in this order: removes
 // page-number lines and repeated running headers and footers, drops blank
 // lines that fall inside a sentence (Firefox's copies have them between
-// the lines of a paragraph), joins words hyphenated across line breaks, joins a line ending in a
-// dash to the next without a space, and joins the lines of each paragraph, keeping list items and
-// short headings apart. Outside PDF mode only the de-hyphenation that the word list confirms
-// applies ("re-" + "sults"), so deliberate line breaks survive.
+// the lines of a paragraph), joins words hyphenated across line breaks,
+// joins those the word list confirms inside a line ("re- sults", as
+// Chromium copies them), joins a line ending in a dash to the next
+// without a space, and joins the lines of each paragraph, keeping list
+// items and short headings apart. Outside PDF mode only the
+// de-hyphenation that the word list confirms applies ("re-" + "sults"),
+// so deliberate line breaks survive.
 //
 // words may be null, for no word list: PDF mode then joins every
 // hyphenated break, and outside it nothing is joined.
