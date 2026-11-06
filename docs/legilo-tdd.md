@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.19
+- Status: Draft 0.20
 - Date: 6 November 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -301,6 +301,8 @@ User presses shortcut
   -> End of document: state Idle, optional notification
 ```
 
+Until stage 3, the command line applies the speech rules as it hands the segments to the controller (`spokenSegments()`), which speaks the same thing. The worker takes the `Document` itself when the reader needs it.
+
 ### 6.5 Repository layout
 
 ```
@@ -511,10 +513,15 @@ All rules apply in PDF mode only, except the confirmed join in rule 3, which app
 2. **Repeated running headers and footers.** Count each line after replacing digits with `#` and trimming. Remove a line if:
    - it is short (under 60 characters),
    - it contains at least three letters,
-   - it occurs at least twice in the text, and
-   - it is not a sentence (does not end with terminal punctuation).
+   - it does not start with a lowercase letter,
+   - it occurs at least twice in the text, every occurrence at least 15 non-empty lines (half the shortest page) from the next,
+   - it is not a sentence (does not end with terminal punctuation),
+   - it is in a run of at most three such lines (a footer and the next page's header), and
+   - the lines beside that run do not repeat too.
 
    This catches "Journal of Something, Vol. 12" repeated across a multi-page selection. The letter requirement keeps table rows such as "12.5" and "13.7", which both become "##.#". Toggle, default on.
+
+   The page gap, the run and the neighbours were added when the comparison with `speak-tts` (12, stage 2 results) showed real text removed: documents repeat short lines close together (a list of amendments), repeat whole passages (which Firefox copies as short lines), and Firefox splits single words ("and") off a line. A section heading or a table's labels repeated pages apart still look like a header.
 3. **De-hyphenation across line breaks.** First, in PDF mode, a blank line inside a sentence is dropped: one after a line that ends without terminal punctuation and before a line that starts with a lowercase letter. Firefox's copies put one between many lines of a paragraph, often between the halves of a hyphenated word (12, stage 2 results). Then, for `(\w+)-[ \t]*\n[ \t]*(\w+)`:
    - Keep the hyphen if both halves are words in the word list and the joined form is not (for example, "well-known" stays).
    - **Confirmed join (all modes):** join the halves without the hyphen if the joined form is in the word list and at least one half is not (for example, "re-" + "sults").
@@ -540,7 +547,8 @@ These rules change what is spoken, not what is displayed. They run on each segme
 - **Email addresses.** Setting: speak as "an email address at example.com" (default) or in full.
 - **Numeric citation markers** `[12]`, `[3, 4]`, `[5-7]`, `[5` + U+2013 + `7]`. Removed in PDF mode by default, and optionally in all text. In ordinary text they are left alone by default, because square-bracketed numbers there are often meaningful.
 - **Author-year citations** such as `(Smith et al., 2020)` or `(Smith and Jones 2019; Lee 2021)`. Optional, default off. Matches a bracketed group of one or more entries separated by `;`. Each entry is capitalised names, an optional "et al.", and a four-digit year with an optional letter (2020a).
-- **Superscripts and fractions.** A small table: U+00B2 to " squared", U+00B3 to " cubed", U+00BD to " a half", U+00BC to " a quarter", U+00BE to " three quarters". In stage 2, drop any entry that espeak-ng is shown by test to read correctly already.
+- **Superscripts and fractions.** U+00B2 to " squared" and U+00B3 to " cubed". A digit followed by U+00BC, U+00BD or U+00BE gets " and " between them ("2 and a half").
+  - The first draft also mapped U+00BD, U+00BC and U+00BE to words, to be dropped where espeak-ng reads the symbol already. A stage 2 spike with the Phonemiser showed it reads the three fractions correctly on their own, in both en-gb-x-rp and en-us, but U+00B2 and U+00B3 as "two" and "three", and a fraction after a digit without its "and" ("two a half hours"), which the table's entry would not have fixed.
 
 #### 7.2.6 Fixes relative to `speak-tts` and `speak-selection`
 
@@ -1227,6 +1235,8 @@ Performance budgets are measured in a separate benchmark job, not asserted in th
 
 A regression of more than 20% against the previous recorded run is reported in the job's summary.
 
+- **As built (stage 2):** `tests/benchmark/bench_pipeline`, run by `scripts/bench` until there is CI. It times the pipeline in Auto and Always modes and the speech rules on 5 MB made of the regression corpus's samples, records each result in `build/linux-release/bench-results.tsv`, and reports measures over budget or more than 20% slower than the previous record, without failing.
+
 ---
 
 ## 10. Build, CI and packaging
@@ -1464,7 +1474,29 @@ Against the exit criteria, on 30 October 2026:
 
 #### Stage 2 results (6 November 2026, in progress)
 
-Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, the regression corpus (9.2), PDF detection (7.2.3), `CleanupSettings`, the `Document` model and `CleanupPipeline` (7.2.1, 7.2.8), and the clean-up pair test (9.2). Still to do: the speech rules (7.2.5), `--clean-only` and `--explain`, the comparison with `speak-tts --clean-only`, and the 5 MB benchmark.
+The scope is built: the normaliser, segmenter, word list, reflow and whitespace steps, the regression corpus (9.2), PDF detection (7.2.3), `CleanupSettings`, the `Document` model and `CleanupPipeline` (7.2.1, 7.2.8), the speech rules (7.2.5), `--clean-only` and `--explain`, the clean-up pair test (9.2) and the benchmark (9.6).
+
+**Exit criteria:**
+
+| Criterion | Result |
+|---|---|
+| Corpus tests pass | Pass, with expected failures: detection's held-out precision, and the four clean-up pairs text alone cannot recover (9.2) |
+| Detection at least 98% precision and 90% recall on the held-out set | Recall 0.915 met; precision 0.915 not met (7.2.3, below) |
+| At least as good as `speak-tts --clean-only` on your samples | See the comparison below; to be judged by you |
+| 5 MB budget met in the benchmark job | Met: Auto mode 1.35 s, Always 1.05 s, speech rules 0.22 s on the development laptop |
+
+**Comparison with `speak-tts --clean-only`**, on every corpus sample (private samples counted, never shown):
+
+| Measure | `speak-tts` | Legilo |
+|---|---|---|
+| Clean-up pairs: paragraphs recovered exactly | 0 of 88 | 67 of 88 |
+| Clean-up pairs: similarity to the expected text | 0.20 to 0.99 | 0.99 to 1.00 |
+| Text whose line breaks matter (108 samples): line breaks kept | 15% | 83% |
+| Of those, samples flattened into one line | 58 | 0 |
+| PDF text: broken words left | 18 | 7 |
+| PDF text: words not spoken, apart from joined halves | 881 of 57,166 committed, 4 of 13,706 private | 943 and 43 |
+
+Legilo leaves more words unspoken because it removes running headers and footers, which `speak-tts` reads aloud (fix 12), and words from within URLs, as both do. The comparison first showed the header rule removing real text as well, 400 words in three private samples, which led to its stricter tests (7.2.4, rule 2). What it removes now in the private samples is short lines starting with a capital that recur 35 to 75 lines apart.
 
 **PDF detection meets its recall target but not its precision target.**
 
@@ -1760,7 +1792,8 @@ legilo --speed X                speed for this command only
 legilo --read [FILE...]         open files in the reader and start reading;
                                 with no files, show the reader
 legilo --show                   show the reader
-legilo --clean-only [FILE]      print the spoken text (stdin if no file)
+legilo --clean-only [FILE]      print the spoken text (stdin if no file); the input
+                                is taken as pasted, so Auto mode detects PDF text in it
 legilo --explain [FILE]         print detection features and score
 legilo --list-voices            list installed voices
 legilo --install-voice ARCHIVE  install a voice from a downloaded archive (7.3.2)
@@ -1828,6 +1861,13 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.20 (6 November 2026)
+
+- The speech rules as built: only the superscripts need words, and a fraction after a digit gets "and", from a spike with the Phonemiser (7.2.5). Until stage 3 the command line applies them (6.4).
+- The running-header rule needs a page between repeats, a capital, a short run and neighbours that do not repeat (7.2.4, rule 2).
+- The benchmark as built (9.6); `--clean-only` takes its input as pasted (Appendix B).
+- Stage 2's exit criteria, with the comparison with `speak-tts --clean-only` and the benchmark results (12).
 
 ### Draft 0.19 (6 November 2026)
 
