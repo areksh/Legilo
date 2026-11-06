@@ -1,0 +1,382 @@
+Standard Deduction for
+Dependents
+The standard deduction for an individual who
+can be claimed as a dependent on another person’s tax return is generally limited to the
+greater of:
+1. $1,350, or
+2. The individual’s earned income for the
+year plus $450 (but not more than the regular standard deduction amount, generally
+$15,750).
+However, if the individual is 65 or older or blind,
+the standard deduction may be higher.
+If you (or your spouse if filing jointly) can be
+claimed as a dependent on someone else’s return, use Table 8 to determine your standard deduction.
+Earned income defined. Earned income
+is salaries, wages, tips, professional fees, and
+other amounts received as pay for work you actually perform.
+For purposes of the standard deduction,
+earned income also includes any part of a taxable scholarship or fellowship grant. See chapter 1 of Pub. 970 for more information on what
+qualifies as a scholarship or fellowship grant.
+Example 1. You are 16 years old and single. Your parents can claim you as a dependent
+on their 2025 tax return. You have interest income of $780 and wages of $150. You have no
+itemized deductions and use Table 8 to find
+your standard deduction. You enter $150
+(earned income) on line 1, $600 ($150 + $450)
+on line 3, $1,350 (the larger of $600 and
+CAUTION
+!
+$1,350) on line 5, and $15,750 on line 6. Your
+standard deduction, on line 7a, is $1,350 (the
+smaller of $1,350 and $15,750).
+Example 2. You are a 22-year-old college
+student and can be claimed as a dependent on
+your parents’ 2025 tax return. You are married
+filing a separate return. Your spouse doesn’t
+itemize deductions. You have $1,500 in interest
+income and wages of $3,800 and no itemized
+deductions. You find your standard deduction
+by using Table 8. You enter earned income of
+$3,800 on line 1. You add lines 1 and 2 and enter $4,250 on line 3. On line 5, you enter
+$4,250, the larger of lines 3 and 4. Because you
+are married filing a separate return, you enter
+$15,750 on line 6. On line 7a, you enter $4,250
+as the standard deduction amount because it is
+smaller than $15,750, the amount on line 6.
+Example 3. You are single and can be
+claimed as a dependent on your parents’ 2025
+tax return. You are 18 years old and blind, and
+have interest income of $1,300, wages of
+$2,900, and no itemized deductions. You use
+Table 8 to find the standard deduction amount.
+You enter wages of $2,900 on line 1 and add
+lines 1 and 2 and enter $3,350 on line 3. On
+line 5, you enter $3,350, the larger of lines 3
+and 4. Because you are single, you enter
+$15,750 on line 6 and $3,350 on line 7a. This is
+the smaller of the amounts on lines 5 and 6. Because you checked one box in the top part of
+the worksheet, you enter $2,000 on line 7b, then
+add the amounts on lines 7a and 7b and enter
+the standard deduction amount of $5,350 on
+line 7c.
+Example 4. You are 18 years old and single
+and can be claimed as a dependent on your parents’ 2025 tax return. You have wages of
+$7,000, interest income of $500, a business
+loss of $3,000, and no itemized deductions. You
+use Table 8 to figure the standard deduction
+amount. You enter $4,000 ($7,000 − $3,000) on
+line 1, add lines 1 and 2, and enter $4,450 on
+line 3. On line 5, you enter $4,450, the larger of
+lines 3 and 4, and, because you are single,
+$15,750 on line 6. On line 7a, you enter $4,450
+as the standard deduction amount because it is
+smaller than $15,750, the amount on line 6.
+Who Should Itemize
+You should itemize deductions if your total deductions are more than the standard deduction
+amount. Also, you should itemize if you don’t
+qualify for the standard deduction, as discussed, earlier, under Persons not eligible for
+the standard deduction.
+You should first figure your itemized deductions and compare that amount to your standard
+deduction to make sure you are using the
+method that gives you the greater benefit.
+When to itemize. You may benefit from
+itemizing your deductions on Schedule A (Form
+1040) if you:
+1. Don’t qualify for the standard deduction,
+2. Had large uninsured medical and dental
+expenses during the year,
+3. Paid interest and taxes on your home,
+4. Had large uninsured casualty or theft losses,
+5. Made large contributions to qualified charities, or
+6. Have total itemized deductions that are
+more than the standard deduction to which
+you are otherwise entitled.
+If you decide to itemize your deductions,
+complete Schedule A (Form 1040) and attach it
+to your Form 1040 or 1040-SR. Enter the
+amount from Schedule A (Form 1040), line 17,
+on Form 1040 or 1040-SR, line 12e.
+Electing to itemize for state tax or other
+purposes. Even if your itemized deductions
+are less than your standard deduction, you can
+elect to itemize deductions on your federal return rather than take the standard deduction.
+You may want to do this if, for example, the tax
+benefit of itemizing your deductions on your
+state tax return is greater than the tax benefit
+you lose on your federal return by not taking the
+standard deduction. To make this election, you
+must check the box on line 18 of Schedule A
+(Form 1040).
+Changing your mind. If you don’t itemize your
+deductions and later find that you should have
+itemized—or if you itemize your deductions and
+later find you shouldn’t have—you can change
+your return by filing Form 1040-X.
+Married persons who filed separate returns. You can change methods of taking deductions only if you and your spouse both make
+the same changes. Both of you must file a consent to assessment for any additional tax either
+one may owe as a result of the change.
+You and your spouse can use the method
+that gives you the lower total tax, even though
+one of you may pay more tax than you would
+have paid by using the other method. You both
+must use the same method of claiming deductions. If one itemizes deductions, the other
+should itemize because the other spouse won’t
+qualify for the standard deduction. See Persons
+not eligible for the standard deduction, earlier.
+2025 Standard
+Deduction Tables
+If you are married filing a separate return and your spouse itemizes deductions, or if you are a dual-status alien,
+you can’t take the standard deduction even if
+you were born before January 2, 1961 or are
+blind.
+CAUTION
+!
+24 Publication 501 (2025)
+Table 6. Standard Deduction Chart for Most People*
+IF your filing status is... YOUR standard deduction is...
+Single or Married filing separately $15,750
+Married filing jointly or Qualifying surviving spouse   31,500
+Head of household  23,625
+* Don’t use this chart if you were born before January 2, 1961, or are blind, or if someone else can claim you (or your spouse if filing jointly) as a dependent.
+Use Table 7 or Table 8 instead.
+Table 7. Standard Deduction Chart for People Born Before January 2, 1961, or Who Are Blind*
+Check the correct number of boxes below. Then go to the chart.
+You: Born before January 2, 1961 Blind
+Your spouse: Born before January 2, 1961 Blind
+Total number of boxes you checked
+IF your filing status is... AND the number in the box above is... THEN your standard deduction is...
+Single
+1 $17,750
+2  19,750
+Married filing jointly
+1 $33,100
+2  34,700
+3  36,300
+4  37,900
+Qualifying surviving spouse
+1 $33,100
+2  34,700
+Married filing separately**
+1 $17,350
+2  18,950
+3  20,550
+4  22,150
+Head of household
+1 $25,625
+2  27,625
+* If someone else can claim you (or your spouse if filing jointly) as a dependent, use Table 8 instead.
+** You can check the boxes for “Your spouse” if your filing status is married filing separately and your spouse had no income, isn’t filing a return, and can’t be claimed as a
+dependent on another person’s tax return.
+Publication 501 (2025) 25
+Standard Deduction Worksheet for Dependents
+Use this worksheet only if someone else can claim you (or your spouse if
+filing jointly) as a dependent.
+Table 8.
+Keep for Your Records
+Check the correct number of boxes below. Then go to the worksheet.
+You: Born before January 2, 1961 Blind
+Your spouse: Born before January 2, 1961 Blind
+Total number of boxes you checked
+1. Enter your earned income (defined below). If none, enter -0-. 1.
+2. Additional amount. 2. $450
+3. Add lines 1 and 2. 3.
+4. Minimum standard deduction. 4. $1,350
+5. Enter the larger of line 3 or line 4. 5.
+6. Enter the amount shown below for your filing status.
+• Single or Married filing separately—$15,750
+• Married filing jointly—$31,500
+• Head of household—$23,625
+6.
+7. Standard deduction.
+a. Enter the smaller of line 5 or line 6. If born after January 1, 1961, and not blind, stop here. This is your
+standard deduction. Otherwise, go on to line 7b. 7a.
+b. If born before January 2, 1961, or blind, multiply $2,000 ($1,600 if married) by the number in the box above. 7b.
+c. Add lines 7a and 7b. This is your standard deduction for 2025. 7c.
+Earned income includes wages, salaries, tips, professional fees, and other compensation received for personal services you performed. It also includes any
+taxable scholarship or fellowship grant.
+Enhanced Deduction for
+Seniors
+Taxpayers who are age 65 or older may be eligible for the enhanced deduction for seniors. This
+deduction is in addition to the higher standard
+deduction for taxpayers age 65 or older discussed under Higher Standard Deduction for
+Age (65 or Older), earlier. The maximum
+amount of the deduction is $6,000 ($12,000 if
+married filing jointly and both spouses are eligible). The deduction will be limited if your modified adjusted gross income is more than
+$75,000 ($150,000 if married filing jointly).
+Qualified individuals can claim the enhanced deduction for seniors whether
+they claim the standard deduction or
+itemize deductions.
+The special rules that apply to U.S. nationals: residents of Canada, Mexico,
+and South Korea; and residents of India who were students or business apprentices
+don’t apply to the enhanced deduction for seniors. See Pub. 519 for more information.
+TIP
+CAUTION
+!
+To be eligible to claim the enhanced deduction for seniors:
+• You (and/or your spouse if filing a joint return) must have been born before January
+2, 1961;
+• You must have a valid SSN. If you are married filing jointly, the spouse who is claiming the enhanced deduction for seniors
+must have a valid SSN; and
+• If you are married, you must file a joint return with your spouse.
+Death of a taxpayer. Consider the taxpayer to
+be 65 or older at the end of 2025 only if the taxpayer was 65 or older at the time of death. Even
+if the taxpayer was born before January 2,
+1961, the taxpayer isn’t considered 65 or older
+at the end of 2025 unless the taxpayer was 65
+or older at the time of death. A person is considered to reach age 65 on the day before the person’s 65th birthday.
+Example. Your spouse was born on February 14, 1960, and died on February 13, 2025.
+Your spouse is considered age 65 at the time of
+death. However, if your spouse died on February 12, 2025, your spouse isn’t considered age
+65 at the time of death and isn’t age 65 or older
+at the end of 2025.
+Valid SSN. You and/or your spouse must have
+a valid SSN to take this deduction. A valid SSN
+for purposes of the enhanced deduction for seniors is one that is valid for employment and
+that is issued by the SSA before the due date of
+your 2025 return (including extensions).
+For more information, see the Instructions
+for Form 1040.
+How To Get Tax Help
+If you have questions about a tax issue; need
+help preparing your tax return; or want to download free publications, forms, or instructions, go
+to IRS.gov to find resources that can help you
+right away.
+Tax reform. Tax reform legislation impacting
+federal taxes, credits, and deductions was
+enacted in P.L. 119-21, commonly known as the
+One Big Beautiful Bill Act, on July 4, 2025. Go
+to IRS.gov/OBBB for more information and updates on how this legislation affects your taxes.
+Preparing and filing your tax return. After
+receiving all your wage and earnings statements (Forms W-2, W-2G, 1099-R, 1099-MISC,
+1099-NEC, etc.); unemployment compensation
+statements (by mail or in a digital format) or
+other government payment statements (Form
+26 Publication 501 (2025)
+1099-G); and interest, dividend, and retirement
+statements from banks and investment firms
+(Forms 1099), you have several options to
+choose from to prepare and file your tax return.
+You can prepare the tax return yourself, see if
+you qualify for free tax preparation, or hire a tax
+professional to prepare your return.
+Free options for tax preparation. Your options for preparing and filing your return online
+or in your local community, if you qualify, include
+the following.
+• Free File. This program lets you prepare
+and file your federal individual income tax
+return for free using software or Free File
+Fillable Forms. However, state tax preparation may not be available through Free File.
+Go to IRS.gov/FreeFile to see if you qualify
+for free online federal tax preparation, e-filing, and direct deposit or payment options.
+• VITA. The Volunteer Income Tax Assistance (VITA) program offers free tax help to
+people with low-to-moderate incomes, persons with disabilities, and limited-English-speaking taxpayers who need help
+preparing their own tax returns. Go to
+IRS.gov/VITA, download the free IRS2Go
+app, or call 800-906-9887 for information
+on free tax return preparation.
+• TCE. The Tax Counseling for the Elderly
+(TCE) program offers free tax help for all
+taxpayers, particularly those who are 60
+years of age and older. TCE volunteers
+specialize in answering questions about
+pensions and retirement-related issues
+unique to seniors. Go to IRS.gov/TCE or
+download the free IRS2Go app for information on free tax return preparation.
+• MilTax. Members of the U.S. Armed
+Forces and qualified veterans may use MilTax, a free tax service offered by the Department of Defense through Military OneSource. For more information, go to
+MilitaryOneSource (MilitaryOneSource.mil/
+MilTax).
+Also, the IRS offers Free Fillable Forms,
+which can be completed online and then
+e-filed regardless of income.
+Using online tools to help prepare your return. Go to IRS.gov/Tools for the following.
+• The Earned Income Tax Credit Assistant
+(IRS.gov/EITCAssistant) determines if
+you’re eligible for the earned income credit
+(EITC).
+• The Online EIN Application (IRS.gov/EIN)
+helps you get an employer identification
+number (EIN) at no cost.
+• The Tax Withholding Estimator (IRS.gov/
+W4App) makes it easier for you to estimate
+the federal income tax you want your employer to withhold from your paycheck.
+This is tax withholding. See how your withholding affects your refund, take-home pay,
+or tax due.
+• The Sales Tax Deduction Calculator
+(IRS.gov/SalesTax) figures the amount you
+can claim if you itemize deductions on
+Schedule A (Form 1040).
+Getting answers to your tax questions. On IRS.gov, you can get
+up-to-date information on current
+events and changes in tax law.
+• IRS.gov/Help: A variety of tools to help you
+get answers to some of the most common
+tax questions.
+• IRS.gov/ITA: The Interactive Tax Assistant,
+a tool that will ask you questions and,
+based on your input, provide answers on a
+number of tax topics.
+• IRS.gov/Forms: Find forms, instructions,
+and publications. You will find details on
+the most recent tax changes and interactive links to help you find answers to your
+questions.
+• You may also be able to access tax information in your e-filing software.
+Need someone to prepare your tax return?
+There are various types of tax return preparers,
+including enrolled agents, certified public accountants (CPAs), accountants, and many others who don’t have professional credentials. If
+you choose to have someone prepare your tax
+return, choose that preparer wisely. A paid tax
+preparer is:
+• Primarily responsible for the overall substantive accuracy of your return,
+• Required to sign the return, and
+• Required to include their preparer tax identification number (PTIN).
+Although the tax preparer always signs
+the return, you’re ultimately responsible
+for providing all the information required for the preparer to accurately prepare
+your return and for the accuracy of every item
+reported on the return. Anyone paid to prepare
+tax returns for others should have a thorough
+understanding of tax matters. For more information on how to choose a tax preparer, go to Tips
+for Choosing a Tax Preparer on IRS.gov.
+Employers can register to use Business
+Services Online. The Social Security Administration (SSA) offers online service at SSA.gov/
+employer for fast, free, and secure W-2 filing options to CPAs, accountants, enrolled agents,
+and individuals who process Form W-2, Wage
+and Tax Statement; and Form W-2c, Corrected
+Wage and Tax Statement.
+Business tax account. If you are a sole proprietor, a partnership, an S corporation, a C corporation, or a single-member limited liability
+company (LLC), you can view your tax information on record with the IRS and do more with a
+business tax account. Go to IRS.gov/
+BusinessAccount for more information.
+IRS social media. Go to IRS.gov/SocialMedia
+to see the various social media tools the IRS
+uses to share the latest information on tax
+changes, scam alerts, initiatives, products, and
+services. At the IRS, privacy and security are
+our highest priority. We use these tools to share
+public information with you. Don’t post your social security number (SSN) or other confidential
+information on social media sites. Always protect your identity when using any social networking site.
+The following IRS YouTube channels provide
+short, informative videos on various tax-related
+topics in English and ASL.
+• Youtube.com/irsvideos.
+CAUTION
+!
+• Youtube.com/irsvideosASL.
+Over-the-Phone Interpreter (OPI) Service.
+The IRS offers the OPI Service to taxpayers
+needing language interpretation. The OPI Service is available at Taxpayer Assistance Centers
+(TACs), most IRS offices, and every VITA/TCE
+tax return site. This service is available in Spanish, Mandarin, Cantonese, Korean, Vietnamese, Russian, and Haitian Creole.
+Accessibility Helpline available for taxpayers with disabilities. Taxpayers who need information about accessibility services can call
+833-690-0598. The Accessibility Helpline can
+answer questions related to current and future
+accessibility products and services available in
+alternative media formats (for example,
+braille-ready, large print, audio, etc.). The Accessibility Helpline does not have access to
+your IRS account. For help with tax law, refunds,
+or account-related issues, go to IRS.gov/
+LetUsHelp.
+Alternative media preference. Form 9000,
+Alternative Media Preference, or Form
+9000(SP) allows you to elect to receive certain
+types of written correspondence in the following

@@ -1,0 +1,27 @@
+(4.5)
+
+where it was assumed that the crystal is infinitely wide in the x and y directions and
+the length along the z-axis is L. We will call |ψi a biphoton wavefunction in free
+space. The phase matching function is given by:
+∆k z (ks⊥ , ωs ; ki⊥ , ωi ) = k pz (ks⊥ + ki⊥ , ωs + ωi ) − k sz (ks⊥ , ωs ) − k iz (ki⊥ , ωi ) ± K,
+(4.6)
+where we added the quasi wavevector K and assumed that the crystal is polled
+along the z-axis. For non periodically polled crystals K = 0. We will refer to these
+crystals as ’regular’. Fiber modes are approximated with Gaussian functions:
+w2µ
+wµ
+uµ (kµ⊥ , ωµ ) = √ exp[− (kµ⊥ − kµ0⊥ )2 ], µ = s, i
+2
+π
+
+(4.7)
+
+The wavefunction of the fiber coupled photons, also called biphoton wavefunction,
+is given by an overlap of fiber mode functions with free space biphoton wavefunction:
+ψ ( ω s , ωi ) =
+
+Z
+
+d2 k s ⊥ d2 k i ⊥ u s ( k s ⊥ , ω s ) u i ( k i ⊥ , ωi ) ψ ( k s ⊥ , ω s ; k i ⊥ , ωi ).
+
+(4.8)

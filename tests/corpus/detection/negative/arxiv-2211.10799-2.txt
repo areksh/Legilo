@@ -1,0 +1,30 @@
+i
+V3/2 ∑
+p,s,i
+δ
+ωp
+ωs+ωi
+gp,s,i(ωs, ωi)(âpâ†
+s â†
+i − h.c)θ(kp − ks − ki ± K), (2.150)
+and operator commutation relation is:
+[âα, â†
+β] = δ
+β
+α , ∀α, β ∈ {p, s, i}. (2.151)
+We use the term "dressed mode" since in a material we do not deal with photons but
+rather quantized excitations of electromagnetic field and material. The quantization
+constant of a dressed mode was defined in Eq. 2.121 and refers to quantization of
+photon-dielectric interaction in case of polychromatic field propagating in a linear
+dielectric. Discussion of the above quantization approach can be found in [35]. The
+above Hamiltonian describes only the interaction of the nonlinear medium with the
+
+2.4. Phase matching 31
+incident field. The full form of the Hamiltonian is:
+Ĥ = Ĥp + Ĥs + Ĥi + ĤNL
+I , (2.152)
+Ĥx = h̄ωx(n̂x +
+1
+2
+), x ∈ {p, s, i}. (2.153)
+We will be interested mostly in ĤNL

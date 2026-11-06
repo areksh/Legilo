@@ -1,0 +1,35 @@
+Quasi-phase matching
+
+In regular crystals for a particular choice of polarization, frequencies and propaga(2)
+tion directions χijk (ω p ; ωs , ωi ) is a constant. In periodically polled crystals, χ(2) is a
+periodic function of one spatial dimension, let us say z:
+(2)
+
+d(z) ≡ χijk (ω p ; ωs , ωi , z).
+
+(2.139)
+
+The usual way of creating periodically polled crystal is to manufacture it in such a
+way that d(z) changes sign periodically, such that:
+d(z) = d(0) sign[sin(
+
+2πz
+)],
+Λ
+
+(2.140)
+
+where Λ is a spatial period. Integral over crystal volume can no longer be expressed
+as in Eq. 2.133. Instead, the θ function has to be replaced by
+θ (k) =
+
+Z
+
+d3 r d0 (z) exp(ik · r ),
+
+Vc
+
+(2.141)
+
+where d0 (z) = d(z)/d(0). With this change of θ (k), the Hamiltonian from equation
+Eq. 2.131 along with the expression from equation Eq. 2.132 are still valid. The function d0 (z) is a periodic function so it can be expanded in a Fourer series with complex

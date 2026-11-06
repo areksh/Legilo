@@ -29,6 +29,8 @@ it harms it.
 | `detection/positive/`, `detection/negative/` | One sample per file |
 | `detection/split.txt` | Which samples are for tuning and which are held out |
 | `detection/relabelled.tsv` | Excerpts that hold no prose, so are negative |
+| `detection/heldout-documents.txt` | The documents whose samples are held out |
+| `detection/copies.tsv` | The document each hand-made copy came from |
 | `cleanup/<name>/input.txt`, `expected.txt` | Whole documents and the text reflow should recover |
 | `sources.json` | The downloaded documents, with URLs, hashes and licences |
 | `tools/` | The scripts that make all of the above |
@@ -36,7 +38,10 @@ it harms it.
 
 Samples are named after where they came from:
 
-- `arxiv-*`, `plos-*`, `nist-*`: excerpts of downloaded PDFs (`sources.json`).
+- `arxiv-*`, `plos-*`, `nist-*`, `scotus-*`, `usgs-*`, `irs-*`, `uscourts-*`:
+  excerpts of downloaded PDFs (`sources.json`): papers, a thesis, a
+  security guide, a Supreme Court opinion, a fact sheet, a tax guide, the
+  Federal Rules of Evidence and two letters to Congress.
 - `made-*`: excerpts of documents typeset for the corpus with LibreOffice
   (`tools/build_documents.py`): a two-column paper, a report with Roman
   front matter, a novel chapter, a three-column newsletter, a recipe, a
@@ -94,12 +99,18 @@ from in `detection/copies.tsv`, and `tools/split.py`.
 
 ## The split
 
-`tools/split.py` assigns each sample to the tuning or held-out set from a
-hash of its name, so the sets are stable as samples are added; about a
-third is held out. Excerpts of one PDF share a set, and so do the copies
-made by hand from it, so the held-out score never includes documents the
-detector was tuned on. Tune on the tuning
-set only.
+`tools/split.py` assigns each sample to the tuning or held-out set.
+Excerpts of one PDF share a set, and so do the copies made by hand from
+it, so the held-out score never includes documents the detector was tuned
+on. The documents held out are listed in `detection/heldout-documents.txt`.
+They were added after the detector's features were chosen: the first
+held-out documents had been looked at while choosing them, so they moved
+to the tuning set. Samples not cut from a document, such as the emails
+and poems, are split by a hash of their name, which keeps the sets stable
+as samples are added; about a third is held out.
+
+Tune on the tuning set only, and score the held-out set once per change
+of features, never to choose between them.
 
 ## Licences
 

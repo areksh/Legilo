@@ -1,0 +1,384 @@
+Invasive species research within the U.S. Geological Survey’s (USGS) Ecosystems Mission Area focuses on invasive plants, animals, and pathogens
+
+throughout the United States. USGS scientists provide science support to help solve the problems posed by these nonnative species while working with
+
+partners in the U.S. Department of the Interior (DOI), other Federal, State, and Territorial agencies, Tribes, industry, agriculture, and nonprofit organizations.
+
+Key components of USGS invasive species science include the development of novel prevention, prediction, early detection, containment, and control tools.
+
+Invasive Species Facts
+
+An invasive species is, with regard to a particular ecosystem,
+
+a nonnative organism whose introduction does or is likely to cause
+
+economic or environmental harm, or harm to human, animal, or
+
+plant health (U.S. Department of the Interior, 2021). An invasive
+
+species can be introduced from another continent (for example,
+
+cheatgrass,
+ 
+Bromus tectorum
+) or transported outside its native
+
+range within the United States (for example, American bullfrog,
+
+Lithobates catesbeianus
+).
+
+•
+ 
+Invasive species are everywhere and affect everyone
+—Invasive
+
+species adversely affect every State, Territory, and Tribe in the
+
+Nation, from heavily populated urban centers to unpopulated
+
+wilderness areas.
+
+•
+ 
+People intentionally and unintentionally spread invasive
+
+species
+—Increased global travel and trade provide pathways for
+
+both intentional and unintentional introductions of invasive species.
+
+•
+ 
+Invasive species are costly
+—Every year, harm caused by
+
+invasive species costs governments, industries, and private
+
+citizens substantial economic losses into the billions of dollars
+
+(Crystal-Ornelas and others, 2021).
+
+•
+ 
+We all pay the cost of invasive species
+—Farmers, ranchers,
+
+other private landowners, businesses, and all levels of government
+
+bear the costs to control the economic, health, and environmental
+
+threats posed by invasive species.
+
+•
+ 
+The impacts of invasive species are wide ranging
+—Effects
+
+of invasive species include decreased agricultural production,
+
+competition with and predation on native plants and wildlife,
+
+impairment of critical water infrastructure, transmission of disease
+
+to wildlife and humans, threats to commercial and native fisheries,
+
+and reduced hunting, fishing, and other recreational opportunities
+
+such as boating and swimming (Nalepa and Schloesser, 2013;
+
+Mayfield and others, 2021).
+
+•
+ 
+Climate change affects invasive species, and invasive species
+
+affect the impacts of climate change
+—Changing climate can
+
+exacerbate the impacts of some invasive species (including
+
+the spread of associated human and wildlife disease), alter
+
+existing ranges, open new introduction pathways, and decrease
+
+effectiveness of control tools. Likewise, invasive species can
+
+make ecosystems and communities less resilient to climate change
+
+(Hellmann and others, 2008; Hulme, 2017).
+
+Focus Areas of Invasive
+
+Species Research
+
+Invasive species research
+
+within the USGS focuses on a
+
+diverse array of DOI priorities
+
+including the following:
+
+Prevention
+
+•
+ 
+Preventing invasion of the Great Lakes and uninvaded waterways
+
+in the Mississippi River Basin by bighead (
+Hypophthalmichthys
+
+nobilis
+), black (
+Mylopharyngodon piceus
+) and silver (
+H. molitrix
+)
+
+carp; and
+
+•
+ 
+Reducing the risk of invasive species introductions in the
+
+Hawaiian Islands and U.S.-affiliated Pacific Islands through
+
+shipping containers and other pathways.
+
+Detection
+
+•
+ 
+Providing nationwide reporting, monitoring, and tracking of all
+
+freshwater aquatic invasive species as part of a national early
+
+detection system;
+
+•
+ 
+Building knowledge about population dynamics and detection
+
+methods for the Burmese python (
+Python bivittatus
+), black and
+
+white tegu (
+Salvator merianae
+), and other invasive reptiles in the
+
+Everglades and other parts of southern Florida;
+
+•
+ 
+Assisting Federal, State, and Tribal partners by developing early
+
+detection methods for zebra (
+Dreissena polymorpha
+) and quagga
+
+(
+D. bugensis
+) mussels in the continental United States; and
+
+•
+ 
+Predicting the spread of existing invasive plant populations in
+
+the continental United States through the INHABIT tool, which
+
+uses habitat suitability models to help public lands agencies target
+
+surveillance and other management activities.
+
+Containment and Control
+
+•
+ 
+Reducing existing populations of grass carp (
+Ctenopharyngodon
+
+idella
+) in the Great Lakes, and reducing populations of all
+
+four species of invasive carp in the Mississippi River Basin and
+
+named subbasins where they are already present;
+
+•
+ 
+Control of sea lamprey (
+Petromyzon marinus
+) in the Great Lakes;
+
+•
+ 
+Reducing impacts of the brown treesnake (
+Boiga irregularis
+) on
+
+Guam; and
+
+•
+ 
+Predicting spread and supporting control efforts related to invasive
+
+plants such as cheatgrass, salt cedar (
+Tamarix spp
+.), Russian olive
+
+(
+Elaeagnus angustifolia
+), leafy spurge (
+Euphorbia esula
+), and
+
+buffelgrass (
+Cenchrus ciliaris
+).
+
+Invasive dreissenid mussels.
+
+Photograph by U.S. Geological Survey.
+
+Invasive Species Research—
+
+Science for Prevention, Detection, Containment, and Control
+Genetics and Invasive Species Detection
+
+Environmental deoxyribonucleic acid (eDNA) is a detection method that
+
+identifies the presence of target species in the environment by locating DNA
+
+fragments sloughed from scales, shed from skin cells, or excreted with fecal
+
+material that may include an animal’s intestinal cells or cells from an organism
+
+the animal has eaten.
+
+Using eDNA techniques to detect DNA from a target invasive species has
+
+recently emerged as a powerful tool for surveillance of invasive species in water,
+
+land, and even air. USGS scientists have refined methods to improve detection
+
+sensitivity, develop best practices, understand how eDNA changes over time, and
+
+decrease time between sampling and results.
+
+USGS scientists have developed a portable eDNA detection kit for detecting
+
+bighead and silver carps and zebra and quagga mussels that provides results in
+
+less than an hour. This tool is being enhanced to include Asian fish tapeworm
+
+(
+Schyzocotyle acheilognathi
+), spiny water flea (
+Bythotrephes longimanus
+), and
+
+other species (Hofmeister and others, 2021; Kageyama and others, 2022).
+
+The USGS also used eDNA sampling to detect invasive northern pike
+
+(
+Esox lucius
+) in several south-central Alaska lakes following eradication efforts, and
+
+to monitor the potential range expansion of Burmese pythons in southern Florida.
+
+In Hawai’i, USGS scientists have collaborated with partners to develop,
+
+test, and validate an eDNA field method to detect the fungi that cause
+
+Rapid ʻŌhiʻa Death in mature ʻŌhiʻa lehua (
+Metrosideros polymorpha
+) trees
+
+(Atkinson and Roy, 2023).
+
+The USGS also is developing terrestrial eDNA protocols for invasive reptiles
+
+in areas susceptible to invasion and investigating the detection of airborne eDNA to identify invasive species in shipping containers.
+
+USGS scientists are collaborating with other Federal partners to develop general standards for using eDNA in species detection, which will promote trust
+
+and rigor in this surveillance technology. These efforts also include creating an eDNA toolbox for managers and others to use to gain information about using
+
+eDNA methods in prevention and early detection activities, assistance in creating an eDNA communication plan with partners, a search tool to determine if eDNA
+
+tools are available for species and locations of interest, developing genetic tools to detect priority invasive species, and a genetic materials repository where DNA
+
+can be shared to make eDNA tool development more efficient (Mehta and others, 2007).
+
+Early Detection and Rapid Response
+
+While invasive species prevention is the first line of defense, even
+
+the best prevention efforts will not stop all invaders. When prevention
+
+fails, Early Detection and Rapid Response (EDRR) is an efficient and
+
+cost-effective part of invasive species management. It consists of a
+
+coordinated set of actions to find and eradicate potential invasive species
+
+in a specific location before they spread and cause harm.
+
+USGS provides scientific support to DOI bureaus and other partners
+
+to aid in implementation of EDRR efforts and make informed management
+
+actions. In certain cases, USGS staff lead multiagency and partner rapid
+
+response efforts where their specific skill sets are required, such as regional
+
+leadership, EDRR research, and training.
+
+As one example, USGS scientists are participating in a working
+
+group under the National Science and Technology Council effort to
+
+develop a national Marine and Great Lakes eDNA strategy (National
+
+Science and Technology Council, 2023). USGS scientists also are
+
+improving eDNA detection by publishing studies on priority species
+
+and enhancing the utility of eDNA results through the use of structured
+
+decision making. In addition, USGS is aiding the development of
+
+a surveillance network that includes use of large sets of traditional
+
+sampling and eDNA data to evaluate “hotspots” of invasive species
+
+introduction vulnerability.
+
+USGS scientists are central in creating tools that will serve as the
+
+architecture of a national EDRR framework that will interconnect and
+
+coordinate various EDRR efforts and create an information management
+
+system to support EDRR decision making. Additionally, the USGS is
+
+engaged with partners in other EDRR work such as using eDNA as an early
+
+detection tool for dreissenid mussels in the western United States, and the
+
+USGS is developing methods for using eDNA in the Great Lakes to locate
+
+new spawning areas for grass carp.
+
+Another example of the USGS engagement in EDRR involves scientists working with partners on surveillance methods for use in terrestrial habitats. These
+
+projects include buffelgrass, a nonnative perennial plant that is rapidly spreading across National Park Service and adjacent lands in the Sonoran Desert in Arizona
+
+and California. It can form large, continuous patches that carry fire quickly and broadly across the landscape. The USGS is working with the National Park Service
+
+and others on EDRR remote-sensing tools to detect invasive buffelgrass, such as sensors aboard unmanned aerial systems and high-resolution satellite imagery.
+
+Buffelgrass is a nonnative perennial grass that is rapidly

@@ -1,0 +1,41 @@
+rewrite above equation:
+g(2)
+(0) =
+hn̂i2 + (∆n̂)2 − hn̂i
+hn̂i2
+= 1 +
+(∆n̂)2 − hn̂i
+hn̂i2
+. (2.56)
+We will use this function to characterize the statistical properties of different types
+of light.
+2.2.6 Sub-Poissonian, Poissonian and super-Poissonian light
+As we mentioned before, the Poisson process helps to characterize the nature of
+light. We will refer to states generated in Poissonian, sub-Poissonian and super-
+Poissonian processes respectively as Poissonian, sub-Poissonian and super-Poissonian
+states. In this paragraph, we will show how. As mentioned before, a Poisson process
+has its mean equal to variance. Consequently, the auto-correlation function of light
+in a Poissonian state simplifies to:
+g
+(2)
+Poiss(0) = 1. (2.57)
+For a sub-Poissonian state we have:
+(∆n̂)2
+< hn̂i ⇔ g
+(2)
+sub(0) < 1. (2.58)
+As mentioned before, this result cannot be explained with the classical probability
+theory since from discussion of Eq. 2.43 we know that it leads to probability distri-
+bution with negative probability values. Similarly to the sub-Poisson process, we
+can define the super-Poisson process via:
+(∆n)2
+> hn̂i ⇔ g
+(2)
+Super(0) > 1. (2.59)
+2.2.7 Thermal state
+The thermal state can be fully described on the grounds of the classical theory with-
+out a need to use quantum mechanical results. Since the quantum mechanical cal-
+culation would lead us to the same properties of the thermal state as classical calcu-
+lations, they are not necessary.
+In a single-mode thermal state, the probability of the system to be found in the
+energy state h̄nω, ω being the frequency of the mode, is

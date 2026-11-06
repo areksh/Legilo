@@ -1,0 +1,39 @@
+(B) states the specific ground, unless it was apparent
+from the context; or
+(2) if the ruling excludes evidence, a party informs the court
+of its substance by an offer of proof, unless the substance was
+apparent from the context.
+(b) NOT NEEDING TO RENEW AN OBJECTION OR OFFER OF PROOF.
+Once the court rules definitively on the record—either before or at
+trial—a party need not renew an objection or offer of proof to pre-
+serve a claim of error for appeal.
+(c) COURT’S STATEMENT ABOUT THE RULING; DIRECTING AN OFFER
+OF PROOF. The court may make any statement about the char-
+acter or form of the evidence, the objection made, and the ruling.
+
+2
+Rule 104 FEDERAL RULES OF EVIDENCE
+The court may direct that an offer of proof be made in question-
+and-answer form.
+(d) PREVENTING THE JURY FROM HEARING INADMISSIBLE EVIDENCE.
+To the extent practicable, the court must conduct a jury trial so
+that inadmissible evidence is not suggested to the jury by any
+means.
+(e) TAKING NOTICE OF PLAIN ERROR. A court may take notice of
+a plain error affecting a substantial right, even if the claim of
+error was not properly preserved.
+(As amended Apr. 17, 2000, eff. Dec. 1, 2000; Apr. 26, 2011, eff. Dec.
+1, 2011.)
+Rule 104. Preliminary Questions
+(a) IN GENERAL. The court must decide any preliminary question
+about whether a witness is qualified, a privilege exists, or evi-
+dence is admissible. In so deciding, the court is not bound by evi-
+dence rules, except those on privilege.
+(b) RELEVANCE THAT DEPENDS ON A FACT. When the relevance of
+evidence depends on whether a fact exists, proof must be intro-
+duced sufficient to support a finding that the fact does exist. The
+court may admit the proposed evidence on the condition that the
+proof be introduced later.
+(c) CONDUCTING A HEARING SO THAT THE JURY CANNOT HEAR IT.
+The court must conduct any hearing on a preliminary question so
+that the jury cannot hear it if:

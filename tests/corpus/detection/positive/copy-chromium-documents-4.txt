@@ -1,0 +1,15 @@
+diation energy is carried by photons. Another difference between the
+classical and quantum description of electromagnetic fields comes from non determinism of quantum theory. In quantum optics, solutions of Maxwell’s equations can
+be interpreted as probability amplitude distributions for photons. We will make use
+of such interpretation in the spectral domain when considering biphoton wavefunctions or in the spatial domain discussing waveguide modes.This interpretation is in
+agreement with observed statistical nature of very low intensity radiation.
+To describe physical phenomena which involve very low intensity radiation we
+need a different approach in experiments and different mathematical apparatus. In
+this chapter I will address both problems. I will start with short introduction to
+stochastic processes.
+First, I will introduce the notion of the Poisson process, which is an important
+stochastic process in the theory of quantum optics. Properties of that process will be
+used for proving the non-classical behaviour of some light states. Then, I will describe classical correlation functions and their quantum analogues: quantum coherence function. For completeness of description, discussion of the first and secondorder correlation function will be supplemented with a description of the Young
+interference experiment and Hanbury Brown and Twiss experiment. At this point,
+all the necessary tools will have been introduced and I will move on to a description
+of quantum states of light. At the end of the chapter, we explain t

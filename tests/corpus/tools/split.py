@@ -3,12 +3,16 @@
 tuning set or the held-out set (design 9.2). Detection is tuned on the
 tuning set only and scored on the held-out set.
 
-A sample's set follows from a hash of its name, so it never changes and
-adding samples leaves the others where they are: about one in three is
-held out. Excerpts of one PDF share a set, hashed on the document's name,
-and so does every copy made by hand from that PDF (detection/copies.tsv,
-from tools/identify_copies.py), so the held-out set never scores a
-document the detector was tuned on.
+Excerpts of one PDF share a set, and so does every copy made by hand
+from that PDF (detection/copies.tsv, from tools/identify_copies.py), so
+the held-out set never scores a document the detector was tuned on. The
+documents held out are those in detection/heldout-documents.txt: they
+were added after the detector's features had been chosen, which the
+first held-out documents had been looked at for, so those now tune.
+
+Every other sample's set follows from a hash of its name, so it never
+changes and adding samples leaves the others where they are: about one
+in three is held out.
 Run after adding samples:
 python3 -I tests/corpus/tools/split.py
 """
@@ -21,7 +25,9 @@ DETECTION = ROOT / "tests/corpus/detection"
 
 
 # Prefixes of samples cut from a PDF, named <document>-<n>.
-FROM_DOCUMENTS = ("arxiv-", "plos-", "nist-", "made-")
+FROM_DOCUMENTS = ("arxiv-", "plos-", "nist-", "made-", "scotus-", "usgs-", "irs-", "uscourts-")
+HELD_OUT_DOCUMENTS = {line for line in (DETECTION / "heldout-documents.txt").read_text().splitlines()
+                      if line and not line.startswith("#")}
 
 
 def copy_sources():
@@ -45,7 +51,10 @@ def group(name):
 
 
 def held_out(name):
-    return int(hashlib.sha256(group(name).encode()).hexdigest(), 16) % 3 == 0
+    source = group(name)
+    if source.startswith(FROM_DOCUMENTS):
+        return source in HELD_OUT_DOCUMENTS
+    return int(hashlib.sha256(source.encode()).hexdigest(), 16) % 3 == 0
 
 
 def main():

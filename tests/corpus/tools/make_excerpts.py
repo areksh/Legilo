@@ -33,7 +33,7 @@ DETECTION = ROOT / "tests/corpus/detection"
 CLEANUP = ROOT / "tests/corpus/cleanup"
 LOCAL = ROOT / "tests/corpus/local"
 
-EXCERPTS = {"arxiv": 6, "plos": 5, "nist": 8, "made": 4}
+EXCERPTS = {"arxiv": 6, "plos": 5, "nist": 8, "made": 4, "scotus": 6, "usgs": 4, "irs": 6, "uscourts": 4}
 RELABELLED = {line.split("\t")[0] for line in (DETECTION / "relabelled.tsv").read_text().splitlines()
               if line and not line.startswith("#")}
 BODY_FRACTION = 0.6  # research papers end in references and appendices
@@ -80,6 +80,10 @@ def write_excerpts(pdf, label_dir, name, number, rng, body_only):
             sample = f"{name}-{i + 1}"
             target = DETECTION / "negative" if sample in RELABELLED else label_dir
             (target / f"{sample}.txt").write_text(text, encoding="utf-8")
+            # A sample relabelled since the last run leaves a copy behind.
+            for other in (DETECTION / "positive", DETECTION / "negative"):
+                if other != target:
+                    (other / f"{sample}.txt").unlink(missing_ok=True)
             written += 1
     return written
 

@@ -1,0 +1,54 @@
+DOCTORAL THESIS (REVISED AFTER SUBMISSION)
+Light guided in tailored environments:
+from basic aspects to applications
+Author:
+Andrzej GAJEWSKI
+Supervisors:
+Dr hab. Piotr KOLENDERSKI
+Dr hab. Karolina SŁOWIK
+A thesis submitted in fulfillment of the requirements
+for the degree of Doctor of Philosophy
+in the
+Single Photon Applications Laboratory
+Faculty of Physics, Astronomy and Informatics
+May 9, 2022
+arXiv:2211.10799v1 [quant-ph] 19 Nov 2022
+iii
+Acknowledgements
+The author would like to acknowledge and thank his supervisor Dr Piotr
+Kolenderski for the support and collaboration in research through the past 8 years.
+Special thanks go to Dr Karolina Słowik not only for the joint research, but
+also for the fact that she always had time for the author. The author would like to
+thank and apologize at the same time for all the weekends and holidays that Dr
+Słowik spent reading this doctoral dissertation.
+The research presented within this thesis was supported and partially financed by Project
+HEIMaT No. Homing/2016-1/8.
+v
+Contents
+Acknowledgements iii
+1 Introduction 1
+2 Theoretical background 3
+2.1 Classical light . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+2.2 Non-classical light . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+2.2.1 Statistical approach to light states . . . . . . . . . . . . . . . . . 4
+2.2.2 Correlation functions . . . . . . . . . . . . . . . . . . . . . . . . . 6
+2.2.3 First order coherence functions: Young experiment . . . . . . . 8
+2.2.4 Second-order coherence functions: Hanbury Brown and Twiss
+experiment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+2.2.5 Quantum coherence functions . . . . . . . . . . . . . . . . . . . 11
+2.2.6 Sub-Poissonian, Poissonian and super-Poissonian light . . . . . 13
+2.2.7 Thermal state . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+2.2.8 Fock states of light . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+2.2.9 Coherent states of light . . . . . . . . . . . . . . . . . . . . . . . . 15
+2.2.10 Quadrature squeezed coherent states . . . . . . . . . . . . . . . 16
+2.2.11 Squeezed vacuum states . . . . . . . . . . . . . . . . . . . . . . . 17
+2.2.12 Two-mode squeezed vacuum states . . . . . . . . . . . . . . . . 18
+2.3 Spontaneous parametric down-conversion . . . . . . . . . . . . . . . . 19
+2.3.1 Three wave mixing Hamiltonian . . . . . . . . . . . . . . . . . . 20
+2.4 Phase matching . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+2.4.1 Anisotropic crystals . . . . . . . . . . . . . . . . . . . . . . . . . 26
+2.4.2 Phase matching types . . . . . . . . . . . . . . . . . . . . . . . . 28
+2.4.3 Quasi-phase matching . . . . . . . . . . . . . . . . . . . . . . . . 29
+2.4.4 Spontaneous parametric down-conversion . . . . . . . . . . . . 30
+3 Estimating Sellmeier coefficients with single photons 33
+3.1 Using SPDC to estimate Sellmeier coefficients . . . . . . . . . . . . . . . 34

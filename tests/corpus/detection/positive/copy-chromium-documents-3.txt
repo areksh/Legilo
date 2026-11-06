@@ -1,0 +1,43 @@
+Chapter 1
+Introduction
+This dissertation is dedicated to the investigation of quantum optical effects involving single photons in tailored structures. All the research results presented in this
+thesis were the outcome of my work in the KL FAMO (Krajowe Laboratorium Fizyki
+Atomowej i Optycznej) laboratory at the Institute of Physics of the Nicolaus Copernicus University in Toru ´n, in the Single Photon Applications Laboratory (SPA) laboratory group led by Dr Piotr Kolenderski. Research in the SPA laboratory combines the
+use of single-photon sources based on the spontaneous parametric down-conversion
+(SPDC) phenomenon. This research is both experimental, theoretical and numerical
+in nature.
+Spontaneous parametric down-conversion in a nonlinear crystal was first demonstrated in 1967 [1]. Although that way of producing nonclassical light is relatively
+old, it is still one of the most efficient ways of generating pairs of photons including
+highly entangled photon pairs. The SPDC process plays a crucial role in experiments involving single photons [2, 3, 4, 5] but also it is very important in quantum
+communication applications, especially in quantum key distribution [6, 7, 8].
+The reasons why SPDC is widely used are its relative simplicity of implementation, the robustness of setup and the possibility of creating single photons on demand. There are other ways of creating single photons i.e using quantum dots [9, 10]
+or NV-centers [11]. These types of sources have their advantages, for example, quantum dots might be integrated with photonic circuits. SPDC sources, on the other
+hand, would be very hard to integrate with microelectronics.
+My research focused on the theoretical and numerical aspects of the research
+work. A lot of my theoretical research and numerical simulations support the experiments performed in this laboratory. Others lead to suggestions for experiments
+that may be performed in the future. The scope of my research on issues related
+to quantum optics is wide: it includes the applied aspect, the development of the
+theoretical model and basic research. The applied aspect is the development of a
+methodological framework for the determination of Sellmeier coefficients [12] based
+on measurements of photon properties from SPDC sources.
+Sellmeier equations together with the parameterization coefficients of these equations are a way to describe dispersion phenomena in crystals, also those used for
+SPDC [13]. The precise determination of the Sellmeier coefficients is important both
+in the design of experiments based on SPDC and in non-linear optics [14, 15]. The
+growing interest in quantum key distribution (QKD) based on single photon-pair
+sources [16] also motivates research into the determination of Sellmeier coefficients.
+The process of forming crystals enabling SPDC often suffers from uncertainties originating in fabrication process, leading to different dispersion characteristics of the
+crystal than intended. Therefore, it is important to find an uncomplicated and precise method of their determination. I will describe the research on this issue in Chapter 3, and the results will be used in the next chapter.
+2 Chapter 1. Introduction
+The fourth chapter is devoted to the theory of the parametric frequency conversion phenomenon. I will develop a model describing the joint probability distribution of the frequencies of photon pairs generated in the process, called in the
+literature on the subject "biphoton wave function". My contribution here is a generalization of the pre-existing model limited to the case of non-periodic crystals. I also
+developed a numerical implementation of the analytical model, the performance of
+which was presented in the articles [17, 18, 19]. The model presented in the fourth
+chapter calculates the "biphoton wave function" not only for uniaxial but also for
+biaxial crystals. After a short introduction, I will conduct an extensive discussion to
+validate the model against two experiments performed in the SPA laboratory.
+I will devote an extensive fifth chapter to modelling the modes of the bent waveguide, combining analytical considerations and numerical modelling. In this chapter, I find solutions to the Helmholtz equation [13] defining the modes of an optical waveguide, going beyond the approximations commonly used in the literature.
+Thanks to this, I will be able to correctly predict the number of modes in a bent
+waveguide and their spatial distribution. The correctness of my results is verified
+with numerical simulations obtained in COMSOL. In this chapter I emphasize the
+context of basic research: I show that the bent waveguide is described by equations
+analogous to the equations of the dynamics of a quantum particle in a space with

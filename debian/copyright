@@ -68,7 +68,9 @@ Copyright: The authors of the papers listed in tests/corpus/sources.json, and Ar
 License: CC-BY-4.0
 Comment: Text selected by hand in Firefox, Chromium and Okular from the
  arXiv and PLOS papers in tests/corpus/sources.json, which are under CC BY
- 4.0, and from the corpus's own documents (tools/build_documents.py).
+ 4.0, from the corpus's own documents (tools/build_documents.py), and from
+ the works of the United States government in tests/corpus/sources.json,
+ which are in the public domain there.
 
 Files: tests/corpus/detection/negative/poem-*
  tests/corpus/detection/negative/web-*
@@ -79,10 +81,18 @@ License: public-domain
  Species and Herman Melville's Moby-Dick.
 
 Files: tests/corpus/detection/*/nist-*
-Copyright: none (a work of the United States government)
+ tests/corpus/detection/*/scotus-*
+ tests/corpus/detection/*/usgs-*
+ tests/corpus/detection/*/irs-*
+ tests/corpus/detection/*/uscourts-*
+Copyright: none (works of the United States government)
 License: public-domain
- NIST Special Publication 800-12 Revision 1 is a work of the United States
- government and is not subject to copyright in the United States.
+ NIST Special Publication 800-12 Revision 1, the Supreme Court's slip
+ opinion in Loper Bright Enterprises v. Raimondo, USGS Fact Sheet
+ 2024-3001, IRS Publication 501, the Federal Rules of Evidence and the
+ Judicial Conference's letters to Congress, all listed in
+ tests/corpus/sources.json, are works of the United States government and
+ are not subject to copyright in the United States.
 
 
 License: GPL-3+

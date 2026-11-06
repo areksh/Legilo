@@ -1,0 +1,65 @@
+Chapter 2
+Theoretical background
+This chapter introduces basic mathematical tools to be used throughout the thesis.
+First, we shortly review Maxwell and Helmholtz equations. We will need both in
+the last chapter of this thesis. Next, we introduce quantum coherence functions
+and with their help, we describe the most important quantum states. We move on
+to a description of the spontaneous parametric down-conversion process, crystal
+anisotropy and phase matching conditions. We use this description to introduce the
+formalism of biphoton wavefunction in the next chapter.
+2.1 Classical light
+Classical electromagnetic radiation is fully described by a set of Maxwell equations.
+Maxwell equations in a linear dielectric, when no sources or charges are present have
+the following form [27]:
+∇ · E = 0 (2.1)
+∇ · B = 0 (2.2)
+∇ × E = −
+∂B
+∂t
+(2.3)
+∇ × B =
+µrer
+c
+2
+∂E
+∂t
+. (2.4)
+Here, µr
+is magnetic permeability and er
+is relative electric permittivity. As usual,
+c stands for light velocity in vacuum. Bold symbols are used to denote vectors and
+E and B represent electric and magnetic vector fields, respectively. The first two
+equations describe the divergence of fields, and the last two describe the curl of the
+fields. Both expressions involve the nabla symbol ∇. The dot product is denoted
+with · and the vector product with ×. From the above equations, one can easily
+obtain the wave equation. Wave equations in vacuum read:
+∂
+2E
+∂t
+2 − c
+2∇2E = 0 (2.5)
+∂
+2B
+∂t
+2 − c
+2∇2B = 0 (2.6)
+Both the electric and magnetic fields are position and time dependent E = E(r, t),
+B = B(r, t). If we assume that separation of variables is justified in our situation, we
+can simplify the wave equation to the Helmholtz equation. Let us assume that linearly polarized electric field can be separated into two functions E(r, t) = R(r)T(t)e,
+4 Chapter 2. Theoretical background
+with e being the polarization vector, then [27]:
+∇2R(r)
+R(r)
+= −k
+2
+(2.7)
+1
+c
+2T(t)
+d
+2T(t)
+dt2 = −k
+2
+. (2.8)
+The above equation is the Helmholtz equation and k = |k|, where k stand for
+wavevector in vacuum.

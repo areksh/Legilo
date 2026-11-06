@@ -1,0 +1,193 @@
+Cite as: 603 U. S. ____ (2024)
+
+Syllabus
+
+action it reviews—is to “decide
+ 
+all
+ 
+relevant questions of law” and “in
+-
+
+terpret . . . statutory provisions.”
+ 
+§706 (emphasis added).
+ 
+It requires
+a court to
+ 
+ignore
+, not follow, “the reading the court would have
+reached” had it exercised its independent judgment as required by the
+APA.
+ 
+Chevron
+, 467 U. S., at 843, n. 11.
+ 
+Chevron
+ 
+insists on more than
+the “respect” historically given to Executive Branch interpretations; it
+demands that courts mechanically afford
+ 
+binding
+ 
+deference to agency
+interpretations, including those that have been inconsistent over time,
+see
+ 
+id.
+, at 863, and even when a pre-existing judicial precedent holds
+that an ambiguous statute means something else,
+ 
+National Cable &
+Telecommunications Assn.
+ 
+v.
+ 
+Brand X Internet Services
+, 545 U. S. 967,
+
+982.
+ 
+That regime is the antithesis of the time honored approach the
+APA prescribes.
+
+Chevron
+ 
+cannot be reconciled with the APA by presuming that stat
+-
+
+utory ambiguities are implicit delegations to agencies. That presump
+-
+
+tion does not approximate reality. A statutory ambiguity does not nec
+-
+
+essarily reflect a congressional intent that an agency, as opposed to a
+court, resolve the resulting interpretive question.
+ 
+Many or perhaps
+most statutory ambiguities may be unintentional.
+ 
+And when courts
+confront statutory ambiguities in cases that do not involve agency in
+-
+
+terpretations or delegations of authority, they are not somehow re
+-
+
+lieved of their obligation to independently interpret the statutes.
+ 
+In
+-
+
+stead of declaring a particular party’s reading “permissible” in such a
+case, courts use every tool at their disposal to determine the best read
+-
+
+ing of the statute and resolve the ambiguity. But in an agency case as
+in any other, there is a best reading all the same—“the reading the
+court would have reached” if no agency were involved.
+ 
+Chevron
+, 467
+
+U.
+ 
+S., at 843, n. 11. It therefore makes no sense to speak of a “permis
+-
+
+sible” interpretation that is not the one the court, after applying all
+relevant interpretive tools, concludes is best.
+
+Perhaps most fundamentally,
+ 
+Chevron
+’s presumption is misguided
+because agencies have no special competence in resolving statutory
+ambiguities.
+ 
+Courts do.
+ 
+The Framers anticipated that courts would
+often confront statutory ambiguities and expected that courts would
+resolve them by exercising independent legal judgment.
+ 
+Chevron
+gravely erred in concluding that the inquiry is fundamentally different
+just because an administrative interpretation is in play.
+ 
+The very
+point of the traditional tools of statutory construction is to resolve stat
+-
+
+utory ambiguities.
+ 
+That is no less true when the ambiguity is about
+the scope of an agency’s own power—perhaps the occasion on which
+abdication in favor of the agency is
+ 
+least
+ 
+appropriate. Pp. 21–23.
+
+(3)
+ 
+The Government responds that Congress must generally in
+-
+
+tend for agencies to resolve statutory ambiguities because agencies
+have subject matter expertise regarding the statutes they administer;
+6
+ 
+LOPER BRIGHT ENTERPRISES
+ 
+v.
+ 
+RAIMONDO
+
+Syllabus
+
+because deferring to agencies purportedly promotes the uniform con
+-
+
+struction of federal law; and because resolving statutory ambiguities
+can involve policymaking best left to political actors, rather than
+courts. See Brief for Respondents in No. 22–1219, pp. 16–19. But none
+of these considerations justifies
+ 
+Chevron
+’s sweeping presumption of
+congressional intent.
+
+As the Court recently noted, interpretive issues arising in connec
+-
+
+tion with a regulatory scheme “may fall more naturally into a judge’s
+bailiwick” than an agency’s.
+ 
+Kisor
+ 
+v.
+ 
+Wilkie
+, 588 U. S. 558, 578. Under
+Chevron
+’s broad rule of deference, though, ambiguities of all stripes
+trigger deference, even in cases having little to do with an agency’s
+technical subject matter expertise. And even when an ambiguity hap
+-
+
+pens to implicate a technical matter, it does not follow that Congress
+has taken the power to authoritatively interpret the statute from the
+courts and given it to the agency.
+ 
+Congress expects courts to handle
+technical statutory questions, and courts did so without issue in
+agency cases before
+ 
+Chevron
+. After all, in an agency case in particular,
+the reviewing court will go about its task with the agency’s “body of
+experience and informed judgment,” among other information, at it

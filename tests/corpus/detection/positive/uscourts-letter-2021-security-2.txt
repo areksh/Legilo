@@ -1,0 +1,48 @@
+Hattiesburg, Mississippi ($20.4 million).
+The Judiciary supports additional funding for GSA’s Basic and Major Repairs and
+Alterations (R&A) program, a component piece of the Federal Buildings Fund, to ensure
+safe, secure, and functional space for judges and Judiciary employees. Every year, the
+Judiciary pays over $1 billion in rent to GSA, a significant portion of which is intended to
+cover the costs of maintaining and upgrading existing facilities. Because of funding
+constraints, GSA has received just over half ($6.4 billion) of the $12.1 billion it has
+requested for its R&A program since FY 2011. This has led to deteriorating building
+systems, broken elevators, and significant mold and water intrusion problems in
+numerous courthouses across the country. Accordingly, we ask that Congress consider
+funding for GSA’s Basic and Major R&A program in an infrastructure bill so GSA can
+begin to address the backlog of needed repairs to courthouses and court facilities.
+Cybersecurity and IT Modernization Infrastructure ($515.0 million)
+The combination of sharp increases in the number of cyberattacks on Judiciary IT
+systems, aging legacy applications critical to court operations, and funding shortfalls has
+created IT vulnerabilities that require an infusion of resources to address. Without
+additional resources, these IT vulnerabilities will impact our ability to provide core IT
+services and cyber protections for the courts, or to undertake much needed modernization
+projects. The constraints of the annual appropriations process simply do not allow for
+investments of the magnitude needed for a comprehensive retooling of our IT systems,
+applications, and accompanying infrastructure. Accordingly, we look to the Congress to
+provide $515.0 million in urgently needed one-time IT funding in the infrastructure bill
+for the priorities described below.
+Of the total amount requested, $149.0 million is for cybersecurity improvements
+to respond to increasing threats and attacks against Judiciary IT systems. A recent IT
+security assessment conducted by the Department of Homeland Security’s Cybersecurity
+
+Honorable Bernie Sanders
+Honorable Lindsey Graham
+Page 5
+and Infrastructure Security Agency, highlighted several serious Judiciary cybersecurity
+vulnerabilities that, collectively, pose significant threats to the security and integrity of
+Judiciary IT systems. The requested funding would be used to expand the Judiciary’s IT
+Security Operations Center to improve our ability to monitor, prevent, investigate, and
+respond to cyber threats; expand and upgrade multi-factor authentication and identity
+confirmation technology to ensure only credentialed users are accessing Judiciary IT
+systems; strengthen “end point” security to ensure devices accessing Judiciary networks
+are authorized to do so; and implement a development, security, and operations approach,
+known as DevSecOps, for software development to integrate IT security at every phase of
+software development, testing, and implementation.
+We request $212.0 million for a range of IT initiatives related to application
+modernization, which provides essential infrastructure for key Judiciary programs, and
+for network management modernization and data security modernization.2
+The
+Judiciary’s largest application modernization project underway is the Probation and
+Pretrial Services Case Tracking System (PACTS) 360 project that will replace the aging
+and failing case management system used by probation and pretrial services officers to
+supervise defendants awaiting trial and offenders released from prison. Other application

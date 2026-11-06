@@ -1,0 +1,104 @@
+Table 6. Standard Deduction Chart for Most People*
+IF your filing status is... YOUR standard deduction is...
+Single or Married filing separately $15,750
+Married filing jointly or Qualifying surviving spouse   31,500
+Head of household  23,625
+* Don’t use this chart if you were born before January 2, 1961, or are blind, or if someone else can claim you (or your spouse if filing jointly) as a dependent.
+Use Table 7 or Table 8 instead.
+Table 7. Standard Deduction Chart for People Born Before January 2, 1961, or Who Are Blind*
+Check the correct number of boxes below. Then go to the chart.
+You: Born before January 2, 1961 Blind
+Your spouse: Born before January 2, 1961 Blind
+Total number of boxes you checked
+IF your filing status is... AND the number in the box above is... THEN your standard deduction is...
+Single
+1 $17,750
+2  19,750
+Married filing jointly
+1 $33,100
+2  34,700
+3  36,300
+4  37,900
+Qualifying surviving spouse
+1 $33,100
+2  34,700
+Married filing separately**
+1 $17,350
+2  18,950
+3  20,550
+4  22,150
+Head of household
+1 $25,625
+2  27,625
+* If someone else can claim you (or your spouse if filing jointly) as a dependent, use Table 8 instead.
+** You can check the boxes for “Your spouse” if your filing status is married filing separately and your spouse had no income, isn’t filing a return, and can’t be claimed as a
+dependent on another person’s tax return.
+Publication 501 (2025) 25
+Standard Deduction Worksheet for Dependents
+Use this worksheet only if someone else can claim you (or your spouse if
+filing jointly) as a dependent.
+Table 8.
+Keep for Your Records
+Check the correct number of boxes below. Then go to the worksheet.
+You: Born before January 2, 1961 Blind
+Your spouse: Born before January 2, 1961 Blind
+Total number of boxes you checked
+1. Enter your earned income (defined below). If none, enter -0-. 1.
+2. Additional amount. 2. $450
+3. Add lines 1 and 2. 3.
+4. Minimum standard deduction. 4. $1,350
+5. Enter the larger of line 3 or line 4. 5.
+6. Enter the amount shown below for your filing status.
+• Single or Married filing separately—$15,750
+• Married filing jointly—$31,500
+• Head of household—$23,625
+6.
+7. Standard deduction.
+a. Enter the smaller of line 5 or line 6. If born after January 1, 1961, and not blind, stop here. This is your
+standard deduction. Otherwise, go on to line 7b. 7a.
+b. If born before January 2, 1961, or blind, multiply $2,000 ($1,600 if married) by the number in the box above. 7b.
+c. Add lines 7a and 7b. This is your standard deduction for 2025. 7c.
+Earned income includes wages, salaries, tips, professional fees, and other compensation received for personal services you performed. It also includes any
+taxable scholarship or fellowship grant.
+Enhanced Deduction for
+Seniors
+Taxpayers who are age 65 or older may be eligible for the enhanced deduction for seniors. This
+deduction is in addition to the higher standard
+deduction for taxpayers age 65 or older discussed under Higher Standard Deduction for
+Age (65 or Older), earlier. The maximum
+amount of the deduction is $6,000 ($12,000 if
+married filing jointly and both spouses are eligible). The deduction will be limited if your modified adjusted gross income is more than
+$75,000 ($150,000 if married filing jointly).
+Qualified individuals can claim the enhanced deduction for seniors whether
+they claim the standard deduction or
+itemize deductions.
+The special rules that apply to U.S. nationals: residents of Canada, Mexico,
+and South Korea; and residents of India who were students or business apprentices
+don’t apply to the enhanced deduction for seniors. See Pub. 519 for more information.
+TIP
+CAUTION
+!
+To be eligible to claim the enhanced deduction for seniors:
+• You (and/or your spouse if filing a joint return) must have been born before January
+2, 1961;
+• You must have a valid SSN. If you are married filing jointly, the spouse who is claiming the enhanced deduction for seniors
+must have a valid SSN; and
+• If you are married, you must file a joint return with your spouse.
+Death of a taxpayer. Consider the taxpayer to
+be 65 or older at the end of 2025 only if the taxpayer was 65 or older at the time of death. Even
+if the taxpayer was born before January 2,
+1961, the taxpayer isn’t considered 65 or older
+at the end of 2025 unless the taxpayer was 65
+or older at the time of death. A person is considered to reach age 65 on the day before the person’s 65th birthday.
+Example. Your spouse was born on February 14, 1960, and died on February 13, 2025.
+Your spouse is considered age 65 at the time of
+death. However, if your spouse died on February 12, 2025, your spouse isn’t considered age
+65 at the time of death and isn’t age 65 or older
+at the end of 2025.
+Valid SSN. You and/or your spouse must have
+a valid SSN to take this deduction. A valid SSN
+for purposes of the enhanced deduction for seniors is one that is valid for employment and
+that is issued by the SSA before the due date of
+your 2025 return (including extensions).
+For more information, see the Instructions
+for Form 1040.

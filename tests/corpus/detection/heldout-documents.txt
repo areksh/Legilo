@@ -1,0 +1,9 @@
+# Documents whose excerpts and hand copies are held out. Read by
+# tools/split.py.
+arxiv-2211.10799
+irs-p501
+scotus-22-451
+uscourts-fre-2019
+uscourts-letter-2021-security
+uscourts-letter-2022-open-courts
+usgs-fs20243001
