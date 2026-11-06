@@ -46,6 +46,8 @@ private slots:
     void poemIsNotPdf();
     void linesStartingWithDigitsOrBracketsDoNotWrap();
     void blankLinesAreIgnored();
+    void fragmentsDoNotWrap();
+    void shortLinesOfProseStillWrap();
     void hyphenatedBreakAcrossLines();
     void hyphenatedBreakInsideLine();
     void compoundWordIsNoBreak();
@@ -129,6 +131,23 @@ void TestPdfDetector::blankLinesAreIgnored()
     spaced.replace(u'\n', u"\n\n"_s);
 
     QCOMPARE(feature(spaced, u"wrap"_s), feature(WrappedProse, u"wrap"_s));
+}
+
+// Equations and table cells, copied a symbol or a cell to a line, can
+// start line after line with a lowercase letter without being prose.
+void TestPdfDetector::fragmentsDoNotWrap()
+{
+    const QString equation = u"sum over\ni and j\nwith k\nfixed by\nr = 0.10\nthe rule"_s;
+
+    QCOMPARE(feature(equation, u"wrap"_s), 0.0);
+}
+
+// Three words are enough for a line to run on.
+void TestPdfDetector::shortLinesOfProseStillWrap()
+{
+    const QString prose = u"It was a long\nway home for\nthe tired dog\nand its owner."_s;
+
+    QCOMPARE(feature(prose, u"wrap"_s), 3.0 / 8.0);
 }
 
 void TestPdfDetector::hyphenatedBreakAcrossLines()

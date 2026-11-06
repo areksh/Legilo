@@ -35,6 +35,19 @@ bool continues(QStringView line)
     return line.front().isLower();
 }
 
+// Equations and table cells come a symbol or a cell to a line, and their
+// lines can start lowercase too; a line of prose holds a few words.
+bool holdsWords(QStringView line)
+{
+    constexpr int MinimumWords = 3;
+    static const QRegularExpression word(u"\\p{L}{2,}"_s, Unicode);
+    int words = 0;
+    for (auto it = word.globalMatchView(line); it.hasNext() && words < MinimumWords; it.next()) {
+        ++words;
+    }
+    return words >= MinimumWords;
+}
+
 // Code, shell, markup and table rows use these far more than prose does.
 bool isSymbolDense(QStringView line)
 {
@@ -86,7 +99,7 @@ DetectionResult detectPdf(QStringView text, const DetectionHints &hints,
     for (qsizetype i = 0; i < body; ++i) {
         const QStringView line = lines.at(i).text;
         const QStringView next = lines.at(i + 1).text;
-        run = !endsSentence(line) && continues(next) ? run + 1 : 0;
+        run = !endsSentence(line) && holdsWords(line) && continues(next) ? run + 1 : 0;
         longestRun = std::max(longestRun, run);
         if (brokenAtEnd.matchView(line).hasMatch() && next.front().isLower()) {
             hyphen = true;

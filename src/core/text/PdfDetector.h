@@ -26,14 +26,14 @@ struct DetectionHints
 // scaled alike.
 struct DetectorWeights
 {
-    double wrap = 3.11;
-    double midline = 1.05;
-    double hyphen = 1.03;
+    double wrap = 4.89;
+    double midline = 1.30;
+    double hyphen = 1.51;
     double ligature = 0.0;
-    double pagenum = 0.36;
+    double pagenum = 0.41;
     double owner = 0.22;
-    double list = 0.27;
-    double symbols = -1.44;
+    double list = 0.29;
+    double symbols = -1.36;
     double html = -0.11;
     double threshold = 1.0;
 };
@@ -53,10 +53,11 @@ struct DetectionResult
 // line's successor is the next non-empty line, and every line but the last
 // is a body line.
 //
-// - wrap: the longest run of body lines that end mid-sentence and run on
-//   into a line starting with a lowercase letter, as a fraction of eight
-//   lines. A run, not a share of all lines, so that an address block or a
-//   table above wrapped prose does not hide it.
+// - wrap: the longest run of body lines that hold at least three words,
+//   end mid-sentence and run on into a line starting with a lowercase
+//   letter, as a fraction of eight lines. A run, not a share of all
+//   lines, so that an address block or a table above wrapped prose does
+//   not hide it.
 // - midline: lines in which a sentence ends and another begins, as they
 //   do in wrapped prose and rarely in lists, chat or poems. The word
 //   before the stop must be lower case, so "Dr. Smith" does not count.
