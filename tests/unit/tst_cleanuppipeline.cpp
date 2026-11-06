@@ -84,6 +84,7 @@ private slots:
     void idIsTheHashOfTheOriginal();
     void titleIsTheFirstWords();
     void recordsSourceAndSettings();
+    void recordsWhetherThePdfRulesRan();
 };
 
 void TestCleanupPipeline::pdfTextIsReflowedInAutoMode()
@@ -224,6 +225,16 @@ void TestCleanupPipeline::recordsSourceAndSettings()
 
     QCOMPARE(document.source, CaptureSource::Clipboard);
     QCOMPARE(document.settingsUsed, settings);
+}
+
+// The citation speech rule applies to PDF text by default (7.2.5), so
+// playback needs to know which rules ran.
+void TestCleanupPipeline::recordsWhetherThePdfRulesRan()
+{
+    QVERIFY(clean(WrappedProse).pdf);
+    QVERIFY(!clean(Poem).pdf);
+    QVERIFY(clean(Poem, withMode(ReflowMode::Always)).pdf);
+    QVERIFY(!clean(WrappedProse, withMode(ReflowMode::Never)).pdf);
 }
 
 QTEST_GUILESS_MAIN(TestCleanupPipeline)

@@ -23,6 +23,7 @@ struct Document
     QString cleaned;  // what is displayed
     QList<Segment> segments;
     DetectionResult detection; // empty unless the mode was Auto
+    bool pdf = false;          // whether reflow's PDF rules ran
     CleanupSettings settingsUsed;
 };
 

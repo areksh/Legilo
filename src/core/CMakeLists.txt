@@ -30,6 +30,8 @@ add_library(legilo_core STATIC
     text/Reflow.cpp
     text/Reflow.h
     text/Segmenter.cpp
+    text/SpeechRules.cpp
+    text/SpeechRules.h
     text/Segmenter.h
     text/WordList.cpp
     text/WordList.h

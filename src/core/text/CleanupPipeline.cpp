@@ -59,6 +59,7 @@ Document CleanupPipeline::run(const TextCapture &capture, const CleanupSettings 
         pdf = document.detection.isPdf;
     }
 
+    document.pdf = pdf;
     ReflowOptions reflowOptions;
     reflowOptions.pdf = pdf;
     reflowOptions.removePageNumbers = settings.pageNumbers;
