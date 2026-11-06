@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.17
+- Status: Draft 0.18
 - Date: 6 November 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
@@ -513,13 +513,14 @@ All rules apply in PDF mode only, except the confirmed join in rule 3, which app
    - it is not a sentence (does not end with terminal punctuation).
 
    This catches "Journal of Something, Vol. 12" repeated across a multi-page selection. The letter requirement keeps table rows such as "12.5" and "13.7", which both become "##.#". Toggle, default on.
-3. **De-hyphenation across line breaks.** For `(\w+)-[ \t]*\n[ \t]*(\w+)`:
+3. **De-hyphenation across line breaks.** First, in PDF mode, a blank line inside a sentence is dropped: one after a line that ends without terminal punctuation and before a line that starts with a lowercase letter. Firefox's copies put one between many lines of a paragraph, often between the halves of a hyphenated word (12, stage 2 results). Then, for `(\w+)-[ \t]*\n[ \t]*(\w+)`:
    - Keep the hyphen if both halves are words in the word list and the joined form is not (for example, "well-known" stays).
    - **Confirmed join (all modes):** join the halves without the hyphen if the joined form is in the word list and at least one half is not (for example, "re-" + "sults").
    - **PDF mode only:** in every other case, join the halves without the hyphen. With no word list available, join.
+   - **Inside a line (PDF mode only):** "word- word", Chromium's form of a hyphenated break, is changed only where the word list settles it: joined without the hyphen for a confirmed join, and with it where both halves are words and the joined form is not. Anything else is left as it is, because a hyphen and a space can be meant ("pre- and post-tests").
 4. **Dash at line end.** For a line ending in an em or en dash (U+2014, U+2013), join to the next line without inserting a space.
 5. **Line joining.**
-   - Blank lines are paragraph breaks.
+   - Blank lines that rule 3 left are paragraph breaks.
    - Within a paragraph, a line break becomes a space, **except** before a line that starts with a list marker, or after a short line (under 50% of the 90th-percentile length) that ends with terminal punctuation. Those breaks become paragraph breaks.
    - The exceptions preserve lists and headings that the script merged into the previous paragraph.
 
@@ -1495,8 +1496,8 @@ Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, 
 - **Chromium** keeps no blank lines either, and almost no line ends in a hyphen: a hyphenated break seems to arrive joined into one line, with a space after the hyphen ("inter- ferometric").
 - `pdftotext`'s blank lines are mostly page and column breaks too (79% fall mid-sentence). In no source does a blank line reliably mark a paragraph.
 - Reflow (7.2.4) and detection (7.2.3) both read a blank line as a paragraph break. They have to change, test-first against these samples, when the detector is built:
-  - In PDF mode, a blank line inside a sentence (the line before ends without terminal punctuation and the next continues it) is not a paragraph break, and de-hyphenation works across it.
-  - In PDF mode, "word- word" inside a line (Chromium's form of a hyphenated break) joins when the word list confirms the joined word.
+  - In PDF mode, a blank line inside a sentence (the line before ends without terminal punctuation and the next continues it) is not a paragraph break, and de-hyphenation works across it. Done (7.2.4, rule 3).
+  - In PDF mode, "word- word" inside a line (Chromium's form of a hyphenated break) joins when the word list confirms the joined word. Done (7.2.4, rule 3).
   - Where a copy has lost its paragraph breaks, a paragraph ends after a line that ends a sentence and is clearly shorter than the text's usual line length.
   - Detection's features must not depend on blank lines marking paragraphs. Done: detection ignores blank lines (7.2.3).
 - `pdftotext` itself sometimes merges two lines into one, leaves a space inside a hyphenated word ("ac count"), and runs a word hyphenated at the foot of a page into the footer ("somePage 1 of 5"). The corpus keeps these as found.
@@ -1820,6 +1821,10 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.18 (6 November 2026)
+
+- Reflow drops blank lines inside a sentence in PDF mode, and joins "word- word" inside a line where the word list settles it (7.2.4, rules 3 and 5; 12, stage 2 results).
 
 ### Draft 0.17 (6 November 2026)
 
