@@ -246,15 +246,21 @@ QString reflow(QStringView text, const ReflowOptions &options, const WordList *w
 {
     QString result = text.toString();
     if (options.pdf) {
-        result = removePageNumbers(result);
+        if (options.removePageNumbers) {
+            result = removePageNumbers(result);
+        }
         if (options.removeRunningHeaders) {
             result = removeRunningHeaders(result);
         }
         result = joinBlankLinesInSentences(result);
     }
-    result = dehyphenate(result, options.pdf, words);
+    if (options.dehyphenate) {
+        result = dehyphenate(result, options.pdf, words);
+    }
     if (options.pdf) {
-        result = dehyphenateInLines(result, words);
+        if (options.dehyphenate) {
+            result = dehyphenateInLines(result, words);
+        }
         result = joinDashes(result);
         result = joinLines(result);
     }

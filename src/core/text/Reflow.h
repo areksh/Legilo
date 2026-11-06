@@ -11,8 +11,12 @@ struct ReflowOptions
 {
     // Apply the PDF rules: detection said so, or the mode is Always.
     bool pdf = false;
+    // Remove page-number lines (PDF mode only).
+    bool removePageNumbers = true;
     // Remove repeated running headers and footers (PDF mode only).
     bool removeRunningHeaders = true;
+    // Join words broken by a hyphen (rule 3); off leaves every hyphen.
+    bool dehyphenate = true;
 };
 
 // Pipeline step 3 (design 7.2.4). In PDF mode, in this order: removes
@@ -24,7 +28,9 @@ struct ReflowOptions
 // without a space, and joins the lines of each paragraph, keeping list
 // items and short headings apart. Outside PDF mode only the
 // de-hyphenation that the word list confirms applies ("re-" + "sults"),
-// so deliberate line breaks survive.
+// so deliberate line breaks survive. The page-number, header and
+// de-hyphenation rules can each be turned off (the cleanup/pageNumbers,
+// cleanup/repeatedLines and cleanup/dehyphenate settings).
 //
 // words may be null, for no word list: PDF mode then joins every
 // hyphenated break, and outside it nothing is joined.

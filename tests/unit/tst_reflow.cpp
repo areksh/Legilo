@@ -38,6 +38,8 @@ private slots:
     void plainText_data();
     void plainText();
     void runningHeadersCanBeKept();
+    void pageNumbersCanBeKept();
+    void dehyphenationCanBeTurnedOff();
     void withoutWordListPdfJoinsEveryBreak();
     void tidiesWhitespace_data();
     void tidiesWhitespace();
@@ -174,6 +176,30 @@ void TestReflow::runningHeadersCanBeKept()
 
     QCOMPARE(kept,
              u"Journal of Things, Vol. 12 Body one.\n\nJournal of Things, Vol. 13 Body two."_s);
+}
+
+void TestReflow::pageNumbersCanBeKept()
+{
+    const QString kept =
+        legilo::reflow(u"End of the page text\n12\nand the next page."_s,
+                       ReflowOptions{.pdf = true, .removePageNumbers = false}, &words());
+
+    QCOMPARE(kept, u"End of the page text 12 and the next page."_s);
+}
+
+// Off means no hyphen is touched, in any mode: the line break still
+// becomes a space in PDF text, but "re-" and "sults" stay apart.
+void TestReflow::dehyphenationCanBeTurnedOff()
+{
+    const ReflowOptions pdfOff{.pdf = true, .dehyphenate = false};
+    const ReflowOptions plainOff{.pdf = false, .dehyphenate = false};
+
+    QCOMPARE(legilo::reflow(u"The re-\nsults are in."_s, pdfOff, &words()),
+             u"The re- sults are in."_s);
+    QCOMPARE(legilo::reflow(u"The re- sults are in."_s, pdfOff, &words()),
+             u"The re- sults are in."_s);
+    QCOMPARE(legilo::reflow(u"The re-\nsults are in."_s, plainOff, &words()),
+             u"The re-\nsults are in."_s);
 }
 
 void TestReflow::withoutWordListPdfJoinsEveryBreak()
