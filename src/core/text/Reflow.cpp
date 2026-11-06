@@ -200,7 +200,9 @@ QString joinDashes(const QString &text)
 // Rule 5: within a paragraph a line break becomes a space, except before
 // a list item or after a line that ends a sentence well short of the
 // usual width. That is a heading, or the last line of a paragraph whose
-// blank line the copy lost: Okular's and Chromium's copies have none.
+// blank line the copy lost: Okular's and Chromium's copies have none. A
+// shorter line still that has no stop is a heading too when the next line
+// starts with a capital ("Method", "1. Introduction").
 QString joinLines(const QString &text)
 {
     QList<QStringList> paragraphs{{}};
@@ -225,8 +227,15 @@ QString joinLines(const QString &text)
     // Tuned on the clean-up corpus (9.2): from 0.8 to 0.95 recovers the
     // same paragraphs, and 0.75 runs a newsletter's together.
     constexpr double ParagraphEnd = 0.85;
-    const double shortLine =
-        ParagraphEnd * static_cast<double>(lengths.at(std::max<qsizetype>(index, 0)));
+    // A heading without a stop must be shorter still.
+    constexpr double Heading = 0.5;
+    const auto usual = static_cast<double>(lengths.at(std::max<qsizetype>(index, 0)));
+    const auto isHeading = [&](const QString &line, const QString &next) {
+        return static_cast<double>(line.size()) < Heading * usual && !endsSentence(line) &&
+               std::ranges::any_of(
+                   line, [](QChar c) { return c.isLetter(); }) &&
+               next.front().isUpper();
+    };
 
     QStringList joined;
     for (const QStringList &lines : paragraphs) {
@@ -237,7 +246,9 @@ QString joinLines(const QString &text)
         for (qsizetype i = 1; i < lines.size(); ++i) {
             const QString &previous = lines.at(i - 1);
             const bool paragraphEnd =
-                static_cast<double>(previous.size()) < shortLine && endsSentence(previous);
+                (static_cast<double>(previous.size()) < ParagraphEnd * usual &&
+                 endsSentence(previous)) ||
+                isHeading(previous, lines.at(i));
             paragraph += isListItemLine(lines.at(i)) || paragraphEnd ? u"\n\n"_s : u" "_s;
             paragraph += lines.at(i);
         }

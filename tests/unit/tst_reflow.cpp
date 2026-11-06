@@ -134,6 +134,14 @@ void TestReflow::pdfMode_data()
         u"to the end of it."_s,
         u"This line is nearly as long as the others are. The next sentence starts here and runs "
         u"on to the end of it."_s);
+    row("heading without a stop stays apart",
+        u"Method\nHeat the oven to two hundred degrees and wait\n"
+        u"for it to warm up properly before you start."_s,
+        u"Method\n\nHeat the oven to two hundred degrees and wait for it to warm up properly "
+        u"before you start."_s);
+    row("line running on into a capital stays joined",
+        u"We met them all on the long way back to\nLondon and home again in the same day."_s,
+        u"We met them all on the long way back to London and home again in the same day."_s);
     row("short heading stays apart (fix 7)",
         u"Introduction.\nThis is a long line of body text that goes on.\n"
         u"And it continues on this line as well."_s,
