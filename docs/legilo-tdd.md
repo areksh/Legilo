@@ -1,7 +1,7 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.15
-- Date: 30 October 2026
+- Status: Draft 0.16
+- Date: 6 November 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
 
@@ -58,6 +58,7 @@ The design replaces an existing pair of scripts (`speak-selection`, Bash, and `s
 | Reader | Full reader window with sentence highlighting, a paste/edit box and plain-text files |
 | Navigation | Start from any point, step by sentence or paragraph, resume where you stopped |
 | Clean-up preview | Yes, with clean-up settings shown alongside the preview |
+| PDF detection | Features and weights fitted on the regression corpus, not set by hand; the held-out set is scored once per change of features and never used to choose them (7.2.3, 9.2) |
 | Audio export | Yes |
 | Later | PDF files, OCR, the references-section skip, dictation, other formats, other languages |
 
@@ -443,34 +444,40 @@ These run on all text and should never damage normal prose:
 
 The selection and clipboard do not reliably say where text came from, so detection is based on the shape of the text, plus weak hints from MIME types and, on Windows, the owning process.
 
-Features are computed on the normalised text, split into lines. "Body lines" are non-empty lines that are not the last line of a paragraph (a paragraph ends at a blank line).
+Features are computed on the normalised text, split into lines. Blank lines are ignored, because no PDF reader's copy marks paragraphs with them reliably (12, stage 2 results). A line's successor is the next non-empty line, and every non-empty line but the last is a body line. A body line **wraps** when it ends without terminal punctuation (`.!?:;` plus closing quotes or brackets) and the next line starts with a lowercase letter. The first draft also counted a leading digit or opening bracket, but in the corpus that marked logs, tables, chat and checklists far more often than prose.
 
-| Feature | Definition | Initial weight |
+| Feature | Definition | Weight |
 |---|---|---|
-| `wrap` | Fraction of body lines that end without terminal punctuation (`.!?:;` plus closing quotes or brackets) and are followed by a line starting with a lowercase letter, digit or opening bracket | 0.35 |
-| `uniform` | Fraction of body lines whose length is at least 75% of the 90th-percentile line length (justified or wrapped page text) | 0.25 |
-| `hyphen` | 1 if any line ends with a letter followed by `-` and the next line starts with a lowercase letter | 0.10 |
-| `ligature` | 1 if the raw text contained ligature characters (recorded during normalisation) | 0.10 |
-| `pagenum` | 1 if any line matches the page-number rule (section 7.2.4) | 0.10 |
-| `owner` | 1 if `ownerHint` is a known PDF reader (Windows only) | 0.10 |
+| `wrap` | The longest run of body lines that wrap, as a fraction of eight lines (at most 1). A run, not a share of all lines, so that an address block or a table above wrapped prose does not hide it, and a few short lines of chat that happen to run on count for little | 3.11 |
+| `midline` | Fraction of lines in which one sentence ends and another begins: a lowercase word of two or more letters, or a closing bracket, then `.`, `!` or `?`, an optional closing quote or bracket, whitespace and a capital. "Dr. Smith" and initials do not count | 1.05 |
+| `hyphen` | 1 if a line ends with a letter followed by `-` and the next line starts with a lowercase letter, or a line holds "word- word", Chromium's form of a hyphenated break | 1.03 |
+| `ligature` | 1 if the raw text contained ligature characters (recorded during normalisation) | 0 |
+| `pagenum` | 1 if any line matches the page-number rule (section 7.2.4) | 0.36 |
+| `owner` | 1 if `ownerHint` is a known PDF reader (Windows only) | 0.22 |
+| `list` | Fraction of lines that start with a list marker (`-`, `*`, a bullet character, `1.`, `a)`) | 0.27 |
 
 Negative signals subtract from the score:
 
 | Signal | Definition | Weight |
 |---|---|---|
-| `list` | Fraction of lines that start with a list marker (`-`, `*`, a bullet character, `1.`, `a)`) | -0.30 |
-| `code` | Fraction of lines containing typical code characters (`{`, `}`, `;` at line end, `=>`, `::`) or starting with indentation of 4 or more spaces | -0.40 |
-| `html` | 1 if the capture offered `text/html` (rich-text sources are rarely raw PDF text) | -0.05 |
+| `symbols` | Fraction of lines in which at least 5% of the characters are symbols: brackets of every kind, `=`, `;`, `$`, `#`, slashes, `&`, `*`, `_`, `~`, `^`, `@`, `%`, the vertical bar and the backtick. It marks code, shell sessions, markup and tables | -1.44 |
+| `html` | 1 if the capture offered `text/html` (rich-text sources are rarely raw PDF text) | -0.11 |
 
 ```
 if fewer than 3 non-empty lines: not PDF (nothing to reflow anyway)
 score = sum(weight * feature)
-isPdf = score >= threshold         (threshold starts at 0.45)
+isPdf = score >= 1
 ```
 
-The weights and threshold are starting values, to be tuned against the tuning split of the regression corpus and scored on its held-out split (section 9.2).
+The weights are fitted by logistic regression on the regression corpus's tuning set (section 9.2) with `tests/corpus/tools/tune_detector.py`. The tool places the threshold for the highest recall at a tuning precision of at least 0.99, and scales the weights so the threshold is 1, which keeps one fit comparable with the next.
 
-The minimum of 3 lines means a two-line selection is never treated as PDF text. The most common hyphenation break in such a selection is still fixed, because confirmed de-hyphenation runs in all modes (7.2.4, rule 3). Detection exposes the score and each feature value, so the preview can explain its decision ("Detected as PDF text: wrapped lines 82%, uniform width 90%").
+- `owner` and `html` cannot be fitted, because no corpus sample carries those hints. They keep the first draft's weights (0.10 and -0.05 against a threshold of 0.45), scaled the same way. No sample has ligatures either, so the fit leaves `ligature` at 0.
+- The first draft's `uniform` (the share of body lines at least 75% as long as the 90th-percentile line) fitted to about zero: Chromium copies a paragraph as one long line, and table rows are as uniform as justified prose. It was dropped.
+- The first draft's `code` signal became the broader `symbols`.
+- `list` was a negative signal in the first draft. It fits slightly positive, because numbered clauses and recipe steps wrap in PDF text as prose does, and reflow keeps the break before each list item anyway (7.2.4, rule 5).
+- The weights were refitted once the corpus grew, with the features unchanged. The results, and the known weakness, are in section 12 (stage 2 results).
+
+The minimum of 3 lines means a two-line selection is never treated as PDF text. The most common hyphenation break in such a selection is still fixed, because confirmed de-hyphenation runs in all modes (7.2.4, rule 3). Detection exposes the score and each feature value, so the preview can explain its decision ("Detected as PDF text: wrapped lines 100%, sentences inside lines 40%").
 
 Modes, set in the settings and the preview:
 
@@ -1158,11 +1165,14 @@ public:
     - precision at least 98%, because false positives damage text
     - recall at least 90%
 - Start the corpus from the inputs you already tested the scripts with.
-- **As built (`tests/corpus/`, stage 2):** 190 samples, 98 positive and 92 negative.
+- **As built (`tests/corpus/`, stage 2):** 244 samples, 136 positive and 108 negative, plus private samples kept out of git.
   - Labels follow what the detector decides: positive means the line breaks are layout that reflow should undo. A menu, a table or a poem copied from a PDF is negative, because reflowing it would damage it.
-  - Positives are excerpts, cut with `pdftotext` (poppler, as Okular uses), of six arXiv papers and two PLOS ONE articles (CC BY 4.0), NIST SP 800-12 (public domain), and ten documents typeset for the corpus with LibreOffice, whose clean text is known exactly and gives six clean-up pairs. Nineteen samples were selected by hand in Firefox, Okular and Chromium.
-  - Negatives are written for the corpus, plus public-domain poems and book prose.
-  - The held-out third is fixed by `detection/split.txt` and keeps each PDF's excerpts together. `tests/corpus/local/`, which git ignores, holds samples of private documents, for local tuning only.
+  - A sample is labelled by what it holds, not by the document it came from. An excerpt of a paper can hold nothing but table cells or a chart's axis labels; `detection/relabelled.tsv` lists the 15 such excerpts, with the reason for each. An excerpt that mixes the two, such as a letter's address block above its wrapped body, stays positive.
+  - Positives are excerpts, cut with `pdftotext` (poppler, as Okular uses), of six arXiv papers, a thesis and two PLOS ONE articles (CC BY 4.0); NIST SP 800-12, a Supreme Court opinion, a USGS fact sheet, IRS Publication 501, the Federal Rules of Evidence and two letters to Congress (works of the United States government); and ten documents typeset for the corpus with LibreOffice, whose clean text is known exactly and gives six clean-up pairs. 39 samples were selected by hand in Firefox, Okular and Chromium.
+  - Negatives are written for the corpus, plus public-domain poems and book prose, and the excerpts that hold no prose.
+  - The sets are fixed by `detection/split.txt`, which keeps each document's excerpts and hand copies together. The documents held out are listed in `detection/heldout-documents.txt`: seven added after the detector's features were chosen. The first held-out documents had been looked at while choosing them, so they moved to the tuning set. Samples not cut from a document are split by a hash of their name, about a third held out. The held-out set has 47 positives and 40 negatives.
+  - `tests/corpus/local/`, which git ignores, holds samples of private documents, for local tuning only.
+  - `tst_detectioncorpus` scores the held-out set against the targets. Until precision reaches its target, that check is marked as an expected failure (section 12, stage 2 results).
   - The tools that make it all, and the licences, are in `tests/corpus/README.md`.
 
 ### 9.3 Integration tests
@@ -1444,9 +1454,29 @@ Against the exit criteria, on 30 October 2026:
   - Output is at least as good as `speak-tts --clean-only` on all of your samples.
   - The 5 MB performance budget is met in the benchmark job (9.6).
 
-#### Stage 2 results (30 October 2026, in progress)
+#### Stage 2 results (6 November 2026, in progress)
 
-Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, and the regression corpus (9.2).
+Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, the regression corpus (9.2) and PDF detection (7.2.3).
+
+**PDF detection meets its recall target but not its precision target.**
+
+| Detector | Scored on | Precision | Recall |
+|---|---|---|---|
+| First draft's features and weights | first held-out set | 0.82 | 0.43 |
+| Fitted features (7.2.3) | first held-out set | 1.00 | 0.86 |
+| Fitted features, refitted on the larger tuning set | fresh held-out set | **0.935** | **0.915** |
+| Target (9.2) | | 0.98 | 0.90 |
+
+- The first held-out set came from about five documents, so one document decided a fifth of its recall, and its misses (a letter's address block above short paragraphs) were looked at while choosing the `wrap` feature. It moved to the tuning set, and seven documents in layouts the corpus lacked were added as a fresh held-out set, labelled by reading them before the detector ran on them.
+- On the fresh set every negative written for the corpus passes. The three false positives are non-prose inside the new PDFs: equation fragments from the thesis and two IRS tables. Their short lowercase fragments look like wrapped lines to `wrap`. One of the tables, whose cells wrap, was a borderline label.
+- The precision check is marked as an expected failure in `tst_detectioncorpus`, not lowered: Qt fails the test with XPASS once the target is met. The fix is next, test-first from the equation and table excerpts already in the tuning set. The fresh held-out set has now been scored, so the next score comes from another fresh set: selections saved during real use at stage 3, not another session of selecting by hand.
+
+**More about how the viewers copy**, from the second round of selections:
+
+- Firefox made a table hard to select, and the text below a table could not be selected until the next page.
+- Okular highlighted three-column text under a table as if it were one line.
+- Chromium copied a linked phrase one letter per line ("Q", "u", "a", ...). Reflow would join those letters with spaces and speech would spell the word out. Joining runs of single-letter lines without spaces is a candidate reflow rule.
+- A copy helper left running saves whatever else is selected on the desktop, because the selection is shared. The corpus's helper now saves a selection only when most of it comes from a corpus PDF, and stops after a set number of saves.
 
 **Real selections differ from `pdftotext`, and from each other.** Text selected by hand in Firefox (pdf.js), Okular (poppler) and Chromium (PDFium), compared with `pdftotext`'s excerpts of the same kind of text (aggregate figures only; private samples included):
 
@@ -1465,7 +1495,7 @@ Done so far: the normaliser, segmenter, word list, reflow and whitespace steps, 
   - In PDF mode, a blank line inside a sentence (the line before ends without terminal punctuation and the next continues it) is not a paragraph break, and de-hyphenation works across it.
   - In PDF mode, "word- word" inside a line (Chromium's form of a hyphenated break) joins when the word list confirms the joined word.
   - Where a copy has lost its paragraph breaks, a paragraph ends after a line that ends a sentence and is clearly shorter than the text's usual line length.
-  - Detection's features must not depend on blank lines marking paragraphs.
+  - Detection's features must not depend on blank lines marking paragraphs. Done: detection ignores blank lines (7.2.3).
 - `pdftotext` itself sometimes merges two lines into one, leaves a space inside a hyphenated word ("ac count"), and runs a word hyphenated at the foot of a page into the footer ("somePage 1 of 5"). The corpus keeps these as found.
 - Keyboard selections may not reach the primary selection (7.1.2).
 
@@ -1787,6 +1817,12 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.16 (6 November 2026)
+
+- PDF detection as built: blank lines ignored, `wrap` as the longest run of wrapped lines continued by a lowercase letter, `midline` and `symbols` added, `uniform` and `code` dropped, `list` slightly positive, weights fitted on the corpus and scaled to a threshold of 1 (7.2.3, 1.3).
+- The corpus labels samples by what they hold, adds seven documents as a fresh held-out set and moves the spent one to tuning (9.2).
+- Detection meets its recall target but not its precision target on the fresh set; the precision check is an expected failure until tables and equations inside PDFs are handled. More viewer findings, and the copy helper's guard (12, stage 2 results).
 
 ### Draft 0.15 (30 October 2026)
 
