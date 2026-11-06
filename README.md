@@ -73,6 +73,7 @@ Docker with `CONTAINER_ENGINE=docker`.
 | Command | What it does |
 |---|---|
 | `scripts/check` | Formatting, a warnings-as-errors build, the unit and integration tests, and clang-tidy. Run this before committing. |
+| `scripts/bench` | Times the text pipeline on 5 MB of text in a release build, records the results in `build/linux-release/bench-results.tsv`, and reports measures over budget or more than 20% slower than the previous run (runs on the host) |
 | `scripts/build-deb` | Builds the `.deb`, runs lintian on it, and writes the results to `out/` |
 | `scripts/container [COMMAND]` | Runs a command (or a shell) in the container, with the repository at `/src` |
 | `scripts/fetch-deps` | Downloads the pinned source archives into `third_party/downloads/` (runs on the host) |
@@ -92,6 +93,8 @@ the first build compiles sherpa-onnx; each takes a few minutes.
 | `src/app/` | The application: tray, windows, settings, command line |
 | `tests/unit/` | Qt Test unit tests, run through CTest |
 | `tests/integration/` | Tests against real dependencies, such as speech synthesis with real voices |
+| `tests/corpus/` | The regression corpus for PDF detection and clean-up, and the tools that make it (its own README) |
+| `tests/benchmark/` | Benchmarks, run by `scripts/bench` rather than CTest |
 | `debian/` | Debian packaging |
 | `packaging/` | The build container and, later, the Windows installer |
 | `scripts/` | Developer scripts (see above) |

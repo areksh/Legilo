@@ -1,0 +1,34 @@
+#!/bin/sh
+# Runs the benchmarks (design 9.6) in a release build and records the
+# results in build/linux-release/bench-results.tsv, one line per measure:
+# date, commit, measure, milliseconds. Reports any measure more than 20%
+# slower than its previous record, and the budgets it misses, without
+# failing: timings depend on the machine and what else it is doing.
+set -eu
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+cd "$root"
+build=build/linux-release
+results=$build/bench-results.tsv
+
+cmake --preset linux-release >/dev/null
+cmake --build --preset linux-release --target bench_pipeline >/dev/null
+
+when=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+commit=$(git rev-parse --short HEAD)
+if [ -n "$(git status --porcelain)" ]; then
+    commit="$commit+"
+fi
+
+"$build/tests/benchmark/bench_pipeline" | while IFS="$(printf '\t')" read -r name ms; do
+    previous=$(awk -F '\t' -v n="$name" '$3 == n { ms = $4 } END { print ms }' "$results" 2>/dev/null || true)
+    printf '%s\t%s\t%s\t%s\n' "$when" "$commit" "$name" "$ms" >>"$results"
+    note=""
+    if [ -n "$previous" ] && [ "$ms" -gt $((previous * 120 / 100)) ]; then
+        note=" (more than 20% slower than the previous ${previous} ms)"
+    fi
+    case $name in
+        pipeline-*-5mb) if [ "$ms" -ge 2000 ]; then note="$note (over the 2 s budget)"; fi ;;
+    esac
+    printf '%-22s %6s ms%s\n' "$name" "$ms" "$note"
+done
