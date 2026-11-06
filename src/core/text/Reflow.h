@@ -26,7 +26,8 @@ struct ReflowOptions
 // joins those the word list confirms inside a line ("re- sults", as
 // Chromium copies them), joins a line ending in a dash to the next
 // without a space, and joins the lines of each paragraph, keeping list
-// items and short headings apart. Outside PDF mode only the
+// items apart and ending a paragraph after a sentence that stops well
+// short of the usual line width. Outside PDF mode only the
 // de-hyphenation that the word list confirms applies ("re-" + "sults"),
 // so deliberate line breaks survive. The page-number, header and
 // de-hyphenation rules can each be turned off (the cleanup/pageNumbers,

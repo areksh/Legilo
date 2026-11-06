@@ -121,6 +121,19 @@ void TestReflow::pdfMode_data()
     row("numbered list items stay apart",
         u"The steps follow here\n1. Open the lid\n2) Pour it out"_s,
         u"The steps follow here\n\n1. Open the lid\n\n2) Pour it out"_s);
+    // Okular and Chromium copies have no blank lines, so a paragraph ends
+    // where a sentence stops well short of the usual line width.
+    row("paragraph ends where a sentence stops short",
+        u"The first paragraph runs across this whole line\nand ends here, well short of it.\n"
+        u"The second paragraph starts on this line and\ngoes on to the end."_s,
+        u"The first paragraph runs across this whole line and ends here, well short of it.\n\n"
+        u"The second paragraph starts on this line and goes on to the end."_s);
+    row("sentence ending at full width runs on",
+        u"This line is nearly as long as the others are.\nThe next sentence starts here and runs "
+        u"on\n"
+        u"to the end of it."_s,
+        u"This line is nearly as long as the others are. The next sentence starts here and runs "
+        u"on to the end of it."_s);
     row("short heading stays apart (fix 7)",
         u"Introduction.\nThis is a long line of body text that goes on.\n"
         u"And it continues on this line as well."_s,

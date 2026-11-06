@@ -198,7 +198,9 @@ QString joinDashes(const QString &text)
 }
 
 // Rule 5: within a paragraph a line break becomes a space, except before
-// a list item or after a short line that ends a sentence (a heading).
+// a list item or after a line that ends a sentence well short of the
+// usual width. That is a heading, or the last line of a paragraph whose
+// blank line the copy lost: Okular's and Chromium's copies have none.
 QString joinLines(const QString &text)
 {
     QList<QStringList> paragraphs{{}};
@@ -220,7 +222,11 @@ QString joinLines(const QString &text)
     constexpr double Percentile = 0.9;
     const auto index =
         static_cast<qsizetype>(std::ceil(Percentile * static_cast<double>(lengths.size()))) - 1;
-    const double shortLine = 0.5 * static_cast<double>(lengths.at(std::max<qsizetype>(index, 0)));
+    // Tuned on the clean-up corpus (9.2): from 0.8 to 0.95 recovers the
+    // same paragraphs, and 0.75 runs a newsletter's together.
+    constexpr double ParagraphEnd = 0.85;
+    const double shortLine =
+        ParagraphEnd * static_cast<double>(lengths.at(std::max<qsizetype>(index, 0)));
 
     QStringList joined;
     for (const QStringList &lines : paragraphs) {
@@ -230,9 +236,9 @@ QString joinLines(const QString &text)
         QString paragraph = lines.first();
         for (qsizetype i = 1; i < lines.size(); ++i) {
             const QString &previous = lines.at(i - 1);
-            const bool heading =
+            const bool paragraphEnd =
                 static_cast<double>(previous.size()) < shortLine && endsSentence(previous);
-            paragraph += isListItemLine(lines.at(i)) || heading ? u"\n\n"_s : u" "_s;
+            paragraph += isListItemLine(lines.at(i)) || paragraphEnd ? u"\n\n"_s : u" "_s;
             paragraph += lines.at(i);
         }
         joined.append(paragraph);
