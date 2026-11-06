@@ -16,23 +16,24 @@ struct DetectionHints
 };
 
 // Feature weights and the decision threshold (design 7.2.3), fitted by
-// logistic regression on the regression corpus's tuning set (9.2) and
-// scaled so the threshold is 1. Signals against PDF text carry negative
-// weights. The design counted list markers against it too, but numbered
-// clauses and recipe steps wrap in PDF text as prose does, and reflow
-// keeps the break before each list item anyway, so the fit gives list a
-// small positive weight. No corpus sample has the
-// owner or html hint, so those keep the design's weights, scaled alike.
+// logistic regression on the regression corpus's tuning set (9.2) with
+// tests/corpus/tools/tune_detector.py, and scaled so the threshold is 1.
+// Signals against PDF text carry negative weights. The design counted
+// list markers against it too, but numbered clauses and recipe steps wrap
+// in PDF text as prose does, and reflow keeps the break before each list
+// item anyway, so the fit gives list a small positive weight. No corpus
+// sample has the owner or html hint, so those keep the design's weights,
+// scaled alike.
 struct DetectorWeights
 {
-    double wrap = 2.58;
-    double midline = 0.94;
-    double hyphen = 0.95;
+    double wrap = 3.11;
+    double midline = 1.05;
+    double hyphen = 1.03;
     double ligature = 0.0;
-    double pagenum = 0.41;
+    double pagenum = 0.36;
     double owner = 0.22;
-    double list = 0.26;
-    double symbols = -1.26;
+    double list = 0.27;
+    double symbols = -1.44;
     double html = -0.11;
     double threshold = 1.0;
 };
