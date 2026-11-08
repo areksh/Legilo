@@ -4,11 +4,68 @@
 #include "core/tts/Phonemiser.h"
 
 #include <algorithm>
+#include <iostream>
 #include <sherpa-onnx/c-api/cxx-api.h>
+#include <sstream>
 
 using namespace Qt::StringLiterals;
 
 namespace legilo {
+
+namespace {
+
+// Collects what is written to std::cerr until release(). Debian's ONNX
+// Runtime registers ONNX's operator schemas again when its environment
+// starts, and libonnx prints each one it already has, about 570 lines,
+// to std::cerr. That happens once per process, inside the first
+// OfflineTts::Create. Another thread writing to std::cerr meanwhile is
+// caught too, and passed on by reportCaptured().
+class CerrCapture
+{
+public:
+    CerrCapture()
+        : m_previous(std::cerr.rdbuf(m_buffer.rdbuf()))
+    {}
+    ~CerrCapture() { release(); }
+    CerrCapture(const CerrCapture &) = delete;
+    CerrCapture &operator=(const CerrCapture &) = delete;
+    CerrCapture(CerrCapture &&) = delete;
+    CerrCapture &operator=(CerrCapture &&) = delete;
+
+    // Gives std::cerr back and returns what it collected.
+    std::string release()
+    {
+        if (m_previous != nullptr) {
+            std::cerr.rdbuf(m_previous);
+            m_previous = nullptr;
+        }
+        return m_buffer.str();
+    }
+
+private:
+    std::ostringstream m_buffer;
+    std::streambuf *m_previous;
+};
+
+// Logs captured output: the duplicate schemas as one debug line, anything
+// else as a warning, so a real error is not lost.
+void reportCaptured(const std::string &captured)
+{
+    int duplicates = 0;
+    std::istringstream lines(captured);
+    for (std::string line; std::getline(lines, line);) {
+        if (line.starts_with("Schema error: Trying to register schema")) {
+            ++duplicates;
+        } else if (!line.empty()) {
+            qCWarning(lcTts).noquote() << QString::fromStdString(line);
+        }
+    }
+    if (duplicates > 0) {
+        qCDebug(lcTts) << "Ignored" << duplicates << "duplicate ONNX schema registrations";
+    }
+}
+
+} // namespace
 
 struct SherpaTtsEngine::Private
 {
@@ -35,7 +92,14 @@ std::unique_ptr<SherpaTtsEngine> SherpaTtsEngine::load(const Voice &voice, int t
         return nullptr;
     }
 
-    auto tts = sherpa_onnx::cxx::OfflineTts::Create(config);
+    std::string captured;
+    auto tts = [&] {
+        CerrCapture capture;
+        auto created = sherpa_onnx::cxx::OfflineTts::Create(config);
+        captured = capture.release();
+        return created;
+    }();
+    reportCaptured(captured);
     if (tts.Get() == nullptr) {
         qCWarning(lcTts) << "Cannot load voice" << voice.id << "from" << voice.directory;
         return nullptr;
