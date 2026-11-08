@@ -215,6 +215,8 @@ void TestCleanupPipeline::titleIsTheFirstWords()
 {
     QCOMPARE(clean(WrappedProse).title, u"The survey covered every school in"_s);
     QCOMPARE(clean(u"  Short\n note "_s).title, u"Short note"_s);
+    // Fix 14: Unicode spaces separate words too.
+    QCOMPARE(clean(u"Alpha\u2028Beta Gamma"_s).title, u"Alpha Beta Gamma"_s);
 }
 
 void TestCleanupPipeline::recordsSourceAndSettings()

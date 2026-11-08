@@ -17,7 +17,7 @@ constexpr char16_t RightDoubleQuote = 0x201D;
 bool isValidRoman(const QString &numeral)
 {
     static const QRegularExpression roman(
-        u"^(?=[mdclxvi])m{0,3}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})$"_s);
+        u"^(?=[mdclxvi])m{0,3}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})$"_s, Unicode);
     return roman.match(numeral).hasMatch();
 }
 

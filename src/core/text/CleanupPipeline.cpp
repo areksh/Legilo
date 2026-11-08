@@ -19,7 +19,8 @@ constexpr qsizetype TitleWords = 6;
 
 QString titleOf(const QString &text)
 {
-    static const QRegularExpression space(u"\\s+"_s);
+    static const QRegularExpression space(u"\\s+"_s,
+                                          QRegularExpression::UseUnicodePropertiesOption);
     return text.trimmed().split(space, Qt::SkipEmptyParts).mid(0, TitleWords).join(u' ');
 }
 

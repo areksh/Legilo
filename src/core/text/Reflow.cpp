@@ -377,7 +377,7 @@ QString reflow(QStringView text, const ReflowOptions &options, const WordList *w
 
 QString tidyWhitespace(QStringView text)
 {
-    static const QRegularExpression spaces(u"[ \\t]+"_s);
+    static const QRegularExpression spaces(u"[ \\t]+"_s, Unicode);
     QStringList lines;
     bool blankPending = false;
     for (QStringView line : text.split(u'\n')) {

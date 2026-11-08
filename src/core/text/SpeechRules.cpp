@@ -67,7 +67,7 @@ qsizetype urlLength(QStringView url)
 QString hostOf(QStringView url)
 {
     static const QRegularExpression scheme(u"^[a-z][a-z0-9+.-]*://"_s,
-                                           QRegularExpression::CaseInsensitiveOption);
+                                           Unicode | QRegularExpression::CaseInsensitiveOption);
     QString host = url.toString().remove(scheme);
     host = host.section(u'@', -1); // user information
     for (const QChar end : {u'/', u'?', u'#', u':'}) {
