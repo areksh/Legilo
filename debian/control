@@ -6,6 +6,8 @@ Build-Depends:
  cmake (>= 3.25),
  debhelper-compat (= 13),
  help2man,
+ libkf6globalaccel-dev (>= 6.13),
+ libkf6guiaddons-dev (>= 6.13),
  wamerican,
  wbritish,
  libarchive-dev (>= 3.6),

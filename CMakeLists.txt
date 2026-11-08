@@ -14,7 +14,7 @@ option(BUILD_TESTING "Build the tests" ON)
 
 # Shared code must stay within the Qt 6.8 API that Debian trixie ships,
 # even where Windows builds against a newer Qt.
-find_package(Qt6 6.8 REQUIRED COMPONENTS Core)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets Network)
 qt_standard_project_setup(REQUIRES 6.8)
 add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x060800)
 

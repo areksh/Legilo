@@ -32,6 +32,7 @@ Install the build dependencies:
 ```
 sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
     libespeak-ng-dev libonnxruntime-dev libarchive-dev libminiaudio-dev \
+    libkf6globalaccel-dev libkf6guiaddons-dev \
     wbritish wamerican clang-format clang-tidy help2man
 ```
 
