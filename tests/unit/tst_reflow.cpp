@@ -160,6 +160,10 @@ void TestReflow::pdfMode_data()
         u"The foo- barz thing."_s);
     row("ambiguous break inside a line stays", u"They re- cover it."_s, u"They re- cover it."_s);
     row("suspended hyphen stays", u"Use pre- and post-tests."_s, u"Use pre- and post-tests."_s);
+    // Fix 14: without Unicode properties "\w" matches ASCII only, and
+    // "r\u00E9-" would not be found as a broken word.
+    row("accented word broken across a line (fix 14)", u"Le r\u00E9-\nsum\u00E9 est bon."_s,
+        u"Le r\u00E9sum\u00E9 est bon."_s);
     row("dash at line end joins without a space (fix 13)",
         u"It was the end\u2014\nand then more."_s, u"It was the end\u2014and then more."_s);
     row("list items stay apart (fix 7)", u"Buy these things\n- eggs\n- milk\n- bread"_s,

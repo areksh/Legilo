@@ -43,6 +43,10 @@ void TestNormaliser::normalisesText_data()
     QTest::newRow("narrow non-breaking space") << u"10\u202Fkm"_s << u"10 km"_s;
     QTest::newRow("em and thin spaces") << u"a\u2003b\u2009c"_s << u"a b c"_s;
     QTest::newRow("ideographic space") << u"a\u3000b"_s << u"a b"_s;
+    // Fix 5: NFKC turned these into "2" and "1/2", which espeak-ng then
+    // read as "x two" and "one slash two".
+    QTest::newRow("superscripts and fractions kept (fix 5)")
+        << u"x\u00B2 y\u00B3 \u00BD \u00BC \u00BE"_s << u"x\u00B2 y\u00B3 \u00BD \u00BC \u00BE"_s;
     QTest::newRow("CRLF line endings") << u"one\r\ntwo\r\n"_s << u"one\ntwo\n"_s;
     QTest::newRow("CR line endings") << u"one\rtwo"_s << u"one\ntwo"_s;
     QTest::newRow("superscript left alone") << u"x\u00B2 + y\u00B3"_s << u"x\u00B2 + y\u00B3"_s;
