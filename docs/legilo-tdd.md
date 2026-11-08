@@ -1,7 +1,7 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.20
-- Date: 6 November 2026
+- Status: Draft 0.21
+- Date: 8 November 2026
 - Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
 - Changes since the previous draft: Appendix D.
 
@@ -60,6 +60,7 @@ The design replaces an existing pair of scripts (`speak-selection`, Bash, and `s
 | Clean-up preview | Yes, with clean-up settings shown alongside the preview |
 | PDF detection | Features and weights fitted on the regression corpus, not set by hand; the held-out set is scored once per change of features and never used to choose them (7.2.3, 9.2) |
 | Audio export | Yes |
+| Stage 2 | Closed with detection's held-out precision short of its target (0.915 against 0.98); the next tuning and held-out data come from real selections in stage 3 (12) |
 | Later | PDF files, OCR, the references-section skip, dictation, other formats, other languages |
 
 ### 1.4 Terminology
@@ -1122,7 +1123,8 @@ public:
 
 - **Logging:** `QLoggingCategory` per module (`legilo.text`, `legilo.tts`, `legilo.audio`, `legilo.platform`, ...).
   - Written to `legilo.log` in the app's local data directory, rotated at 1 MB with 3 files kept.
-  - Debug categories can be enabled from the settings or with `QT_LOGGING_RULES`.
+  - Debug categories can be enabled from the settings or with `QT_LOGGING_RULES`. They are off by default: the app sets `legilo.*.debug=false` at start-up, and Qt applies `QT_LOGGING_RULES` over it.
+  - Debian's ONNX Runtime registers ONNX's operator schemas again when its environment starts, and `libonnx` prints each duplicate to `std::cerr`, about 570 lines on the first voice loaded. `SherpaTtsEngine::load` collects `std::cerr` while it creates the engine, logs the duplicates as one debug line and passes anything else on as a warning.
 - **Help menu:**
   - "Copy diagnostics" collects the app version, Qt and KDE Frameworks versions, session type, sherpa-onnx version, loaded voices and the last 200 log lines.
   - Selected text is never logged: only lengths and detection scores.
@@ -1481,8 +1483,8 @@ The scope is built: the normaliser, segmenter, word list, reflow and whitespace 
 | Criterion | Result |
 |---|---|
 | Corpus tests pass | Pass, with expected failures: detection's held-out precision, and the four clean-up pairs text alone cannot recover (9.2) |
-| Detection at least 98% precision and 90% recall on the held-out set | Recall 0.915 met; precision 0.915 not met (7.2.3, below) |
-| At least as good as `speak-tts --clean-only` on your samples | See the comparison below; to be judged by you |
+| Detection at least 98% precision and 90% recall on the held-out set | Recall 0.915 met; precision 0.915 not met (7.2.3, below). Carried to stage 3 as a known shortfall |
+| At least as good as `speak-tts --clean-only` on your samples | Met, by a listening check (below) and the comparison of the text (below) |
 | 5 MB budget met in the benchmark job | Met: Auto mode 1.35 s, Always 1.05 s, speech rules 0.22 s on the development laptop |
 
 **Comparison with `speak-tts --clean-only`**, on every corpus sample (private samples counted, never shown):
@@ -1497,6 +1499,10 @@ The scope is built: the normaliser, segmenter, word list, reflow and whitespace 
 | PDF text: words not spoken, apart from joined halves | 881 of 57,166 committed, 4 of 13,706 private | 943 and 43 |
 
 Legilo leaves more words unspoken because it removes running headers and footers, which `speak-tts` reads aloud (fix 12), and words from within URLs, as both do. The comparison first showed the header rule removing real text as well, 400 words in three private samples, which led to its stricter tests (7.2.4, rule 2). What it removes now in the private samples is short lines starting with a capital that recur 35 to 75 lines apart.
+
+**Stage 2 closed on 8 November 2026** with one criterion short: detection's precision, carried to stage 3, where real selections give it new data to tune on and a fresh held-out set to be scored on (stage 3 scope).
+
+**Listening check.** Four copies were read by Legilo and then by `speak-tts`, both with the Cori voice, so only the clean-up differed: an arXiv paper from Firefox, the thesis from Chromium, an arXiv paper from Okular and a private policy document from Firefox. Legilo was consistently at least as good and mostly better: more natural, with pauses where they belong and none where they do not. Both sometimes ran a heading into the text after it; Legilo did so only where `speak-tts` also did, and not every time `speak-tts` did. The check also showed the console filled by ONNX's duplicate schema registrations and by Legilo's own debug messages, both fixed (7.16).
 
 **PDF detection meets its recall target but not its precision target.**
 
@@ -1554,6 +1560,7 @@ Legilo leaves more words unspoken because it removes running headers and footers
   - Settings dialog pages: General, Voice (choose from installed voices, speed), Shortcuts, and a basic Clean-up page (mode and rule toggles, no preview yet).
   - The `.desktop` file, icons and AppStream metadata.
   - The `.deb` published on the releases page.
+  - From stage 2: collect real selections, with the copy helper's guard (9.2), to tune PDF detection on and to score it on a fresh held-out set; its precision was short at stage 2. A heading run into the text after it is the clean-up weakness heard most in the stage 2 listening check, to look at with the same data.
 - **Exit criteria:**
   - On Plasma Wayland, the default shortcut reads the selection from Okular, Firefox and Kate.
   - The clipboard shortcut works.
@@ -1861,6 +1868,12 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.21 (8 November 2026)
+
+- Stage 2 closed: the listening check against `speak-tts` passed, and detection's precision is carried to stage 3 as a known shortfall (1.3, 12).
+- Debug messages are off by default, and ONNX's duplicate schema registrations are kept off the console (7.16).
+- Stage 3's scope gains collecting real selections for detection and the heading weakness (12).
 
 ### Draft 0.20 (6 November 2026)
 

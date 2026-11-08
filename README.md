@@ -5,10 +5,10 @@ reads the selected text, the clipboard, or a plain-text file aloud with
 neural voices (Piper and Kokoro, through sherpa-onnx) that run entirely on
 your machine. Text copied from PDFs is cleaned up before it is spoken.
 
-**Status:** early development (stage 2 of the delivery plan, text
-clean-up). From the command line, Legilo installs a voice from one of
-sherpa-onnx's model archives, reads text aloud after cleaning it up, and
-shows what the clean-up does:
+**Status:** early development. Stage 2 of the delivery plan, text
+clean-up, is complete; stage 3, the tray app, is next. From the command
+line, Legilo installs a voice from one of sherpa-onnx's model archives,
+reads text aloud after cleaning it up, and shows what the clean-up does:
 
 ```
 legilo --install-voice vits-piper-en_GB-cori-medium.tar.bz2
