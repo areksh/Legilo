@@ -1,8 +1,8 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.21
+- Status: Draft 0.22
 - Date: 8 November 2026
-- Working title: "Legilo" is a placeholder name. Check it for clashes before publishing and replace it throughout (binary name, application ID, paths). Settle it before stage 3 (open question 1).
+- Name: Legilo, with the application ID `sh.arek.legilo` (open question 1). Hosted on GitHub at `areksh/Legilo` (open question 2).
 - Changes since the previous draft: Appendix D.
 
 ## Contents
@@ -60,6 +60,8 @@ The design replaces an existing pair of scripts (`speak-selection`, Bash, and `s
 | Clean-up preview | Yes, with clean-up settings shown alongside the preview |
 | PDF detection | Features and weights fitted on the regression corpus, not set by hand; the held-out set is scored once per change of features and never used to choose them (7.2.3, 9.2) |
 | Audio export | Yes |
+| Name and ID | Legilo, application ID `sh.arek.legilo`: reverse DNS of the maintainer's domain, so it survives a move away from GitHub. Fixed from the first release, because KGlobalAccel stores shortcuts under it (14) |
+| Hosting | GitHub, `areksh/Legilo`: source, issues and the releases page (10.3) |
 | Stage 2 | Closed with detection's held-out precision short of its target (0.915 against 0.98); the next tuning and held-out data come from real selections in stage 3 (12) |
 | Later | PDF files, OCR, the references-section skip, dictation, other formats, other languages |
 
@@ -196,6 +198,7 @@ Each requirement has an ID and the stage that delivers it (section 12).
 | PDF extraction | MuPDF (preferred) or Poppler | AGPL-3.0 / GPL-2.0+ | Both | 10 | Decision point at stage 10, see section 7.15 |
 | Windows selection | UI Automation (system COM API) | Platform | Windows | 5 | Fallback: simulated Ctrl+C |
 | Tests | Qt Test, CTest | LGPL-3.0 | Both | 0 | |
+| Desktop file checks | `appstreamcli` (appstream), `desktop-file-validate` (desktop-file-utils) | LGPL-2.1+, GPL-2.0+ | Linux | 3 | Build-time only, never linked or shipped: tests validate the AppStream metadata and the `.desktop` files, so a broken one fails `scripts/check` rather than the package |
 
 Packages from Debian (stage 0, extended per stage):
 
@@ -205,6 +208,7 @@ qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 libkf6globalaccel-dev libkf6guiaddons-dev extra-cmake-modules
 libarchive-dev libsndfile1-dev libespeak-ng-dev libonnxruntime-dev libminiaudio-dev
 wbritish wamerican
+appstream desktop-file-utils
 debhelper devscripts
 ```
 
@@ -826,7 +830,7 @@ Windows defaults:
 - **Changes from the in-app settings dialog:** call `KGlobalAccel::self()->setShortcut(action, {seq}, KGlobalAccel::NoAutoloading)`.
 - **Changes made in System Settings:** these arrive through `KGlobalAccel::globalShortcutChanged`, which is forwarded as `shortcutChanged`.
 - **Availability:** checked with `KGlobalAccel::isGlobalShortcutAvailable()`. If a shortcut is taken, show who owns it and offer to choose another (taking over another component's shortcut is not offered in version 1).
-- **System Settings grouping:** set `QGuiApplication::setDesktopFileName("io.github.example.legilo")` and ship a matching `.desktop` file, so the shortcuts appear under the app's name and icon in System Settings > Keyboard > Shortcuts.
+- **System Settings grouping:** set `QGuiApplication::setDesktopFileName("sh.arek.legilo")` and ship a matching `.desktop` file, so the shortcuts appear under the app's name and icon in System Settings > Keyboard > Shortcuts.
 
 #### 7.6.4 Windows: RegisterHotKey
 
@@ -1257,7 +1261,7 @@ A regression of more than 20% against the previous recorded run is reported in t
 - **Private libraries:** on Linux, sherpa-onnx's two shared libraries (`libsherpa-onnx-c-api.so`, `libsherpa-onnx-cxx-api.so`) are installed to `/usr/lib/legilo/`, and the binary will find them through `INSTALL_RPATH` `$ORIGIN/../lib/legilo`. They never clash with system libraries.
 - **Windows dependencies:** vcpkg manifest mode for libarchive and libsndfile (with MP3 support enabled), and later MuPDF. `windeployqt` collects the Qt runtime.
 
-### 10.2 Continuous integration (GitHub Actions or GitLab CI)
+### 10.2 Continuous integration (GitHub Actions)
 
 | Job | Environment | Steps |
 |---|---|---|
@@ -1283,9 +1287,9 @@ Cache the sherpa-onnx build and the test model between runs.
   | Binary | `/usr/bin/legilo` |
   | Manual page | `/usr/share/man/man1/legilo.1.gz`, generated from `--help` with `help2man` at build time |
   | Private libraries | `/usr/lib/legilo/` |
-  | Desktop file | `/usr/share/applications/io.github.example.legilo.desktop` |
-  | Icons | `/usr/share/icons/hicolor/.../apps/io.github.example.legilo.*` |
-  | AppStream metadata | `/usr/share/metainfo/io.github.example.legilo.metainfo.xml` |
+  | Desktop file | `/usr/share/applications/sh.arek.legilo.desktop` |
+  | Icons | `/usr/share/icons/hicolor/.../apps/sh.arek.legilo.*` |
+  | AppStream metadata | `/usr/share/metainfo/sh.arek.legilo.metainfo.xml` |
   | Service menu (stage 10) | `/usr/share/kio/servicemenus/legilo.desktop` |
   | Licence notices | `/usr/share/doc/legilo/copyright` (DEP-5), including third-party notices |
 
@@ -1561,6 +1565,7 @@ Legilo leaves more words unspoken because it removes running headers and footers
   - The `.desktop` file, icons and AppStream metadata.
   - The `.deb` published on the releases page.
   - From stage 2: collect real selections, with the copy helper's guard (9.2), to tune PDF detection on and to score it on a fresh held-out set; its precision was short at stage 2. A heading run into the text after it is the clean-up weakness heard most in the stage 2 listening check, to look at with the same data.
+- **Order:** a working slice first, so the app can replace the scripts in daily use early: the tray, the speak-selection and speak-clipboard shortcuts, `KdeTextSource` and the single instance. Then the full state machine, IPC and command line, the settings dialog and the packaging.
 - **Exit criteria:**
   - On Plasma Wayland, the default shortcut reads the selection from Okular, Firefox and Kate.
   - The clipboard shortcut works.
@@ -1714,10 +1719,8 @@ Stages 4 and 5 can swap order. Doing Windows earlier exposes portability problem
 
 ## 14. Open questions
 
-1. Final name and application ID (reverse-DNS, for example `io.github.<user>.legilo`). Check for clashes with existing projects.
-   - **Decide before stage 3.** The ID ends up in KGlobalAccel's shortcut storage, the settings and data paths, the desktop files and the IPC address.
-   - Changing it after the first release loses users' shortcuts and settings.
-2. Hosting: GitHub or GitLab (affects CI configuration and where the apt repository and releases live).
+1. ~~Final name and application ID.~~ Resolved at stage 3: Legilo, `sh.arek.legilo` (1.3). No clash was found. The ID is in KGlobalAccel's shortcut storage and the desktop files, so it must not change after the first release.
+2. ~~Hosting.~~ Resolved at stage 3: GitHub, `areksh/Legilo` (1.3). CI, when there is one, is GitHub Actions (10.2).
 3. ~~Default voice.~~ Resolved at stage 0: `en_GB-cori-medium` (12).
 4. Should a speak-selection capture always open the reader, never, or only for long text? The provisional default is `ifVisible` (Appendix A).
 5. Windows 10 support: best effort, or officially supported? Qt 6.12 is the last Qt release that supports it, and its open-source patch releases end when Qt 6.13 ships (around March 2027) (4.2).
@@ -1813,7 +1816,7 @@ Exit codes: 0 for success, 1 for an error reported by the instance, 2 for invali
 
 ## Appendix C: Desktop integration files
 
-`/usr/share/applications/io.github.example.legilo.desktop`:
+`/usr/share/applications/sh.arek.legilo.desktop`:
 
 ```
 [Desktop Entry]
@@ -1822,7 +1825,7 @@ Name=Legilo
 GenericName=Text to Speech Reader
 Comment=Read selected text, the clipboard or documents aloud
 Exec=legilo --read %F
-Icon=io.github.example.legilo
+Icon=sh.arek.legilo
 Terminal=false
 Categories=Utility;Accessibility;Qt;KDE;
 MimeType=text/plain;
@@ -1839,7 +1842,7 @@ Stage 10 adds `application/pdf;` to `MimeType`.
 Type=Application
 Name=Legilo
 Exec=legilo --tray
-Icon=io.github.example.legilo
+Icon=sh.arek.legilo
 X-KDE-autostart-phase=2
 ```
 
@@ -1854,7 +1857,7 @@ X-KDE-Priority=TopLevel
 
 [Desktop Action readAloud]
 Name=Read aloud in Legilo
-Icon=io.github.example.legilo
+Icon=sh.arek.legilo
 Exec=legilo --read %F
 ```
 
@@ -1868,6 +1871,12 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.22 (8 November 2026)
+
+- The name is Legilo and the application ID `sh.arek.legilo`; the project is hosted on GitHub (1.3, 7.6.3, 10.3, 14, Appendix C).
+- appstream and desktop-file-utils join the build dependencies, to validate the desktop files in the tests (5).
+- Stage 3 starts with a working slice (12).
 
 ### Draft 0.21 (8 November 2026)
 
