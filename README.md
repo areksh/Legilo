@@ -5,22 +5,36 @@ reads the selected text, the clipboard, or a plain-text file aloud with
 neural voices (Piper and Kokoro, through sherpa-onnx) that run entirely on
 your machine. Text copied from PDFs is cleaned up before it is spoken.
 
-**Status:** early development. Stage 2 of the delivery plan, text
-clean-up, is complete; stage 3, the tray app, is next. From the command
-line, Legilo installs a voice from one of sherpa-onnx's model archives,
-reads text aloud after cleaning it up, and shows what the clean-up does:
+**Status:** early development. Stage 3 of the delivery plan, the tray
+app, is in progress. Legilo runs in the system tray and reads the
+selection or the clipboard aloud when you press its global shortcuts:
+
+| Shortcut | Action |
+|---|---|
+| Meta+Alt+S | Speak the selection; press again to stop |
+| Meta+Alt+C | Speak the clipboard |
+| Meta+Alt+P | Pause or resume |
+| Meta+Alt+X | Stop |
+
+They can be changed in System Settings > Keyboard > Shortcuts, under
+Legilo. A default that another application already uses is left unset.
+There is no settings dialog or reader window yet.
+
+From the command line:
 
 ```
+legilo                              # start in the tray
+legilo --speak-selection            # also --speak-clipboard, --pause, --stop
 legilo --install-voice vits-piper-en_GB-cori-medium.tar.bz2
 legilo --speak "Hello from Legilo."
 legilo --speak-file notes.txt --speed 1.2
-legilo --clean-only copied.txt     # the text as it would be spoken
-legilo --explain copied.txt        # why it was or was not taken for PDF text
+legilo --clean-only copied.txt      # the text as it would be spoken
+legilo --explain copied.txt         # why it was or was not taken for PDF text
 ```
 
-`--clean-only` and `--explain` read standard input when given no file.
-
-There is no tray app or window yet; those come in later stages.
+The speak, pause and stop commands go to the running instance, starting
+one if needed. `--clean-only` and `--explain` read standard input when
+given no file.
 
 The design, requirements and staged plan are in
 [docs/legilo-tdd.md](docs/legilo-tdd.md).

@@ -1,5 +1,6 @@
 #include "app/Settings.h"
 
+#include <algorithm>
 #include <array>
 
 using namespace Qt::StringLiterals;
@@ -33,6 +34,8 @@ constexpr Key<bool> selectionFallbackToClipboardKey{"behaviour/selectionFallback
                                                     false};
 constexpr Key<ShowCaptureInReader> showCaptureInReaderKey{"behaviour/showCaptureInReader"_L1,
                                                           ShowCaptureInReader::IfVisible};
+constexpr Key<QLatin1StringView> defaultVoiceKey{"voice/default"_L1, {}};
+constexpr Key<double> speedKey{"voice/speed"_L1, 1.0};
 
 constexpr std::array speakWhileSpeakingNames{
     EnumName<SpeakWhileSpeaking>{SpeakWhileSpeaking::Stop, "stop"_L1},
@@ -165,6 +168,28 @@ void Settings::setShowCaptureInReader(ShowCaptureInReader value)
 {
     store(showCaptureInReaderKey.name, nameOf(showCaptureInReaderNames, showCaptureInReader()),
           nameOf(showCaptureInReaderNames, value));
+}
+
+QString Settings::defaultVoice() const
+{
+    return m_store.value(defaultVoiceKey.name, defaultVoiceKey.defaultValue).toString();
+}
+
+void Settings::setDefaultVoice(const QString &value)
+{
+    store(defaultVoiceKey.name, defaultVoice(), value);
+}
+
+double Settings::speed() const
+{
+    bool valid = false;
+    const double value = m_store.value(speedKey.name).toDouble(&valid);
+    return valid ? std::clamp(value, MinSpeed, MaxSpeed) : speedKey.defaultValue;
+}
+
+void Settings::setSpeed(double value)
+{
+    store(speedKey.name, speed(), std::clamp(value, MinSpeed, MaxSpeed));
 }
 
 } // namespace legilo

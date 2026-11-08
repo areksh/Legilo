@@ -31,6 +31,13 @@ private slots:
     void showCaptureInReaderPersistsAsName();
     void unknownEnumValueFallsBackToDefault();
 
+    void defaultVoiceIsUnsetUntilChosen();
+    void defaultVoicePersistsUnderItsName();
+    void speedDefaultsToNormal();
+    void speedPersistsUnderItsName();
+    void speedIsKeptWithinItsRange_data();
+    void speedIsKeptWithinItsRange();
+
     void changedIsEmittedWithKeyWhenValueChanges();
     void changedIsNotEmittedWhenValueIsUnchanged();
 
@@ -172,6 +179,71 @@ void TestSettings::unknownEnumValueFallsBackToDefault()
 
     QCOMPARE(settings.speakWhileSpeaking(), Settings::SpeakWhileSpeaking::Stop);
     QCOMPARE(settings.showCaptureInReader(), Settings::ShowCaptureInReader::IfVisible);
+}
+
+void TestSettings::defaultVoiceIsUnsetUntilChosen()
+{
+    const Settings settings(fileName());
+
+    QVERIFY(settings.defaultVoice().isEmpty());
+}
+
+void TestSettings::defaultVoicePersistsUnderItsName()
+{
+    {
+        Settings settings(fileName());
+        settings.setDefaultVoice(QStringLiteral("piper-en_GB-cori-medium"));
+    }
+
+    const Settings reopened(fileName());
+    QCOMPARE(reopened.defaultVoice(), QStringLiteral("piper-en_GB-cori-medium"));
+    const QSettings raw(fileName(), QSettings::IniFormat);
+    QCOMPARE(raw.value(QStringLiteral("voice/default")).toString(),
+             QStringLiteral("piper-en_GB-cori-medium"));
+}
+
+void TestSettings::speedDefaultsToNormal()
+{
+    const Settings settings(fileName());
+
+    QCOMPARE(settings.speed(), 1.0);
+}
+
+void TestSettings::speedPersistsUnderItsName()
+{
+    {
+        Settings settings(fileName());
+        settings.setSpeed(1.3);
+    }
+
+    const Settings reopened(fileName());
+    QCOMPARE(reopened.speed(), 1.3);
+    const QSettings raw(fileName(), QSettings::IniFormat);
+    QCOMPARE(raw.value(QStringLiteral("voice/speed")).toDouble(), 1.3);
+}
+
+void TestSettings::speedIsKeptWithinItsRange_data()
+{
+    QTest::addColumn<QString>("stored");
+    QTest::addColumn<double>("expected");
+
+    QTest::newRow("too slow") << QStringLiteral("0.2") << 0.5;
+    QTest::newRow("too fast") << QStringLiteral("9") << 2.5;
+    QTest::newRow("not a number") << QStringLiteral("quick") << 1.0;
+}
+
+void TestSettings::speedIsKeptWithinItsRange()
+{
+    QFETCH(QString, stored);
+    QFETCH(double, expected);
+    {
+        QSettings raw(fileName(), QSettings::IniFormat);
+        raw.setValue(QStringLiteral("voice/speed"), stored);
+    }
+
+    const Settings settings(fileName());
+
+    QCOMPARE(settings.speed(), expected);
 }
 
 void TestSettings::changedIsEmittedWithKeyWhenValueChanges()

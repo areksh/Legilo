@@ -51,6 +51,17 @@ public:
     ShowCaptureInReader showCaptureInReader() const;
     void setShowCaptureInReader(ShowCaptureInReader value);
 
+    // The voice to speak with, by ID. Empty until the user chooses one,
+    // which means the first installed voice.
+    QString defaultVoice() const;
+    void setDefaultVoice(const QString &value);
+    // The speaking speed, 1.0 being normal, from MinSpeed to MaxSpeed. A
+    // stored value outside the range reads as the nearest end of it.
+    static constexpr double MinSpeed = 0.5;
+    static constexpr double MaxSpeed = 2.5;
+    double speed() const;
+    void setSpeed(double value);
+
 signals:
     // Emitted with the key name (for example "general/autostart") when a
     // setter changes a value. Setting a key to its current value is silent.

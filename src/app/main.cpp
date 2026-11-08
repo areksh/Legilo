@@ -1,4 +1,6 @@
+#include "app/Instance.h"
 #include "app/Logging.h"
+#include "app/SingleInstance.h"
 #include "core/audio/MiniaudioOutput.h"
 #include "core/models/ModelInstaller.h"
 #include "core/playback/PlaybackController.h"
@@ -7,12 +9,15 @@
 #include "core/tts/SherpaTtsEngine.h"
 #include "core/tts/VoiceRegistry.h"
 
+#include <QApplication>
 #include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QFile>
 #include <QTextStream>
 #include <QThread>
 
+#include <array>
+#include <memory>
 #include <optional>
 
 using namespace legilo;
@@ -22,6 +27,30 @@ namespace {
 // Exit codes from design Appendix B.
 constexpr int ExitError = 1;
 constexpr int ExitUsage = 2;
+constexpr int ExitNoInstance = 3;
+
+// The application ID (design 1.3): the desktop file's name, under which
+// KDE groups Legilo's shortcuts and notifications.
+constexpr auto DesktopFileName = "sh.arek.legilo";
+
+// Options whose command may make this process the instance, which needs
+// a display for the tray. A bare start is one too.
+constexpr std::array InstanceOptions{"--tray", "--speak-selection", "--speak-clipboard"};
+
+bool mayBecomeInstance(int argc, char **argv)
+{
+    if (argc <= 1) {
+        return true;
+    }
+    for (int i = 1; i < argc; ++i) {
+        for (const char *option : InstanceOptions) {
+            if (qstrcmp(argv[i], option) == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 QTextStream &err()
 {
@@ -47,6 +76,43 @@ int installVoice(const QString &archive)
         }
     }
     return 0;
+}
+
+// Hands a command to the running instance, or becomes the instance and
+// carries it out (design 7.8). With no request, a running instance is
+// left as it is; mayBecome is false for commands that need no instance
+// when none is running, such as stop.
+int runInstanceCommand(const std::optional<IpcRequest> &request, bool mayBecome)
+{
+    SingleInstance single(SingleInstance::defaultPath());
+    const auto result = single.start(request, mayBecome);
+    switch (result.outcome) {
+    case SingleInstance::Outcome::Forwarded:
+        if (!result.reply.ok) {
+            err() << "legilo: " << result.reply.error << Qt::endl;
+            return ExitError;
+        }
+        return 0;
+    case SingleInstance::Outcome::NotRunning:
+        return 0;
+    case SingleInstance::Outcome::Failed:
+        err() << "legilo: cannot start Legilo or reach the running instance" << Qt::endl;
+        return ExitNoInstance;
+    case SingleInstance::Outcome::Became:
+        break;
+    }
+
+    Instance instance;
+    single.setHandler([&instance](const IpcRequest &later) { return instance.handle(later); });
+    QObject::connect(&instance, &Instance::quitRequested, qApp, &QCoreApplication::quit);
+    instance.start();
+    if (request) {
+        const IpcReply reply = instance.handle(*request);
+        if (!reply.ok) {
+            err() << "legilo: " << reply.error << Qt::endl;
+        }
+    }
+    return QCoreApplication::exec();
 }
 
 // Speaks text aloud and returns once it has been spoken. A stage 1 stand-in
@@ -135,7 +201,16 @@ int cleanOnly(const QStringList &files, bool explanation)
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
+    // Only a process that may become the instance connects to the display.
+    std::unique_ptr<QCoreApplication> app;
+    if (mayBecomeInstance(argc, argv)) {
+        app = std::make_unique<QApplication>(argc, argv);
+        QGuiApplication::setDesktopFileName(QString::fromLatin1(DesktopFileName));
+        QGuiApplication::setApplicationDisplayName(QStringLiteral("Legilo"));
+        QApplication::setQuitOnLastWindowClosed(false);
+    } else {
+        app = std::make_unique<QCoreApplication>(argc, argv);
+    }
     applyLoggingDefaults();
     QCoreApplication::setApplicationName(QStringLiteral("legilo"));
     QCoreApplication::setApplicationVersion(QStringLiteral(LEGILO_VERSION));
@@ -166,12 +241,22 @@ int main(int argc, char *argv[])
     const QCommandLineOption explainOption(
         QStringLiteral("explain"),
         QStringLiteral("Print PDF detection's features and score, from FILE or standard input."));
-    parser.addOptions({installVoiceOption, speakOption, speakFileOption, voiceOption, speedOption,
-                       cleanOnlyOption, explainOption});
+    const QCommandLineOption trayOption(QStringLiteral("tray"),
+                                        QStringLiteral("Start in the tray (used by autostart)."));
+    const QCommandLineOption speakSelectionOption(QStringLiteral("speak-selection"),
+                                                  QStringLiteral("Read the selection."));
+    const QCommandLineOption speakClipboardOption(QStringLiteral("speak-clipboard"),
+                                                  QStringLiteral("Read the clipboard."));
+    const QCommandLineOption pauseOption(QStringLiteral("pause"),
+                                         QStringLiteral("Pause or resume."));
+    const QCommandLineOption stopOption(QStringLiteral("stop"), QStringLiteral("Stop."));
+    parser.addOptions({trayOption, speakSelectionOption, speakClipboardOption, pauseOption,
+                       stopOption, installVoiceOption, speakOption, speakFileOption, voiceOption,
+                       speedOption, cleanOnlyOption, explainOption});
     parser.addPositionalArgument(QStringLiteral("file"),
                                  QStringLiteral("The text for --clean-only or --explain."),
                                  QStringLiteral("[FILE]"));
-    parser.process(app);
+    parser.process(*app);
 
     if (parser.isSet(cleanOnlyOption) || parser.isSet(explainOption)) {
         if (parser.positionalArguments().size() > 1) {
@@ -205,9 +290,27 @@ int main(int argc, char *argv[])
             capture.text = QString::fromUtf8(file.readAll());
             capture.source = CaptureSource::File;
         }
-        return speak(app, capture, parser.value(voiceOption), speed);
+        return speak(*app, capture, parser.value(voiceOption), speed);
     }
 
-    // Nothing else is implemented yet, so a bare start shows the help.
-    parser.showHelp(0);
+    const auto command = [](const char *name) {
+        return IpcRequest{QString::fromLatin1(name), {}, {}};
+    };
+    if (parser.isSet(speakSelectionOption)) {
+        return runInstanceCommand(command("speak-selection"), true);
+    }
+    if (parser.isSet(speakClipboardOption)) {
+        return runInstanceCommand(command("speak-clipboard"), true);
+    }
+    if (parser.isSet(pauseOption)) {
+        return runInstanceCommand(command("pause"), false);
+    }
+    if (parser.isSet(stopOption)) {
+        return runInstanceCommand(command("stop"), false);
+    }
+    if (parser.isSet(trayOption)) {
+        return runInstanceCommand(std::nullopt, true);
+    }
+    // A bare start shows the reader of a running instance (Appendix B).
+    return runInstanceCommand(command("show"), true);
 }

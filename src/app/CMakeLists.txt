@@ -1,5 +1,7 @@
 # Everything except main() goes in a library so the tests can link it.
 add_library(legilo_app STATIC
+    Instance.cpp
+    Instance.h
     IpcProtocol.cpp
     IpcProtocol.h
     Logging.cpp
@@ -8,6 +10,10 @@ add_library(legilo_app STATIC
     Settings.h
     SingleInstance.cpp
     SingleInstance.h
+    Speaker.cpp
+    Speaker.h
+    TrayController.cpp
+    TrayController.h
 )
 target_include_directories(legilo_app PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(legilo_app PUBLIC legilo_core legilo_platform Qt6::Widgets Qt6::Network)
