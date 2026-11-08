@@ -1,3 +1,4 @@
+#include "app/Logging.h"
 #include "core/audio/MiniaudioOutput.h"
 #include "core/models/ModelInstaller.h"
 #include "core/playback/PlaybackController.h"
@@ -135,6 +136,7 @@ int cleanOnly(const QStringList &files, bool explanation)
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+    applyLoggingDefaults();
     QCoreApplication::setApplicationName(QStringLiteral("legilo"));
     QCoreApplication::setApplicationVersion(QStringLiteral(LEGILO_VERSION));
 
