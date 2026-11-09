@@ -30,6 +30,16 @@ TextCapture read(QClipboard::Mode mode, CaptureSource source)
 
 } // namespace
 
+KdeTextSource::KdeTextSource(QObject *parent)
+    : TextSource(parent)
+{
+    // Created on the first read instead, it found no selection there: the
+    // first shortcut press after start-up said nothing was selected.
+    if (KSystemClipboard::instance() == nullptr) {
+        qCWarning(lcPlatform) << "No system clipboard is available";
+    }
+}
+
 QFuture<TextCapture> KdeTextSource::readSelection()
 {
     return QtFuture::makeReadyValueFuture(read(QClipboard::Selection, CaptureSource::Selection));

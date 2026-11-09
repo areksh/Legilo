@@ -9,12 +9,16 @@ namespace legilo {
 // protocol, so it reads without the window focus that a global shortcut
 // never gives Legilo; on X11 it falls back to QClipboard. Reads complete
 // at once.
+//
+// The system clipboard is set up when the source is created, at start-up:
+// on Wayland it learns the current selection from events that arrive
+// after it binds to data-control, and until then it reports none.
 class KdeTextSource : public TextSource
 {
     Q_OBJECT
 
 public:
-    using TextSource::TextSource;
+    explicit KdeTextSource(QObject *parent = nullptr);
 
     QFuture<TextCapture> readSelection() override;
     QFuture<TextCapture> readClipboard() override;
