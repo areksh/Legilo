@@ -77,6 +77,7 @@ private slots:
     void synthesisesAheadNoMoreThanLookAheadSeconds();
     void pauseStopsOutputAndResumeRestartsIt();
     void stopDiscardsQueuedAudioAndStopsSynthesis();
+    void playAfterStoppingAFullLookAheadPlays();
     void playWhilePlayingReplacesTheDocument();
     void speedChangeKeepsSegmentPlayingAndResynthesisesTheRest();
     void deviceLossPauses();
@@ -239,6 +240,23 @@ void TestPlaybackController::stopDiscardsQueuedAudioAndStopsSynthesis()
     m_controller->play(next);
     QVERIFY(playUntil(*m_output, [&] { return m_controller->state() == State::Idle; }));
     QCOMPARE(m_output->framesPulled(), framesOf(next));
+}
+
+// Regression: the stopped document's audio stays in the queue until the
+// device applies the flush, and the device starts only once the new
+// document's first audio is queued. Counting the stale audio as look-ahead
+// left the new document waiting for room that never came.
+void TestPlaybackController::playAfterStoppingAFullLookAheadPlays()
+{
+    makeController({.lookAheadSegments = 10, .lookAheadSeconds = 1.0});
+    m_controller->play(segments(10));
+    QVERIFY(waitUntil([&] { return m_engine->calls().size() >= 3; }));
+    QTest::qWait(100); // the worker has filled the look-ahead
+
+    m_controller->stop();
+    m_controller->play({u"Something else entirely."_s});
+
+    QVERIFY(waitUntil([&] { return m_controller->state() == State::Playing; }, 2000));
 }
 
 void TestPlaybackController::playWhilePlayingReplacesTheDocument()

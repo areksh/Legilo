@@ -69,7 +69,9 @@ void SynthesisWorker::begin(int segment, quint64 generation, double speed)
 
 // Whether enough audio is queued beyond the segment playing. Before any
 // audio of this generation has played, the segment before the first one
-// counts as playing.
+// counts as playing. Only this generation's audio counts: after a stop the
+// discarded audio stays in the queue until the device starts again, and
+// the device starts only once this generation's first audio is queued.
 bool SynthesisWorker::lookAheadFull() const
 {
     const int playing = m_queue->playingGeneration() == m_generation ? m_queue->currentSegment()
@@ -78,7 +80,7 @@ bool SynthesisWorker::lookAheadFull() const
         return true;
     }
     const double queuedSeconds =
-        static_cast<double>(m_queue->queuedFrames()) / m_engine->sampleRate();
+        static_cast<double>(m_queue->queuedFramesOf(m_generation)) / m_engine->sampleRate();
     return queuedSeconds >= m_settings.lookAheadSeconds;
 }
 

@@ -65,6 +65,10 @@ public:
     // Frames pushed but not yet pulled or discarded. Approximate while
     // other threads are at work.
     qint64 queuedFrames() const;
+    // Producer. Frames pushed for generation and not yet pulled, leaving
+    // out audio of older generations that a flush has discarded but the
+    // consumer has not yet skipped, as when the device is stopped.
+    qint64 queuedFramesOf(quint64 generation) const;
 
 private:
     struct Chunk
@@ -105,6 +109,11 @@ private:
     std::atomic<int> m_currentSegment = -1;       // consumer
     std::atomic<quint64> m_playingGeneration = 0; // consumer
     std::atomic<qint64> m_framesPlayed = 0;       // consumer
+    // Frames pulled of the playing generation, reset when it changes.
+    std::atomic<qint64> m_generationFramesPlayed = 0; // consumer
+
+    quint64 m_pushGeneration = 0;        // producer: the generation last pushed
+    qint64 m_generationFramesPushed = 0; // producer: frames pushed for it
 };
 
 } // namespace legilo

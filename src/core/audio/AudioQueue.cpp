@@ -33,6 +33,11 @@ bool AudioQueue::push(quint64 generation, int segment, std::span<const float> sa
 
     m_chunks[chunkWrite % static_cast<qint64>(m_chunks.size())] =
         Chunk{generation, segment, frames, 0, true, generation};
+    if (generation != m_pushGeneration) {
+        m_pushGeneration = generation;
+        m_generationFramesPushed = 0;
+    }
+    m_generationFramesPushed += frames;
     m_sampleWrite.store(sampleWrite + frames, std::memory_order_release);
     m_chunkWrite.store(chunkWrite + 1, std::memory_order_release);
     return true;
@@ -124,7 +129,13 @@ qsizetype AudioQueue::pull(std::span<float> out)
         sampleRead += count;
         chunk.consumed += count;
         m_currentSegment.store(chunk.segment, std::memory_order_relaxed);
-        m_playingGeneration.store(chunk.generation, std::memory_order_relaxed);
+        // The count is reset before the new generation is published, so a
+        // producer that sees the generation never sees an older count.
+        if (chunk.generation != m_playingGeneration.load(std::memory_order_relaxed)) {
+            m_generationFramesPlayed.store(0, std::memory_order_relaxed);
+            m_playingGeneration.store(chunk.generation, std::memory_order_release);
+        }
+        m_generationFramesPlayed.fetch_add(count, std::memory_order_release);
         if (chunk.consumed == chunk.frames) {
             ++chunkRead;
         }
@@ -135,6 +146,17 @@ qsizetype AudioQueue::pull(std::span<float> out)
     m_sampleRead.store(sampleRead, std::memory_order_release);
     m_chunkRead.store(chunkRead, std::memory_order_release);
     return written;
+}
+
+qint64 AudioQueue::queuedFramesOf(quint64 generation) const
+{
+    if (generation != m_pushGeneration) {
+        return 0;
+    }
+    const qint64 played = m_playingGeneration.load(std::memory_order_acquire) == generation
+                              ? m_generationFramesPlayed.load(std::memory_order_acquire)
+                              : 0;
+    return std::max<qint64>(m_generationFramesPushed - played, 0);
 }
 
 quint64 AudioQueue::playingGeneration() const

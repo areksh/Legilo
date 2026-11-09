@@ -62,6 +62,8 @@ private slots:
     void seekThenSpeedChangeDropsAudioFromBeforeSeek();
     void repeatedSpeedChangesKeepPlayingSegment();
     void flushFailsWhenCallbackFallsBehind();
+    void queuedFramesOfAGenerationLeaveOutDiscardedAudio();
+    void queuedFramesOfAGenerationFallAsItPlays();
     void concurrentProducerAndConsumerKeepOrder();
 };
 
@@ -261,6 +263,36 @@ void TestAudioQueue::repeatedSpeedChangesKeepPlayingSegment()
     QVERIFY(queue.requestFlush(5).has_value());
 
     QCOMPARE(pull(queue, 4), join({ramp(2, 3), silence(1)}));
+}
+
+// A stopped device applies no flushes, so audio a flush has discarded
+// still fills the ring; the producer's look-ahead must not count it.
+void TestAudioQueue::queuedFramesOfAGenerationLeaveOutDiscardedAudio()
+{
+    AudioQueue queue(64);
+    QVERIFY(queue.push(0, 0, ramp(1, 40)));
+    const quint64 generation = queue.requestFlush(-1).value_or(0);
+
+    QVERIFY(queue.push(generation, 0, ramp(100, 10)));
+
+    QCOMPARE(queue.queuedFrames(), 50);
+    QCOMPARE(queue.queuedFramesOf(generation), 10);
+    QCOMPARE(queue.queuedFramesOf(generation + 1), 0);
+}
+
+void TestAudioQueue::queuedFramesOfAGenerationFallAsItPlays()
+{
+    AudioQueue queue(64);
+    QVERIFY(queue.push(0, 0, ramp(1, 40)));
+    const quint64 generation = queue.requestFlush(-1).value_or(0);
+    QVERIFY(queue.push(generation, 0, ramp(100, 10)));
+    QVERIFY(queue.push(generation, 1, ramp(200, 10)));
+
+    pull(queue, 15);
+
+    QCOMPARE(queue.queuedFramesOf(generation), 5);
+    pull(queue, 10);
+    QCOMPARE(queue.queuedFramesOf(generation), 0);
 }
 
 void TestAudioQueue::flushFailsWhenCallbackFallsBehind()
