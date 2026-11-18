@@ -38,6 +38,11 @@ private slots:
     void speedIsKeptWithinItsRange_data();
     void speedIsKeptWithinItsRange();
 
+    void cleanupHasTheDesignDefaultsWhenUnset();
+    void cleanupPersistsEachKeyUnderItsName();
+    void cleanupReadsUnknownValuesAsDefaults();
+    void setCleanupReportsOnlyTheKeysItChanges();
+
     void changedIsEmittedWithKeyWhenValueChanges();
     void changedIsNotEmittedWhenValueIsUnchanged();
 
@@ -244,6 +249,83 @@ void TestSettings::speedIsKeptWithinItsRange()
     const Settings settings(fileName());
 
     QCOMPARE(settings.speed(), expected);
+}
+
+void TestSettings::cleanupHasTheDesignDefaultsWhenUnset()
+{
+    const Settings settings(fileName());
+
+    QCOMPARE(settings.cleanup(), legilo::CleanupSettings{});
+}
+
+void TestSettings::cleanupPersistsEachKeyUnderItsName()
+{
+    legilo::CleanupSettings changed;
+    changed.reflowMode = legilo::ReflowMode::Always;
+    changed.detectThreshold = 1.5;
+    changed.pageNumbers = false;
+    changed.repeatedLines = false;
+    changed.dehyphenate = false;
+    changed.abbreviations = {QStringLiteral("approx"), QStringLiteral("cf")};
+    changed.maxSegmentChars = 200;
+    changed.detectInFiles = true;
+    changed.urls = legilo::UrlRule::Remove;
+    changed.emails = legilo::EmailRule::Full;
+    changed.citations = legilo::CitationRule::Always;
+    changed.authorYearCitations = true;
+    {
+        Settings settings(fileName());
+        settings.setCleanup(changed);
+    }
+
+    const Settings reopened(fileName());
+    QCOMPARE(reopened.cleanup(), changed);
+    const QSettings raw(fileName(), QSettings::IniFormat);
+    QCOMPARE(raw.value(QStringLiteral("cleanup/reflowMode")).toString(), QStringLiteral("always"));
+    QCOMPARE(raw.value(QStringLiteral("cleanup/detectThreshold")).toDouble(), 1.5);
+    QCOMPARE(raw.value(QStringLiteral("cleanup/pageNumbers")).toBool(), false);
+    QCOMPARE(raw.value(QStringLiteral("cleanup/repeatedLines")).toBool(), false);
+    QCOMPARE(raw.value(QStringLiteral("cleanup/dehyphenate")).toBool(), false);
+    QCOMPARE(raw.value(QStringLiteral("cleanup/abbreviations")).toStringList(),
+             QStringList({QStringLiteral("approx"), QStringLiteral("cf")}));
+    QCOMPARE(raw.value(QStringLiteral("cleanup/maxSegmentChars")).toInt(), 200);
+    QCOMPARE(raw.value(QStringLiteral("cleanup/detectInFiles")).toBool(), true);
+    QCOMPARE(raw.value(QStringLiteral("cleanup/urls")).toString(), QStringLiteral("remove"));
+    QCOMPARE(raw.value(QStringLiteral("cleanup/emails")).toString(), QStringLiteral("full"));
+    QCOMPARE(raw.value(QStringLiteral("cleanup/citations")).toString(), QStringLiteral("always"));
+    QCOMPARE(raw.value(QStringLiteral("cleanup/authorYearCitations")).toBool(), true);
+}
+
+void TestSettings::cleanupReadsUnknownValuesAsDefaults()
+{
+    {
+        QSettings raw(fileName(), QSettings::IniFormat);
+        raw.setValue(QStringLiteral("cleanup/reflowMode"), QStringLiteral("sometimes"));
+        raw.setValue(QStringLiteral("cleanup/urls"), QStringLiteral("Host"));
+        raw.setValue(QStringLiteral("cleanup/citations"), QStringLiteral("pdf"));
+        raw.setValue(QStringLiteral("cleanup/detectThreshold"), QStringLiteral("high"));
+        raw.setValue(QStringLiteral("cleanup/maxSegmentChars"), QStringLiteral("long"));
+    }
+
+    const Settings settings(fileName());
+
+    QCOMPARE(settings.cleanup(), legilo::CleanupSettings{});
+}
+
+void TestSettings::setCleanupReportsOnlyTheKeysItChanges()
+{
+    Settings settings(fileName());
+    QSignalSpy spy(&settings, &Settings::changed);
+    legilo::CleanupSettings changed;
+    changed.dehyphenate = false;
+    changed.urls = legilo::UrlRule::Full;
+
+    settings.setCleanup(changed);
+    settings.setCleanup(changed);
+
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(spy.at(0).at(0).toString(), QStringLiteral("cleanup/dehyphenate"));
+    QCOMPARE(spy.at(1).at(0).toString(), QStringLiteral("cleanup/urls"));
 }
 
 void TestSettings::changedIsEmittedWithKeyWhenValueChanges()

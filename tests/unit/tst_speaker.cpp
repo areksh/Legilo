@@ -57,6 +57,12 @@ private slots:
     void pausedNoticeFollowsItsSetting();
     void playbackErrorsAreAlwaysReported();
 
+    void speechFollowsTheCleanupSettings();
+    void speakSelectionAsPdfTextForcesReflow();
+    void fasterAndSlowerChangeAndSaveTheSpeed();
+    void pauseWhenIdleReplaysTheLastTextFromWhereItStopped();
+    void pauseWhenIdleBeforeAnySpeechDoesNothing();
+
 private:
     // Speaks the selection and waits until speech has started.
     bool startSpeaking(const QString &text = u"Some words to speak."_s);
@@ -316,6 +322,80 @@ void TestSpeaker::playbackErrorsAreAlwaysReported()
 
     QVERIFY(waitUntil([&] { return !notices.isEmpty(); }));
     QCOMPARE(notices.first().at(0).value<Speaker::Notice>(), Speaker::Notice::Problem);
+}
+
+void TestSpeaker::speechFollowsTheCleanupSettings()
+{
+    legilo::CleanupSettings cleanup;
+    cleanup.citations = legilo::CitationRule::Always;
+    m_settings->setCleanup(cleanup);
+
+    QVERIFY(startSpeaking(u"A claim [12] made here."_s));
+
+    QVERIFY(!m_engine->texts().join(u' ').contains(u"[12]"_s));
+}
+
+void TestSpeaker::speakSelectionAsPdfTextForcesReflow()
+{
+    m_speaker->setEngine(m_engine);
+    // Two lines are too few for detection, so only forced reflow joins them.
+    m_source->selection = u"This line is wrapped\nin the middle of a sentence."_s;
+    const auto joined = [&] {
+        return m_engine->texts().join(u'|').contains(u"wrapped in the middle"_s);
+    };
+
+    m_speaker->speakSelection();
+    QVERIFY(waitUntil([&] { return !m_engine->calls().isEmpty(); }));
+    QVERIFY(!joined());
+    m_speaker->stop();
+    QVERIFY(waitUntil([&] { return m_controller->state() == State::Idle; }));
+
+    m_speaker->speakSelectionAsPdfText();
+
+    QVERIFY(waitUntil(joined));
+}
+
+void TestSpeaker::fasterAndSlowerChangeAndSaveTheSpeed()
+{
+    m_speaker->faster();
+    m_speaker->faster();
+    QCOMPARE(m_controller->speed(), 1.2);
+    QCOMPARE(m_settings->speed(), 1.2);
+
+    m_speaker->slower();
+    QCOMPARE(m_controller->speed(), 1.1);
+    QCOMPARE(m_settings->speed(), 1.1);
+
+    for (int i = 0; i < 30; ++i) {
+        m_speaker->faster();
+    }
+    QCOMPARE(m_settings->speed(), Settings::MaxSpeed);
+}
+
+void TestSpeaker::pauseWhenIdleReplaysTheLastTextFromWhereItStopped()
+{
+    QVERIFY(startSpeaking(u"First sentence here. Second sentence here. Third one."_s));
+    const qsizetype firstSentence = FakeTtsEngine::framesFor(u"First sentence here."_s);
+    m_output->pull(firstSentence + 1);
+    QVERIFY(waitUntil([&] { return m_controller->currentSegment() == 1; }));
+    m_speaker->stop();
+    const qsizetype callsBefore = m_engine->calls().size();
+
+    m_speaker->togglePause();
+
+    QVERIFY(waitUntil([&] { return m_controller->state() == State::Playing; }));
+    QCOMPARE(m_engine->calls().at(callsBefore).text, u"Second sentence here."_s);
+}
+
+void TestSpeaker::pauseWhenIdleBeforeAnySpeechDoesNothing()
+{
+    m_speaker->setEngine(m_engine);
+
+    m_speaker->togglePause();
+    QTest::qWait(50);
+
+    QCOMPARE(m_controller->state(), State::Idle);
+    QVERIFY(m_engine->calls().isEmpty());
 }
 
 QTEST_GUILESS_MAIN(TestSpeaker)

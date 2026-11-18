@@ -37,6 +37,42 @@ constexpr Key<ShowCaptureInReader> showCaptureInReaderKey{"behaviour/showCapture
 constexpr Key<QLatin1StringView> defaultVoiceKey{"voice/default"_L1, {}};
 constexpr Key<double> speedKey{"voice/speed"_L1, 1.0};
 
+// Not constexpr: CleanupSettings holds a QStringList.
+const CleanupSettings cleanupDefaults{};
+const Key<ReflowMode> reflowModeKey{"cleanup/reflowMode"_L1, cleanupDefaults.reflowMode};
+const Key<double> detectThresholdKey{"cleanup/detectThreshold"_L1, cleanupDefaults.detectThreshold};
+const Key<bool> pageNumbersKey{"cleanup/pageNumbers"_L1, cleanupDefaults.pageNumbers};
+const Key<bool> repeatedLinesKey{"cleanup/repeatedLines"_L1, cleanupDefaults.repeatedLines};
+const Key<bool> dehyphenateKey{"cleanup/dehyphenate"_L1, cleanupDefaults.dehyphenate};
+constexpr auto abbreviationsKey = "cleanup/abbreviations"_L1;
+const Key<int> maxSegmentCharsKey{"cleanup/maxSegmentChars"_L1, cleanupDefaults.maxSegmentChars};
+const Key<bool> detectInFilesKey{"cleanup/detectInFiles"_L1, cleanupDefaults.detectInFiles};
+const Key<UrlRule> urlsKey{"cleanup/urls"_L1, cleanupDefaults.urls};
+const Key<EmailRule> emailsKey{"cleanup/emails"_L1, cleanupDefaults.emails};
+const Key<CitationRule> citationsKey{"cleanup/citations"_L1, cleanupDefaults.citations};
+const Key<bool> authorYearCitationsKey{"cleanup/authorYearCitations"_L1,
+                                       cleanupDefaults.authorYearCitations};
+
+constexpr std::array reflowModeNames{
+    EnumName<ReflowMode>{ReflowMode::Auto, "auto"_L1},
+    EnumName<ReflowMode>{ReflowMode::Always, "always"_L1},
+    EnumName<ReflowMode>{ReflowMode::Never, "never"_L1},
+};
+constexpr std::array urlRuleNames{
+    EnumName<UrlRule>{UrlRule::Host, "host"_L1},
+    EnumName<UrlRule>{UrlRule::Full, "full"_L1},
+    EnumName<UrlRule>{UrlRule::Remove, "remove"_L1},
+};
+constexpr std::array emailRuleNames{
+    EnumName<EmailRule>{EmailRule::Host, "host"_L1},
+    EnumName<EmailRule>{EmailRule::Full, "full"_L1},
+};
+constexpr std::array citationRuleNames{
+    EnumName<CitationRule>{CitationRule::Never, "never"_L1},
+    EnumName<CitationRule>{CitationRule::PdfOnly, "pdfOnly"_L1},
+    EnumName<CitationRule>{CitationRule::Always, "always"_L1},
+};
+
 constexpr std::array speakWhileSpeakingNames{
     EnumName<SpeakWhileSpeaking>{SpeakWhileSpeaking::Stop, "stop"_L1},
     EnumName<SpeakWhileSpeaking>{SpeakWhileSpeaking::Restart, "restart"_L1},
@@ -75,6 +111,20 @@ E readEnum(const QSettings &store, const Key<E> &key, const std::array<EnumName<
 bool readBool(const QSettings &store, const Key<bool> &key)
 {
     return store.value(key.name, key.defaultValue).toBool();
+}
+
+double readDouble(const QSettings &store, const Key<double> &key)
+{
+    bool valid = false;
+    const double value = store.value(key.name).toDouble(&valid);
+    return valid ? value : key.defaultValue;
+}
+
+int readInt(const QSettings &store, const Key<int> &key)
+{
+    bool valid = false;
+    const int value = store.value(key.name).toInt(&valid);
+    return valid ? value : key.defaultValue;
 }
 
 } // namespace
@@ -190,6 +240,44 @@ double Settings::speed() const
 void Settings::setSpeed(double value)
 {
     store(speedKey.name, speed(), std::clamp(value, MinSpeed, MaxSpeed));
+}
+
+CleanupSettings Settings::cleanup() const
+{
+    CleanupSettings value;
+    value.reflowMode = readEnum(m_store, reflowModeKey, reflowModeNames);
+    value.detectThreshold = readDouble(m_store, detectThresholdKey);
+    value.pageNumbers = readBool(m_store, pageNumbersKey);
+    value.repeatedLines = readBool(m_store, repeatedLinesKey);
+    value.dehyphenate = readBool(m_store, dehyphenateKey);
+    value.abbreviations = m_store.value(abbreviationsKey).toStringList();
+    value.maxSegmentChars = readInt(m_store, maxSegmentCharsKey);
+    value.detectInFiles = readBool(m_store, detectInFilesKey);
+    value.urls = readEnum(m_store, urlsKey, urlRuleNames);
+    value.emails = readEnum(m_store, emailsKey, emailRuleNames);
+    value.citations = readEnum(m_store, citationsKey, citationRuleNames);
+    value.authorYearCitations = readBool(m_store, authorYearCitationsKey);
+    return value;
+}
+
+void Settings::setCleanup(const CleanupSettings &value)
+{
+    const CleanupSettings current = cleanup();
+    store(reflowModeKey.name, nameOf(reflowModeNames, current.reflowMode),
+          nameOf(reflowModeNames, value.reflowMode));
+    store(detectThresholdKey.name, current.detectThreshold, value.detectThreshold);
+    store(pageNumbersKey.name, current.pageNumbers, value.pageNumbers);
+    store(repeatedLinesKey.name, current.repeatedLines, value.repeatedLines);
+    store(dehyphenateKey.name, current.dehyphenate, value.dehyphenate);
+    store(abbreviationsKey, current.abbreviations, value.abbreviations);
+    store(maxSegmentCharsKey.name, current.maxSegmentChars, value.maxSegmentChars);
+    store(detectInFilesKey.name, current.detectInFiles, value.detectInFiles);
+    store(urlsKey.name, nameOf(urlRuleNames, current.urls), nameOf(urlRuleNames, value.urls));
+    store(emailsKey.name, nameOf(emailRuleNames, current.emails),
+          nameOf(emailRuleNames, value.emails));
+    store(citationsKey.name, nameOf(citationRuleNames, current.citations),
+          nameOf(citationRuleNames, value.citations));
+    store(authorYearCitationsKey.name, current.authorYearCitations, value.authorYearCitations);
 }
 
 } // namespace legilo

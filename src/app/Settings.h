@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/text/CleanupSettings.h"
+
 #include <QObject>
 #include <QSettings>
 
@@ -61,6 +63,13 @@ public:
     static constexpr double MaxSpeed = 2.5;
     double speed() const;
     void setSpeed(double value);
+
+    // The clean-up settings (Appendix A, cleanup/...), read and written
+    // together, as the pipeline takes them and the Clean-up page edits
+    // them. Each is stored under its own key, and changed() reports each
+    // key that setCleanup() changes.
+    CleanupSettings cleanup() const;
+    void setCleanup(const CleanupSettings &value);
 
 signals:
     // Emitted with the key name (for example "general/autostart") when a

@@ -39,16 +39,24 @@ public:
     Q_ENUM(Notice)
 
     // The source, controller and settings must outlive the speaker.
-    Speaker(TextSource *source, PlaybackController *controller, const Settings *settings,
+    Speaker(TextSource *source, PlaybackController *controller, Settings *settings,
             QObject *parent = nullptr);
 
     // The voice is ready. Plays a request that was waiting for it.
     void setEngine(std::shared_ptr<TtsEngine> engine);
 
     void speakSelection();
+    // Speaks the selection with PDF reflow forced on, for PDF text that
+    // detection misses.
+    void speakSelectionAsPdfText();
     void speakClipboard();
     // Pauses speech that is playing and resumes speech that is paused.
+    // With nothing playing, speaks the last text again from the sentence
+    // where it stopped (design 7.5, togglePlay).
     void togglePause();
+    // Changes the speed by a tenth, now and as the saved speed.
+    void faster();
+    void slower();
     void stop();
 
 signals:
@@ -58,19 +66,23 @@ signals:
 private:
     // Reads the selection or the clipboard and speaks it, unless speech is
     // already under way and the settings say to stop it instead.
-    void request(CaptureSource source);
+    void request(CaptureSource source, bool forcePdf = false);
     // Speaks a capture once the voice is ready. fellBack says the
-    // selection was empty and this is the clipboard instead.
-    void speak(const TextCapture &capture, bool fellBack);
+    // selection was empty and this is the clipboard instead; forcePdf
+    // turns PDF reflow on whatever detection says.
+    void speak(const TextCapture &capture, bool fellBack, bool forcePdf);
+    void changeSpeed(double step);
     void playWhenReady();
     bool isSpeaking() const;
     void notifyStarted(const TextCapture &capture, const QString &spoken, bool fellBack);
 
     TextSource *m_source;
     PlaybackController *m_controller;
-    const Settings *m_settings;
+    Settings *m_settings;
     std::shared_ptr<TtsEngine> m_engine;
     std::optional<QStringList> m_waiting; // spoken segments waiting for the voice
+    QStringList m_last;                   // the segments spoken last
+    int m_lastPosition = 0;               // where to replay them from
 };
 
 } // namespace legilo

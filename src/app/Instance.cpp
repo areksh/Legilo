@@ -48,10 +48,16 @@ IpcReply Instance::handle(const IpcRequest &request)
         m_speaker.speakSelection();
     } else if (command == "speak-clipboard"_L1) {
         m_speaker.speakClipboard();
+    } else if (command == "speak-pdf-text"_L1) {
+        m_speaker.speakSelectionAsPdfText();
     } else if (command == "pause"_L1) {
         m_speaker.togglePause();
     } else if (command == "stop"_L1) {
         m_speaker.stop();
+    } else if (command == "faster"_L1) {
+        m_speaker.faster();
+    } else if (command == "slower"_L1) {
+        m_speaker.slower();
     } else if (command == "show"_L1) {
         // The reader arrives in stage 6; until then there is nothing to show.
     } else {
@@ -60,8 +66,8 @@ IpcReply Instance::handle(const IpcRequest &request)
     return {};
 }
 
-// The actions of design 7.6.2 that this stage carries out, with their
-// Linux defaults. The others are registered as they are built.
+// The actions of design 7.6.2, with their Linux defaults. Show-reader is
+// registered with the reader, in stage 6.
 void Instance::registerShortcuts()
 {
     m_shortcuts = createGlobalShortcuts();
@@ -70,23 +76,19 @@ void Instance::registerShortcuts()
                                 QKeySequence(u"Meta+Alt+S"_s));
     m_shortcuts->registerAction(u"speak-clipboard"_s, tr("Speak clipboard"),
                                 QKeySequence(u"Meta+Alt+C"_s));
+    m_shortcuts->registerAction(u"speak-pdf-text"_s, tr("Speak selection as PDF text"), {});
     m_shortcuts->registerAction(u"pause-resume"_s, tr("Pause or resume"),
                                 QKeySequence(u"Meta+Alt+P"_s));
     m_shortcuts->registerAction(u"stop"_s, tr("Stop"), QKeySequence(u"Meta+Alt+X"_s));
+    m_shortcuts->registerAction(u"faster"_s, tr("Faster"), {});
+    m_shortcuts->registerAction(u"slower"_s, tr("Slower"), {});
 }
 
+// The shortcut IDs are the IPC commands, except pause-resume.
 void Instance::onShortcut(const QString &id)
 {
     qCDebug(lcApp) << "Shortcut" << id;
-    if (id == "speak-selection"_L1) {
-        m_speaker.speakSelection();
-    } else if (id == "speak-clipboard"_L1) {
-        m_speaker.speakClipboard();
-    } else if (id == "pause-resume"_L1) {
-        m_speaker.togglePause();
-    } else if (id == "stop"_L1) {
-        m_speaker.stop();
-    }
+    handle({id == "pause-resume"_L1 ? u"pause"_s : id, {}, {}});
 }
 
 // Loads the chosen voice, or the first installed one, on a thread of its

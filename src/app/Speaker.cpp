@@ -8,6 +8,7 @@
 
 #include <QRegularExpression>
 
+#include <cmath>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -18,6 +19,8 @@ namespace {
 
 // How many words of the text a started notification shows.
 constexpr qsizetype NoticeWords = 8;
+// How much the faster and slower actions change the speed (7.5).
+constexpr double SpeedStep = 0.1;
 
 QString firstWords(const QString &text)
 {
@@ -33,7 +36,7 @@ QString firstWords(const QString &text)
 
 } // namespace
 
-Speaker::Speaker(TextSource *source, PlaybackController *controller, const Settings *settings,
+Speaker::Speaker(TextSource *source, PlaybackController *controller, Settings *settings,
                  QObject *parent)
     : QObject(parent)
     , m_source(source)
@@ -43,6 +46,10 @@ Speaker::Speaker(TextSource *source, PlaybackController *controller, const Setti
     connect(m_controller, &PlaybackController::error, this, [this](const QString &message) {
         emit notify(Notice::Problem, tr("Legilo could not speak"), message);
     });
+    connect(m_controller, &PlaybackController::segmentChanged, this,
+            [this](int segment) { m_lastPosition = segment; });
+    connect(m_controller, &PlaybackController::documentFinished, this,
+            [this] { m_lastPosition = 0; });
 }
 
 void Speaker::setEngine(std::shared_ptr<TtsEngine> engine)
@@ -55,6 +62,29 @@ void Speaker::setEngine(std::shared_ptr<TtsEngine> engine)
 void Speaker::speakSelection()
 {
     request(CaptureSource::Selection);
+}
+
+void Speaker::speakSelectionAsPdfText()
+{
+    request(CaptureSource::Selection, true);
+}
+
+void Speaker::faster()
+{
+    changeSpeed(SpeedStep);
+}
+
+void Speaker::slower()
+{
+    changeSpeed(-SpeedStep);
+}
+
+void Speaker::changeSpeed(double step)
+{
+    // Rounded to tenths, so repeated steps do not drift (1.2000000000000002).
+    const double speed = std::round((m_settings->speed() + step) * 10.0) / 10.0;
+    m_settings->setSpeed(speed);
+    m_controller->setSpeed(m_settings->speed());
 }
 
 void Speaker::speakClipboard()
@@ -76,6 +106,9 @@ void Speaker::togglePause()
         m_controller->resume();
         break;
     case PlaybackController::State::Idle:
+        if (m_engine && !m_last.isEmpty() && !m_waiting) {
+            m_controller->play(m_last, m_lastPosition);
+        }
         break;
     }
 }
@@ -91,7 +124,7 @@ bool Speaker::isSpeaking() const
     return m_waiting.has_value() || m_controller->state() != PlaybackController::State::Idle;
 }
 
-void Speaker::request(CaptureSource source)
+void Speaker::request(CaptureSource source, bool forcePdf)
 {
     if (isSpeaking() && m_settings->speakWhileSpeaking() == Settings::SpeakWhileSpeaking::Stop) {
         stop();
@@ -99,23 +132,27 @@ void Speaker::request(CaptureSource source)
     }
     if (source == CaptureSource::Clipboard) {
         m_source->readClipboard().then(
-            this, [this](const TextCapture &capture) { speak(capture, false); });
+            this, [this](const TextCapture &capture) { speak(capture, false, false); });
         return;
     }
-    m_source->readSelection().then(this, [this](const TextCapture &capture) {
+    m_source->readSelection().then(this, [this, forcePdf](const TextCapture &capture) {
         if (capture.text.trimmed().isEmpty() && m_settings->selectionFallbackToClipboard()) {
-            m_source->readClipboard().then(
-                this, [this](const TextCapture &clipboard) { speak(clipboard, true); });
+            m_source->readClipboard().then(this, [this, forcePdf](const TextCapture &clipboard) {
+                speak(clipboard, true, forcePdf);
+            });
             return;
         }
-        speak(capture, false);
+        speak(capture, false, forcePdf);
     });
 }
 
-void Speaker::speak(const TextCapture &capture, bool fellBack)
+void Speaker::speak(const TextCapture &capture, bool fellBack, bool forcePdf)
 {
-    // The clean-up settings come from the settings with the Clean-up page.
-    const Document document = CleanupPipeline().run(capture, CleanupSettings{});
+    CleanupSettings cleanup = m_settings->cleanup();
+    if (forcePdf) {
+        cleanup.reflowMode = ReflowMode::Always;
+    }
+    const Document document = CleanupPipeline().run(capture, cleanup);
     QStringList segments = spokenSegments(document);
     if (segments.isEmpty()) {
         QString message;
@@ -158,9 +195,10 @@ void Speaker::playWhenReady()
         return;
     }
     if (m_waiting.has_value()) {
-        const QStringList segments = *m_waiting;
+        m_last = *m_waiting;
+        m_lastPosition = 0;
         m_waiting.reset();
-        m_controller->play(segments);
+        m_controller->play(m_last);
     }
 }
 
