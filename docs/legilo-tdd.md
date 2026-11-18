@@ -1,7 +1,7 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.22
-- Date: 8 November 2026
+- Status: Draft 0.23
+- Date: 18 November 2026
 - Name: Legilo, with the application ID `sh.arek.legilo` (open question 1). Hosted on GitHub at `areksh/Legilo` (open question 2).
 - Changes since the previous draft: Appendix D.
 
@@ -45,7 +45,7 @@ The design replaces an existing pair of scripts (`speak-selection`, Bash, and `s
 
 | Topic | Decision |
 |---|---|
-| Platforms | KDE Plasma on Debian 13 (Wayland primary, X11 best effort) and Windows. No macOS, no GNOME for now. |
+| Platforms | KDE Plasma on Debian 13 (Wayland primary, X11 best effort) and Windows. No macOS, no GNOME for now. Development also happens on Fedora 45, which builds and runs Legilo from source but gets no package (4.1). |
 | Language and UI | C++20 with Qt 6 Widgets |
 | Speech engine | sherpa-onnx (ONNX Runtime) for TTS now and speech-to-text (STT) later. No Python or PyTorch at runtime. On Linux it links Debian's ONNX Runtime (10.1). |
 | Voices | Piper (VITS) and Kokoro, English only for now |
@@ -160,6 +160,7 @@ Each requirement has an ID and the stage that delivers it (section 12).
 - Debian 13 (trixie), amd64. Baseline: Qt 6.8.2, KDE Frameworks 6.13, Plasma 6.3.6, GCC 14, CMake 3.31.
 - Do not use any API newer than these versions. Build and test in a trixie container even when developing on trixie, so the build doesn't pick up locally installed extras.
 - Plasma Wayland is the primary session. Plasma X11 should work through the same code paths (KSystemClipboard falls back to QClipboard, and KGlobalAccel works on X11) and is tested on a best-effort basis.
+- **Fedora 45 as a development host** (from stage 3): Legilo builds and runs from source on Fedora's Plasma edition, with its newer Qt 6.11, KDE Frameworks 6.32 and ONNX Runtime 1.26. Release builds, the API baseline and the commit gate stay on trixie: `scripts/check` runs in the trixie container on any host, and a Fedora build cannot catch an API newer than the baseline. Fedora has no package with Debian's word lists, so they come from Debian's pinned packages (5). No RPM is planned.
 
 ### 4.2 Windows
 
@@ -194,7 +195,7 @@ Each requirement has an ID and the stage that delivers it (section 12).
 | Signature check | Monocypher (vendored) | BSD-2-Clause or CC0-1.0 | Both | 4 | Verifies the signed voice catalogue (7.10) |
 | Text diff (preview) | diff-match-patch (C++/Qt port, vendored) | Apache-2.0 | Both | 7 | Character diff of original against cleaned text; also maps positions between texts (7.11.5, 7.12). The port predates Qt 6 and needs updating (`QRegExp`, `midRef`) |
 | Audio file writing | libsndfile | LGPL-2.1+ | Both | 8 | WAV, FLAC, Ogg Vorbis, Opus, and MP3 (MP3 since libsndfile 1.1) |
-| Word list | SCOWL 2020.12.07, standard size, British and American lists merged | SCOWL (permissive, notice required) | Both | 2 | Used for de-hyphenation; replaces `/usr/share/dict/words`. Compiled in as a resource from Debian's `wbritish` and `wamerican` on Linux; the same release pinned on Windows (stage 5). The larger sizes add fragments ("co", "pre") that would upset the keep-the-hyphen rule (7.2.4) |
+| Word list | SCOWL 2020.12.07, standard size, British and American lists merged | SCOWL (permissive, notice required) | Both | 2 | Used for de-hyphenation; replaces `/usr/share/dict/words`. Compiled in as a resource from Debian's `wbritish` and `wamerican`: the system's where installed, otherwise the same packages pinned in `cmake/Dependencies.cmake` and unpacked by `scripts/fetch-deps` (Fedora now, Windows in stage 5). The larger sizes add fragments ("co", "pre") that would upset the keep-the-hyphen rule (7.2.4) |
 | PDF extraction | MuPDF (preferred) or Poppler | AGPL-3.0 / GPL-2.0+ | Both | 10 | Decision point at stage 10, see section 7.15 |
 | Windows selection | UI Automation (system COM API) | Platform | Windows | 5 | Fallback: simulated Ctrl+C |
 | Tests | Qt Test, CTest | LGPL-3.0 | Both | 0 | |
@@ -211,6 +212,8 @@ wbritish wamerican
 appstream desktop-file-utils
 debhelper devscripts
 ```
+
+On Fedora 45 the build needs `gcc-c++ cmake ninja-build pkgconf-pkg-config qt6-qtbase-devel espeak-ng-devel onnxruntime-devel libarchive-devel miniaudio-devel kf6-kglobalaccel-devel kf6-kguiaddons-devel`, plus Podman for the container scripts (4.1). The README keeps both lists.
 
 Confirm the exact names with `apt search` on trixie. Package naming for KDE Frameworks occasionally differs from the upstream framework name. `devscripts` is a developer tool and is not a build dependency of the package (10.3).
 
@@ -1257,7 +1260,7 @@ A regression of more than 20% against the previous recorded run is reported in t
   - Legilo links its C++ API through the imported target `Legilo::SherpaOnnx`.
   - **Patched** before it is configured (`cmake/PatchSherpaOnnx.cmake`): for Piper voices, no pad token after the start marker, matching Piper's own runtime. Without the patch, some short sentences babble for seconds and sentence starts sound cramped (stage 1 results, 12). The script replaces exact text and fails the build if an upgrade has changed it. Report it upstream, so the patch can go.
   - **ONNX Runtime:** on Linux, Debian's `libonnxruntime` 1.21 (`libonnxruntime-dev`) rather than the prebuilt 1.28.2 that sherpa-onnx downloads by default. Configuration fails if it is missing, because sherpa-onnx would otherwise download its own without saying so. Windows uses a prebuilt release (stage 5). The comparison is in the stage 1 results (12).
-- **Pinned archives, offline builds:** sherpa-onnx's configure step fetches nine more source archives, directly and through the projects it pulls in. `cmake/Dependencies.cmake` lists all ten with their SHA-256. `scripts/fetch-deps` downloads them into `third_party/downloads/` on the host, and the build copies them to where each fetch looks first, so the build itself never touches the network. `scripts/check` and `scripts/build-deb` run with the container's network switched off, so a missing archive fails there. Re-derive the list whenever sherpa-onnx is upgraded.
+- **Pinned archives, offline builds:** sherpa-onnx's configure step fetches nine more source archives, directly and through the projects it pulls in. `cmake/Dependencies.cmake` lists all ten with their SHA-256. `scripts/fetch-deps` downloads them into `third_party/downloads/` on the host, and the build copies them to where each fetch looks first, so the build itself never touches the network. `scripts/check` and `scripts/build-deb` run with the container's network switched off, so a missing archive fails there. Re-derive the list whenever sherpa-onnx is upgraded. The same file pins Debian's word-list packages, which `scripts/fetch-deps` unpacks for systems without them (5).
 - **Private libraries:** on Linux, sherpa-onnx's two shared libraries (`libsherpa-onnx-c-api.so`, `libsherpa-onnx-cxx-api.so`) are installed to `/usr/lib/legilo/`, and the binary will find them through `INSTALL_RPATH` `$ORIGIN/../lib/legilo`. They never clash with system libraries.
 - **Windows dependencies:** vcpkg manifest mode for libarchive and libsndfile (with MP3 support enabled), and later MuPDF. `windeployqt` collects the Qt runtime.
 
@@ -1871,6 +1874,11 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.23 (18 November 2026)
+
+- Fedora 45 is a development host: Legilo builds and runs from source there, while releases and the commit gate stay on trixie (1.3, 4.1, 5).
+- The word lists come from Debian's pinned `wbritish` and `wamerican` packages where the system has none (5, 10.1).
 
 ### Draft 0.22 (8 November 2026)
 
