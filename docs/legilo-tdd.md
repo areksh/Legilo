@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.24
+- Status: Draft 0.25
 - Date: 18 November 2026
 - Name: Legilo, with the application ID `sh.arek.legilo` (open question 1). Hosted on GitHub at `areksh/Legilo` (open question 2).
 - Changes since the previous draft: Appendix D.
@@ -867,7 +867,7 @@ Windows defaults:
   - Windows: System Media Transport Controls, for the media flyout and hardware media keys.
   - Metadata: the document title and the current sentence's first words.
 - **Autostart:**
-  - Linux: write or remove `~/.config/autostart/legilo.desktop`, with `Exec=legilo --tray`.
+  - Linux: write or remove `~/.config/autostart/legilo.desktop`, whose `Exec` runs the running executable, by its full path, with `--tray`. The full path makes a build run from a source tree start that build at login; for the package it is `/usr/bin/legilo`. An entry that System Settings has hidden (`Hidden=true`) counts as off.
   - Windows: set or remove a value under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
   - Both sit behind the `Autostart` platform interface.
 
@@ -895,7 +895,9 @@ Windows defaults:
   - `--clean-only`, `--explain`, `--list-voices` and `--install-voice` run in the calling process and never need an instance.
   - Exit code 3 means an instance was needed but could not be started.
 - **Command line:** parsed with `QCommandLineParser`. See Appendix B. It doubles as the fallback for binding actions to desktop shortcuts by hand.
-  - `--read` with no files shows the reader, so the menu entry (`Exec=legilo --read %F`, Appendix C) works when launched without files.
+  - `--read` with no files shows the reader, so the menu entry (`Exec=legilo --read %f`, Appendix C) works when launched without files.
+  - Until the reader (stage 6), `--read` takes one file and speaks it, so the desktop file passes `%f`: a file manager then opens several files one launch each instead of the launch failing. `--voice` and `--speed` for a single command need the voice cache and come in stage 4.
+  - The arguments are parsed before any application object exists, so only a command that may become the instance connects to the display.
 
 ### 7.9 Settings
 
@@ -1297,6 +1299,7 @@ Cache the sherpa-onnx build and the test model between runs.
   | Licence notices | `/usr/share/doc/legilo/copyright` (DEP-5), including third-party notices |
 
 - **Recommends:** none at first. If the `wl-paste` contingency is used (7.1.2), add `wl-clipboard` to `Depends`.
+- **Depends** also names `qt6-svg-plugins` (from stage 3): the icons are SVG, drawn through Qt's SVG image plugin, which no shared library dependency names.
 - **Distribution:** stage 3 ships `.deb` files on the project's releases page. Stage 9 adds a signed apt repository (`aptly` or `reprepro`, hosted on GitHub Pages or similar) so users get updates through `apt`.
 - **Official Debian archive:** out of scope. Debian would want sherpa-onnx and the libraries compiled into it packaged separately rather than built from downloaded archives.
 
@@ -1591,6 +1594,16 @@ Legilo leaves more words unspoken because it removes running headers and footers
 
 **Triple-click in Firefox.** On Debian 13 (Frameworks 6.13), a triple-click in Firefox was read as the word the double-click selected; dragging and Shift selections were read correctly, and Kate's triple-click was too. On Fedora 45 (Frameworks 6.32), after the first-read fix, it is read correctly. Which of the system's changes fixed it is not known. Check it on trixie before the release (9.4); if it fails there, the speak-clipboard fallback covers it.
 
+**The rest of the stage's scope, as built:**
+
+- Speech follows the clean-up settings, which `Settings` reads and writes as one `CleanupSettings`, each kept under its Appendix A key. The speaker gained speak-as-PDF-text, faster, slower, and pause with nothing playing replaying the last text from where it stopped (togglePlay).
+- The full command line (7.8, Appendix B), parsed by `CommandLine` before any application object exists. `speak-text` is refused unless `ipc/allowSpeakText` is on, and `read-file` takes only existing regular files (8).
+- Autostart through an XDG entry (7.7), with the executable's full path in `Exec`.
+- The desktop file, the application icon (a page with sound waves) with play and pause badges for the tray, and AppStream metadata, validated by `desktop-file-validate` and `appstreamcli` in the tests.
+- The settings dialog (7.9). Changes apply at once and the dialog has only a Close button. A voice chosen there loads in the background; a voice chosen while another loads supersedes it.
+- The playback commands of 7.5: seek, step by sentence (the 1.5 s rule measured in audio played, not wall time, so time paused does not count) and by paragraph, and voice changes during playback. The Stopping state of the diagram was not needed: `stop()` discards the queue at once.
+- The settings file was `legilo.ini` on Linux, because QSettings names INI files so; it is now `legilo.conf`, as 7.9 has it.
+
 ### Stage 4 - Model manager and Kokoro (M)
 
 - **Goal:** install voices from the UI; add Kokoro.
@@ -1598,7 +1611,7 @@ Legilo leaves more words unspoken because it removes running headers and footers
   - Catalogue with signed refresh, downloader, verification and removal (7.10). Safe extraction and atomic install reuse `ModelInstaller` from stage 1.
   - Model manager dialog with licence display and samples.
   - Kokoro engine support, with speakers listed as voices.
-  - The least-recently-used voice cache.
+  - The least-recently-used voice cache, and with it `--voice` and `--speed` for a single command (Appendix B), moved from stage 3.
   - First-run flow: if no voice is installed, offer the recommended default (Piper `en_GB-cori-medium`, about 67 MB).
 - **Exit criteria:**
   - A clean install reaches a working voice in three clicks.
@@ -1815,10 +1828,11 @@ legilo --speak-text TEXT        read TEXT (needs ipc/allowSpeakText)
 legilo --pause                  pause or resume
 legilo --stop                   stop
 legilo --faster | --slower      change the speed by 0.1, now and as the saved default
-legilo --voice ID               voice for this command only
-legilo --speed X                speed for this command only
+legilo --voice ID               voice for this command only (stage 4)
+legilo --speed X                speed for this command only (stage 4)
 legilo --read [FILE...]         open files in the reader and start reading;
-                                with no files, show the reader
+                                with no files, show the reader (one file until
+                                stage 6, spoken without the reader)
 legilo --show                   show the reader
 legilo --clean-only [FILE]      print the spoken text (stdin if no file); the input
                                 is taken as pasted, so Auto mode detects PDF text in it
@@ -1842,7 +1856,7 @@ Type=Application
 Name=Legilo
 GenericName=Text to Speech Reader
 Comment=Read selected text, the clipboard or documents aloud
-Exec=legilo --read %F
+Exec=legilo --read %f
 Icon=sh.arek.legilo
 Terminal=false
 Categories=Utility;Accessibility;Qt;KDE;
@@ -1851,7 +1865,7 @@ Keywords=speech;tts;read;aloud;voice;
 StartupNotify=false
 ```
 
-Stage 10 adds `application/pdf;` to `MimeType`.
+Stage 10 adds `application/pdf;` to `MimeType`. Stage 6 changes `%f` to `%F`, when the reader can hold several files (7.8).
 
 `~/.config/autostart/legilo.desktop` (written by the app):
 
@@ -1859,7 +1873,7 @@ Stage 10 adds `application/pdf;` to `MimeType`.
 [Desktop Entry]
 Type=Application
 Name=Legilo
-Exec=legilo --tray
+Exec=/usr/bin/legilo --tray
 Icon=sh.arek.legilo
 X-KDE-autostart-phase=2
 ```
@@ -1889,6 +1903,13 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.25 (18 November 2026)
+
+- Stage 3's scope as built, so far (12).
+- Autostart's `Exec` names the executable by its full path (7.7, Appendix C).
+- Until stage 6, `--read` takes one file and the desktop file passes `%f`; `--voice` and `--speed` for one command move to stage 4 (7.8, 12, Appendix B, Appendix C).
+- The package depends on `qt6-svg-plugins` for the SVG icons (10.3).
 
 ### Draft 0.24 (18 November 2026)
 
