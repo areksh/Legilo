@@ -1,6 +1,6 @@
 # Legilo - Technical Design Document
 
-- Status: Draft 0.23
+- Status: Draft 0.24
 - Date: 18 November 2026
 - Name: Legilo, with the application ID `sh.arek.legilo` (open question 1). Hosted on GitHub at `areksh/Legilo` (open question 2).
 - Changes since the previous draft: Appendix D.
@@ -1576,6 +1576,21 @@ Legilo leaves more words unspoken because it removes running headers and footers
   - Survives logout and login with autostart.
   - Section 9.4 checklist passes for Linux.
 
+#### Stage 3 results (18 November 2026, in progress)
+
+**The working slice.** The tray app reads the selection and the clipboard on Meta+Alt+S and Meta+Alt+C and stops on Meta+Alt+X. The shortcuts appear in System Settings under Legilo. The parts as built:
+
+- `Speaker` carries out the speak actions: capture, clean-up, speak-while-speaking, the clipboard fallback and the notifications. `Instance` wires it to the tray, the shortcuts and the voice. `SingleInstance` and `IpcProtocol` are the single instance of 7.8, under the names the module table (6.1) gives as `IpcServer`.
+- Started notifications show the first eight words, so a stale selection (7.1.2) is visible at once.
+- Meta+Alt+P was taken on the development machine, by Plasma's "Move keyboard focus between panels". As 7.6.2 has it, pause-resume was left unassigned.
+
+**Found in the first desktop test, and fixed:**
+
+- The first read after start-up said nothing was selected. `KSystemClipboard` learns the current selection from Wayland events that arrive after it binds to data-control, and it was created on the first read. It is now created at start-up.
+- After a stop, speech sometimes never started again until a restart. The stopped document's audio stays queued until the device runs, and the worker counted it as look-ahead. The worker now counts only the current generation's audio, which a regression test covers.
+
+**Triple-click in Firefox.** On Debian 13 (Frameworks 6.13), a triple-click in Firefox was read as the word the double-click selected; dragging and Shift selections were read correctly, and Kate's triple-click was too. On Fedora 45 (Frameworks 6.32), after the first-read fix, it is read correctly. Which of the system's changes fixed it is not known. Check it on trixie before the release (9.4); if it fails there, the speak-clipboard fallback covers it.
+
 ### Stage 4 - Model manager and Kokoro (M)
 
 - **Goal:** install voices from the UI; add Kokoro.
@@ -1874,6 +1889,10 @@ HKCU\Software\Classes\.txt\OpenWithProgids
 ```
 
 ## Appendix D: Revision history
+
+### Draft 0.24 (18 November 2026)
+
+- Stage 3 results so far: the working slice as built, two fixes found in the first desktop test, and the triple-click selection to check on trixie (12).
 
 ### Draft 0.23 (18 November 2026)
 
