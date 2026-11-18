@@ -39,9 +39,13 @@ given no file.
 The design, requirements and staged plan are in
 [docs/legilo-tdd.md](docs/legilo-tdd.md).
 
-## Building on Debian 13 (trixie)
+## Building on the host
 
-Install the build dependencies:
+Legilo is released for Debian 13 (trixie), and builds that count happen in
+a trixie container (below). For day-to-day work it also builds on the host,
+on Debian 13 or Fedora 45.
+
+On Debian 13, install the build dependencies:
 
 ```
 sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
@@ -52,8 +56,24 @@ sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
 
 `debian/control` holds the authoritative list of build dependencies.
 
+On Fedora 45:
+
+```
+sudo dnf install gcc-c++ cmake ninja-build pkgconf-pkg-config qt6-qtbase-devel \
+    espeak-ng-devel onnxruntime-devel libarchive-devel miniaudio-devel \
+    kf6-kglobalaccel-devel kf6-kguiaddons-devel podman
+```
+
+Fedora has no package with Debian's British and American word lists, so
+`scripts/fetch-deps` unpacks the same lists from Debian's pinned packages
+into `third_party/word-lists/`, and the build uses them. Fedora's Qt and
+clang are newer than trixie's, so a host build does not prove the code keeps
+to the Qt 6.8 API: `scripts/check` does. Format code in the container too,
+with `scripts/container clang-format -i FILE...`, since another
+clang-format version may lay code out differently.
+
 Download the pinned source archives the build needs (sherpa-onnx and the
-libraries it builds with) into `third_party/downloads/`. The build itself
+libraries it builds with, and the word lists) into `third_party/downloads/`. The build itself
 never downloads anything, so run this again whenever
 `cmake/Dependencies.cmake` changes:
 
@@ -116,6 +136,7 @@ the first build compiles sherpa-onnx; each takes a few minutes.
 | `cmake/` | CMake modules, including the pinned dependency list (`Dependencies.cmake`) |
 | `third_party/downloads/` | Archives from `scripts/fetch-deps` (not committed) |
 | `third_party/test-voices/` | Voices from `scripts/fetch-deps --test-voices` (not committed) |
+| `third_party/word-lists/` | Word lists from `scripts/fetch-deps`, used where the system has none (not committed) |
 | `docs/` | Design documentation |
 
 ## Contributing

@@ -41,6 +41,17 @@ set(LEGILO_TEST_VOICES
     "kokoro-en-v0_19.tar.bz2|https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-en-v0_19.tar.bz2|912804855a04745fa77a30be545b3f9a5d15c4d66db00b88cbcd4921df605ac7"
 )
 
+# The English word lists (design 7.2.4), in the same format: Debian's
+# wbritish and wamerican, SCOWL 2020.12.07 at the standard size, as trixie
+# ships them. Systems without them in /usr/share/dict, such as Fedora, build
+# with these instead, so every build compiles in the same lists. Debian
+# packages are ar archives that libarchive, and so CMake, can unpack
+# anywhere. scripts/fetch-deps unpacks each list into third_party/word-lists/.
+set(LEGILO_WORD_LISTS
+    "wbritish_2020.12.07-4_all.deb|https://deb.debian.org/debian/pool/main/s/scowl/wbritish_2020.12.07-4_all.deb|460507558c9cec1ba9c41f074d4eab6a4a0015ec637787545dc4c70ccde2527f"
+    "wamerican_2020.12.07-4_all.deb|https://deb.debian.org/debian/pool/main/s/scowl/wamerican_2020.12.07-4_all.deb|3b66a8174e8577767aec4c08b8742a2a7551f3a938da351d9aaef13ff0587f1e"
+)
+
 # legilo_dependency_fields(<entry> <name-var> <url-var> <hash-var>)
 function(legilo_dependency_fields entry name_var url_var hash_var)
     string(REPLACE "|" ";" fields "${entry}")

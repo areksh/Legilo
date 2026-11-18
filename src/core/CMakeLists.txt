@@ -73,10 +73,16 @@ target_link_libraries(legilo_core PRIVATE legilo_miniaudio)
 
 # The English word list for de-hyphenation (design 7.2.4): SCOWL's British
 # and American lists from Debian's wbritish and wamerican, compiled in as a
-# compressed resource. The Windows build pins the same SCOWL release
-# (stage 5).
-find_file(LEGILO_BRITISH_WORDS british-english PATHS /usr/share/dict NO_DEFAULT_PATH REQUIRED)
-find_file(LEGILO_AMERICAN_WORDS american-english PATHS /usr/share/dict NO_DEFAULT_PATH REQUIRED)
+# compressed resource. Where the system has none, as on Fedora, the same
+# packages pinned in cmake/Dependencies.cmake supply them, unpacked by
+# scripts/fetch-deps.
+set(word_list_dirs /usr/share/dict ${PROJECT_SOURCE_DIR}/third_party/word-lists)
+find_file(LEGILO_BRITISH_WORDS british-english PATHS ${word_list_dirs} NO_DEFAULT_PATH)
+find_file(LEGILO_AMERICAN_WORDS american-english PATHS ${word_list_dirs} NO_DEFAULT_PATH)
+if(NOT LEGILO_BRITISH_WORDS OR NOT LEGILO_AMERICAN_WORDS)
+    message(FATAL_ERROR "The British and American word lists are missing. "
+        "Install Debian's wbritish and wamerican, or run scripts/fetch-deps.")
+endif()
 set_source_files_properties(${LEGILO_BRITISH_WORDS} PROPERTIES QT_RESOURCE_ALIAS british-english)
 set_source_files_properties(${LEGILO_AMERICAN_WORDS} PROPERTIES QT_RESOURCE_ALIAS american-english)
 qt_add_resources(legilo_core legilo_words PREFIX /legilo/words

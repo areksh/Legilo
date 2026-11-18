@@ -11,8 +11,9 @@
 # Legilo patches it before configuring; cmake/PatchSherpaOnnx.cmake lists
 # the changes and why.
 #
-# On Linux it links Debian's ONNX Runtime (libonnxruntime-dev) instead of
-# downloading the prebuilt one sherpa-onnx defaults to. The Windows build
+# On Linux it links the distribution's ONNX Runtime (Debian's
+# libonnxruntime-dev, Fedora's onnxruntime-devel) instead of downloading the
+# prebuilt one sherpa-onnx defaults to. The Windows build
 # is set up in stage 5.
 #
 # Provides the imported target Legilo::SherpaOnnx (the C++ API).
@@ -42,7 +43,8 @@ endforeach()
 find_path(LEGILO_ONNXRUNTIME_INCLUDE_DIR onnxruntime_cxx_api.h PATH_SUFFIXES onnxruntime)
 find_library(LEGILO_ONNXRUNTIME_LIBRARY onnxruntime)
 if(NOT LEGILO_ONNXRUNTIME_INCLUDE_DIR OR NOT LEGILO_ONNXRUNTIME_LIBRARY)
-    message(FATAL_ERROR "ONNX Runtime not found. Install libonnxruntime-dev.")
+    message(FATAL_ERROR "ONNX Runtime not found. "
+        "Install libonnxruntime-dev (Debian) or onnxruntime-devel (Fedora).")
 endif()
 
 set(sherpa_install "${CMAKE_BINARY_DIR}/_deps/sherpa-onnx/install")

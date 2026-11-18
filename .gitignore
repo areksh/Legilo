@@ -18,6 +18,7 @@ compile_commands.json
 # Downloaded dependencies (scripts/fetch-deps)
 /third_party/downloads/
 /third_party/test-voices/
+/third_party/word-lists/
 /third_party/corpus-sources/
 
 # Python bytecode, from running the corpus tools
