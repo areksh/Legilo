@@ -7,6 +7,8 @@
 #include "platform/Platform.h"
 #include "platform/TextSource.h"
 
+#include <QFile>
+#include <QFileInfo>
 #include <QKeySequence>
 
 using namespace Qt::StringLiterals;
@@ -58,11 +60,42 @@ IpcReply Instance::handle(const IpcRequest &request)
         m_speaker.faster();
     } else if (command == "slower"_L1) {
         m_speaker.slower();
+    } else if (command == "speak-text"_L1) {
+        // Section 8: other programs may not inject text unless allowed.
+        if (!m_settings.allowSpeakText()) {
+            return {false, tr("Speaking text sent by other programs is turned off. Set "
+                              "ipc/allowSpeakText in the settings to allow it.")};
+        }
+        TextCapture capture;
+        capture.text = request.text;
+        capture.source = CaptureSource::Pasted;
+        m_speaker.speakText(capture);
+    } else if (command == "read-file"_L1) {
+        return readFile(request.path);
     } else if (command == "show"_L1) {
         // The reader arrives in stage 6; until then there is nothing to show.
     } else {
         return {false, tr("The command %1 is not available yet.").arg(command)};
     }
+    return {};
+}
+
+// Speaks a plain-text file, read as UTF-8. Only existing regular files are
+// accepted (design 8). The reader shows it from stage 6; until then it is
+// spoken like any other text.
+IpcReply Instance::readFile(const QString &path)
+{
+    if (!QFileInfo(path).isFile()) {
+        return {false, tr("%1 is not a file.").arg(path)};
+    }
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return {false, tr("Cannot read %1: %2").arg(path, file.errorString())};
+    }
+    TextCapture capture;
+    capture.text = QString::fromUtf8(file.readAll());
+    capture.source = CaptureSource::File;
+    m_speaker.speakText(capture);
     return {};
 }
 

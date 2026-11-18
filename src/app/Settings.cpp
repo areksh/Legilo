@@ -36,6 +36,7 @@ constexpr Key<bool> selectionFallbackToClipboardKey{"behaviour/selectionFallback
                                                     false};
 constexpr Key<ShowCaptureInReader> showCaptureInReaderKey{"behaviour/showCaptureInReader"_L1,
                                                           ShowCaptureInReader::IfVisible};
+constexpr Key<bool> allowSpeakTextKey{"ipc/allowSpeakText"_L1, false};
 constexpr Key<QLatin1StringView> defaultVoiceKey{"voice/default"_L1, {}};
 constexpr Key<double> speedKey{"voice/speed"_L1, 1.0};
 
@@ -292,6 +293,16 @@ void Settings::setCleanup(const CleanupSettings &value)
     store(citationsKey.name, nameOf(citationRuleNames, current.citations),
           nameOf(citationRuleNames, value.citations));
     store(authorYearCitationsKey.name, current.authorYearCitations, value.authorYearCitations);
+}
+
+bool Settings::allowSpeakText() const
+{
+    return readBool(m_store, allowSpeakTextKey);
+}
+
+void Settings::setAllowSpeakText(bool value)
+{
+    store(allowSpeakTextKey.name, allowSpeakText(), value);
 }
 
 } // namespace legilo

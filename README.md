@@ -24,17 +24,20 @@ From the command line:
 
 ```
 legilo                              # start in the tray
-legilo --speak-selection            # also --speak-clipboard, --pause, --stop
+legilo --speak-selection            # also --speak-clipboard, --speak-pdf-text
+legilo --pause                      # also --stop, --faster, --slower
+legilo --read notes.txt             # read a plain-text file aloud
 legilo --install-voice vits-piper-en_GB-cori-medium.tar.bz2
-legilo --speak "Hello from Legilo."
-legilo --speak-file notes.txt --speed 1.2
+legilo --list-voices
 legilo --clean-only copied.txt      # the text as it would be spoken
 legilo --explain copied.txt         # why it was or was not taken for PDF text
 ```
 
-The speak, pause and stop commands go to the running instance, starting
-one if needed. `--clean-only` and `--explain` read standard input when
-given no file.
+The speak and read commands go to the running instance, starting one if
+needed; pause, stop, faster and slower do nothing when none is running.
+`--speak-text TEXT` speaks the given text, once `ipc/allowSpeakText=true`
+is set in `~/.config/legilo/legilo.conf`. `--clean-only` and `--explain`
+read standard input when given no file. `legilo --help` lists everything.
 
 The design, requirements and staged plan are in
 [docs/legilo-tdd.md](docs/legilo-tdd.md).

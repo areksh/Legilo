@@ -50,6 +50,10 @@ public:
     // detection misses.
     void speakSelectionAsPdfText();
     void speakClipboard();
+    // Speaks the given text at once, replacing anything playing: text from
+    // the command line or a file, where the speak-while-speaking setting,
+    // which is about pressing a shortcut again, does not apply.
+    void speakText(const TextCapture &capture);
     // Pauses speech that is playing and resumes speech that is paused.
     // With nothing playing, speaks the last text again from the sentence
     // where it stopped (design 7.5, togglePlay).

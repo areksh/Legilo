@@ -81,6 +81,9 @@ void TestSettings::boolKeys()
         << QStringLiteral("behaviour/selectionFallbackToClipboard")
         << &Settings::selectionFallbackToClipboard << &Settings::setSelectionFallbackToClipboard
         << false;
+    QTest::newRow("allowSpeakText")
+        << QStringLiteral("ipc/allowSpeakText") << &Settings::allowSpeakText
+        << &Settings::setAllowSpeakText << false;
 }
 
 void TestSettings::boolKeyHasDefaultWhenUnset()

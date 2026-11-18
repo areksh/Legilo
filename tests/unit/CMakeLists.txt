@@ -22,6 +22,7 @@ endfunction()
 
 legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_speaker SOURCES tst_speaker.cpp LIBS legilo_app)
+legilo_add_unit_test(tst_commandline SOURCES tst_commandline.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_ipcprotocol SOURCES tst_ipcprotocol.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_singleinstance SOURCES tst_singleinstance.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_normaliser SOURCES tst_normaliser.cpp LIBS legilo_core)

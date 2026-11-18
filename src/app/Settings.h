@@ -57,6 +57,11 @@ public:
     ShowCaptureInReader showCaptureInReader() const;
     void setShowCaptureInReader(ShowCaptureInReader value);
 
+    // Whether other programs may have text spoken through the speak-text
+    // command (design 7.8, 8).
+    bool allowSpeakText() const;
+    void setAllowSpeakText(bool value);
+
     // The voice to speak with, by ID. Empty until the user chooses one,
     // which means the first installed voice.
     QString defaultVoice() const;

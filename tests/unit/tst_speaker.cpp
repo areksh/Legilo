@@ -21,6 +21,8 @@ using legilo::testing::FakeTtsEngine;
 using namespace Qt::StringLiterals;
 using State = PlaybackController::State;
 
+Q_DECLARE_METATYPE(legilo::CaptureSource)
+
 namespace {
 
 bool waitUntil(const std::function<bool()> &done, int timeoutMs = 5000)
@@ -62,6 +64,11 @@ private slots:
     void fasterAndSlowerChangeAndSaveTheSpeed();
     void pauseWhenIdleReplaysTheLastTextFromWhereItStopped();
     void pauseWhenIdleBeforeAnySpeechDoesNothing();
+    void speakTextReplacesWhatIsPlaying();
+    void speakTextNamesItsSourceInTheNotice_data();
+    void speakTextNamesItsSourceInTheNotice();
+    void emptyTextIsReportedForWhereItCameFrom_data();
+    void emptyTextIsReportedForWhereItCameFrom();
 
 private:
     // Speaks the selection and waits until speech has started.
@@ -375,16 +382,23 @@ void TestSpeaker::fasterAndSlowerChangeAndSaveTheSpeed()
 void TestSpeaker::pauseWhenIdleReplaysTheLastTextFromWhereItStopped()
 {
     QVERIFY(startSpeaking(u"First sentence here. Second sentence here. Third one."_s));
-    const qsizetype firstSentence = FakeTtsEngine::framesFor(u"First sentence here."_s);
-    m_output->pull(firstSentence + 1);
-    QVERIFY(waitUntil([&] { return m_controller->currentSegment() == 1; }));
+    // Pulled in small steps, as a device would, because the second sentence
+    // may not be queued yet; a step is well under a sentence's frames.
+    QVERIFY(waitUntil([&] {
+        m_output->pull(20);
+        return m_controller->currentSegment() == 1;
+    }));
     m_speaker->stop();
     const qsizetype callsBefore = m_engine->calls().size();
 
     m_speaker->togglePause();
 
     QVERIFY(waitUntil([&] { return m_controller->state() == State::Playing; }));
-    QCOMPARE(m_engine->calls().at(callsBefore).text, u"Second sentence here."_s);
+    // A synthesis begun just before the stop may be recorded after it, so
+    // look at what followed rather than at one position.
+    const QStringList replayed = m_engine->texts().mid(callsBefore);
+    QVERIFY(replayed.contains(u"Second sentence here."_s));
+    QVERIFY(!replayed.contains(u"First sentence here."_s));
 }
 
 void TestSpeaker::pauseWhenIdleBeforeAnySpeechDoesNothing()
@@ -396,6 +410,68 @@ void TestSpeaker::pauseWhenIdleBeforeAnySpeechDoesNothing()
 
     QCOMPARE(m_controller->state(), State::Idle);
     QVERIFY(m_engine->calls().isEmpty());
+}
+
+void TestSpeaker::speakTextReplacesWhatIsPlaying()
+{
+    QVERIFY(startSpeaking(u"The first text."_s));
+    legilo::TextCapture capture;
+    capture.text = u"Some given text."_s;
+    capture.source = legilo::CaptureSource::Pasted;
+
+    m_speaker->speakText(capture);
+
+    QVERIFY(waitUntil([&] { return m_engine->texts().contains(u"Some given text."_s); }));
+    QCOMPARE(m_source->selectionReads, 1);
+}
+
+void TestSpeaker::speakTextNamesItsSourceInTheNotice_data()
+{
+    QTest::addColumn<legilo::CaptureSource>("source");
+    QTest::addColumn<QString>("title");
+    QTest::newRow("pasted") << legilo::CaptureSource::Pasted << u"Reading the text"_s;
+    QTest::newRow("file") << legilo::CaptureSource::File << u"Reading the file"_s;
+}
+
+void TestSpeaker::speakTextNamesItsSourceInTheNotice()
+{
+    QFETCH(legilo::CaptureSource, source);
+    QFETCH(QString, title);
+    QSignalSpy notices(m_speaker.get(), &Speaker::notify);
+    m_speaker->setEngine(m_engine);
+    legilo::TextCapture capture;
+    capture.text = u"Some given text."_s;
+    capture.source = source;
+
+    m_speaker->speakText(capture);
+
+    QVERIFY(waitUntil([&] { return !notices.isEmpty(); }));
+    QCOMPARE(notices.first().at(1).toString(), title);
+}
+
+void TestSpeaker::emptyTextIsReportedForWhereItCameFrom_data()
+{
+    QTest::addColumn<legilo::CaptureSource>("source");
+    QTest::addColumn<QString>("message");
+    QTest::newRow("pasted") << legilo::CaptureSource::Pasted << u"There is no text to read."_s;
+    QTest::newRow("file") << legilo::CaptureSource::File << u"The file holds no text."_s;
+}
+
+void TestSpeaker::emptyTextIsReportedForWhereItCameFrom()
+{
+    QFETCH(legilo::CaptureSource, source);
+    QFETCH(QString, message);
+    QSignalSpy notices(m_speaker.get(), &Speaker::notify);
+    m_speaker->setEngine(m_engine);
+    legilo::TextCapture capture;
+    capture.text = u" \n "_s;
+    capture.source = source;
+
+    m_speaker->speakText(capture);
+
+    QVERIFY(waitUntil([&] { return !notices.isEmpty(); }));
+    QCOMPARE(notices.first().at(0).value<Speaker::Notice>(), Speaker::Notice::Problem);
+    QCOMPARE(notices.first().at(2).toString(), message);
 }
 
 QTEST_GUILESS_MAIN(TestSpeaker)

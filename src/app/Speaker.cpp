@@ -92,6 +92,11 @@ void Speaker::speakClipboard()
     request(CaptureSource::Clipboard);
 }
 
+void Speaker::speakText(const TextCapture &capture)
+{
+    speak(capture, false, false);
+}
+
 void Speaker::togglePause()
 {
     switch (m_controller->state()) {
@@ -156,12 +161,20 @@ void Speaker::speak(const TextCapture &capture, bool fellBack, bool forcePdf)
     QStringList segments = spokenSegments(document);
     if (segments.isEmpty()) {
         QString message;
-        if (fellBack) {
-            message = tr("Nothing is selected, and the clipboard is empty.");
-        } else if (capture.source == CaptureSource::Clipboard) {
-            message = tr("The clipboard holds no text.");
-        } else {
+        switch (capture.source) {
+        case CaptureSource::Selection:
             message = tr("Nothing is selected.");
+            break;
+        case CaptureSource::Clipboard:
+            message = fellBack ? tr("Nothing is selected, and the clipboard is empty.")
+                               : tr("The clipboard holds no text.");
+            break;
+        case CaptureSource::File:
+            message = tr("The file holds no text.");
+            break;
+        case CaptureSource::Pasted:
+            message = tr("There is no text to read.");
+            break;
         }
         emit notify(Notice::Problem, tr("Nothing to read"), message);
         return;
@@ -183,8 +196,20 @@ void Speaker::notifyStarted(const TextCapture &capture, const QString &spoken, b
     if (fellBack && source) {
         title = tr("Nothing selected: reading the clipboard");
     } else if (source) {
-        title = capture.source == CaptureSource::Clipboard ? tr("Reading the clipboard")
-                                                           : tr("Reading the selection");
+        switch (capture.source) {
+        case CaptureSource::Selection:
+            title = tr("Reading the selection");
+            break;
+        case CaptureSource::Clipboard:
+            title = tr("Reading the clipboard");
+            break;
+        case CaptureSource::File:
+            title = tr("Reading the file");
+            break;
+        case CaptureSource::Pasted:
+            title = tr("Reading the text");
+            break;
+        }
     }
     emit notify(Notice::Started, title, firstWords(spoken));
 }

@@ -41,6 +41,7 @@ signals:
     void quitRequested();
 
 private:
+    IpcReply readFile(const QString &path);
     void registerShortcuts();
     void onShortcut(const QString &id);
     void loadVoice();

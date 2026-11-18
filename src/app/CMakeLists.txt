@@ -1,5 +1,7 @@
 # Everything except main() goes in a library so the tests can link it.
 add_library(legilo_app STATIC
+    CommandLine.cpp
+    CommandLine.h
     Instance.cpp
     Instance.h
     IpcProtocol.cpp
