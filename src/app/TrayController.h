@@ -29,6 +29,7 @@ public:
 
 signals:
     void quitRequested();
+    void settingsRequested();
 
 private:
     void showState(PlaybackController::State state);

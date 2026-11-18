@@ -41,6 +41,7 @@ TrayController::TrayController(Speaker *speaker, PlaybackController *controller,
     m_pause = m_menu->addAction(tr("Pause"), speaker, &Speaker::togglePause);
     m_stop = m_menu->addAction(tr("Stop"), speaker, &Speaker::stop);
     m_menu->addSeparator();
+    m_menu->addAction(tr("Settings..."), this, &TrayController::settingsRequested);
     m_menu->addAction(tr("Quit"), this, &TrayController::quitRequested);
     m_icon->setContextMenu(m_menu);
 

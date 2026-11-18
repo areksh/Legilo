@@ -23,6 +23,8 @@ endfunction()
 legilo_add_unit_test(tst_settings SOURCES tst_settings.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_speaker SOURCES tst_speaker.cpp LIBS legilo_app)
 legilo_add_unit_test(tst_commandline SOURCES tst_commandline.cpp LIBS legilo_app)
+legilo_add_unit_test(tst_shortcutactions SOURCES tst_shortcutactions.cpp LIBS legilo_app)
+legilo_add_unit_test(tst_settingsdialog SOURCES tst_settingsdialog.cpp LIBS legilo_app)
 # Platform logic that can be tested apart from the system (design 9.5).
 if(UNIX AND NOT APPLE)
     legilo_add_unit_test(tst_xdgautostart SOURCES tst_xdgautostart.cpp LIBS legilo_platform)

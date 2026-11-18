@@ -10,6 +10,10 @@ add_library(legilo_app STATIC
     Logging.h
     Settings.cpp
     Settings.h
+    SettingsDialog.cpp
+    SettingsDialog.h
+    ShortcutActions.cpp
+    ShortcutActions.h
     SingleInstance.cpp
     SingleInstance.h
     Speaker.cpp

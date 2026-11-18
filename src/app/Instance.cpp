@@ -1,8 +1,11 @@
 #include "app/Instance.h"
 
 #include "app/Logging.h"
+#include "app/SettingsDialog.h"
+#include "app/ShortcutActions.h"
 #include "core/tts/SherpaTtsEngine.h"
 #include "core/tts/VoiceRegistry.h"
+#include "platform/Autostart.h"
 #include "platform/GlobalShortcuts.h"
 #include "platform/Platform.h"
 #include "platform/TextSource.h"
@@ -24,15 +27,20 @@ Instance::Instance(QObject *parent)
 {
     m_controller.setSpeed(m_settings.speed());
     connect(&m_tray, &TrayController::quitRequested, this, &Instance::quitRequested);
+    connect(&m_tray, &TrayController::settingsRequested, this, &Instance::showSettings);
+    connect(&m_settings, &Settings::changed, this, &Instance::onSettingChanged);
 }
 
 Instance::~Instance()
 {
     m_speaker.stop();
+    delete m_settingsDialog;
     // A voice still loading at quit finishes first: the thread cannot be
     // stopped part-way through sherpa-onnx's set-up.
-    if (!m_loader.isNull()) {
-        m_loader->wait();
+    for (const QPointer<QThread> &loader : std::as_const(m_loaders)) {
+        if (!loader.isNull()) {
+            loader->wait();
+        }
     }
 }
 
@@ -99,22 +107,13 @@ IpcReply Instance::readFile(const QString &path)
     return {};
 }
 
-// The actions of design 7.6.2, with their Linux defaults. Show-reader is
-// registered with the reader, in stage 6.
 void Instance::registerShortcuts()
 {
     m_shortcuts = createGlobalShortcuts();
     connect(m_shortcuts.get(), &GlobalShortcuts::activated, this, &Instance::onShortcut);
-    m_shortcuts->registerAction(u"speak-selection"_s, tr("Speak selection"),
-                                QKeySequence(u"Meta+Alt+S"_s));
-    m_shortcuts->registerAction(u"speak-clipboard"_s, tr("Speak clipboard"),
-                                QKeySequence(u"Meta+Alt+C"_s));
-    m_shortcuts->registerAction(u"speak-pdf-text"_s, tr("Speak selection as PDF text"), {});
-    m_shortcuts->registerAction(u"pause-resume"_s, tr("Pause or resume"),
-                                QKeySequence(u"Meta+Alt+P"_s));
-    m_shortcuts->registerAction(u"stop"_s, tr("Stop"), QKeySequence(u"Meta+Alt+X"_s));
-    m_shortcuts->registerAction(u"faster"_s, tr("Faster"), {});
-    m_shortcuts->registerAction(u"slower"_s, tr("Slower"), {});
+    for (const ShortcutAction &action : shortcutActions()) {
+        m_shortcuts->registerAction(action.id, action.label, action.defaultSequence);
+    }
 }
 
 // The shortcut IDs are the IPC commands, except pause-resume.
@@ -122,6 +121,34 @@ void Instance::onShortcut(const QString &id)
 {
     qCDebug(lcApp) << "Shortcut" << id;
     handle({id == "pause-resume"_L1 ? u"pause"_s : id, {}, {}});
+}
+
+// Opens the settings dialog, or raises it if it is open already.
+void Instance::showSettings()
+{
+    if (m_settingsDialog.isNull()) {
+        if (!m_autostart) {
+            m_autostart = createAutostart();
+        }
+        const VoiceRegistry registry(VoiceRegistry::defaultDirectory());
+        m_settingsDialog = new SettingsDialog(&m_settings, m_shortcuts.get(), m_autostart.get(),
+                                              registry.voices());
+        m_settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+    }
+    m_settingsDialog->show();
+    m_settingsDialog->raise();
+    m_settingsDialog->activateWindow();
+}
+
+// Settings changed in the dialog take effect at once: a new voice loads in
+// the background, and a new speed applies from the next sentence (7.5).
+void Instance::onSettingChanged(const QString &key)
+{
+    if (key == "voice/default"_L1) {
+        loadVoice();
+    } else if (key == "voice/speed"_L1) {
+        m_controller.setSpeed(m_settings.speed());
+    }
 }
 
 // Loads the chosen voice, or the first installed one, on a thread of its
@@ -146,7 +173,12 @@ void Instance::loadVoice()
     auto loaded = std::make_shared<std::shared_ptr<TtsEngine>>();
     QThread *loader = QThread::create(
         [loaded, voice = *voice, threads] { *loaded = SherpaTtsEngine::load(voice, threads); });
-    connect(loader, &QThread::finished, this, [this, loaded, id = voice->id] {
+    const quint64 load = ++m_voiceLoads;
+    connect(loader, &QThread::finished, this, [this, loaded, load, id = voice->id] {
+        // A voice chosen since has its own load under way; this one is stale.
+        if (load != m_voiceLoads) {
+            return;
+        }
         if (*loaded) {
             qCDebug(lcApp) << "Loaded the voice" << id;
             m_speaker.setEngine(*loaded);
@@ -156,7 +188,8 @@ void Instance::loadVoice()
         }
     });
     connect(loader, &QThread::finished, loader, &QObject::deleteLater);
-    m_loader = loader;
+    m_loaders.removeAll(nullptr);
+    m_loaders.append(loader);
     loader->start();
 }
 

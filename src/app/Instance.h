@@ -15,7 +15,9 @@
 
 namespace legilo {
 
+class Autostart;
 class GlobalShortcuts;
+class SettingsDialog;
 class TextSource;
 
 // The running instance of Legilo: the tray, the global shortcuts and the
@@ -43,6 +45,8 @@ signals:
 private:
     IpcReply readFile(const QString &path);
     void registerShortcuts();
+    void showSettings();
+    void onSettingChanged(const QString &key);
     void onShortcut(const QString &id);
     void loadVoice();
 
@@ -53,7 +57,10 @@ private:
     Speaker m_speaker;
     TrayController m_tray;
     std::unique_ptr<GlobalShortcuts> m_shortcuts;
-    QPointer<QThread> m_loader;
+    QList<QPointer<QThread>> m_loaders; // voices loading, finished ones null
+    quint64 m_voiceLoads = 0;           // the latest load's number
+    std::unique_ptr<Autostart> m_autostart;
+    QPointer<SettingsDialog> m_settingsDialog;
 };
 
 } // namespace legilo
