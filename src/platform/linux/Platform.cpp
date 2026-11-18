@@ -2,6 +2,10 @@
 
 #include "linux/KGlobalAccelShortcuts.h"
 #include "linux/KdeTextSource.h"
+#include "linux/XdgAutostart.h"
+
+#include <QCoreApplication>
+#include <QStandardPaths>
 
 namespace legilo {
 
@@ -15,6 +19,14 @@ std::unique_ptr<TextSource> createTextSource()
 std::unique_ptr<GlobalShortcuts> createGlobalShortcuts()
 {
     return std::make_unique<KGlobalAccelShortcuts>();
+}
+
+std::unique_ptr<Autostart> createAutostart()
+{
+    return std::make_unique<XdgAutostart>(
+        QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) +
+            QStringLiteral("/autostart"),
+        QCoreApplication::applicationFilePath());
 }
 
 } // namespace legilo

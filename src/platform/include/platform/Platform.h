@@ -4,6 +4,7 @@
 
 namespace legilo {
 
+class Autostart;
 class GlobalShortcuts;
 class TextSource;
 
@@ -12,5 +13,7 @@ class TextSource;
 // QGuiApplication to exist.
 std::unique_ptr<TextSource> createTextSource();
 std::unique_ptr<GlobalShortcuts> createGlobalShortcuts();
+// Autostart for this executable, as it is now running.
+std::unique_ptr<Autostart> createAutostart();
 
 } // namespace legilo

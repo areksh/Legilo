@@ -2,6 +2,7 @@
 # the target platform are added to this library from linux/ or windows/.
 add_library(legilo_platform STATIC
     Logging.cpp
+    include/platform/Autostart.h
     include/platform/GlobalShortcuts.h
     include/platform/Logging.h
     include/platform/Platform.h
@@ -22,6 +23,8 @@ if(UNIX AND NOT APPLE)
         linux/KGlobalAccelShortcuts.cpp
         linux/KGlobalAccelShortcuts.h
         linux/Platform.cpp
+        linux/XdgAutostart.cpp
+        linux/XdgAutostart.h
     )
     target_include_directories(legilo_platform PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(legilo_platform PRIVATE KF6::GlobalAccel KF6::GuiAddons)
