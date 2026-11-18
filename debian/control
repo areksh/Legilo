@@ -6,6 +6,8 @@ Build-Depends:
  cmake (>= 3.25),
  debhelper-compat (= 13),
  help2man,
+ appstream,
+ desktop-file-utils,
  libkf6globalaccel-dev (>= 6.13),
  libkf6guiaddons-dev (>= 6.13),
  wamerican,
@@ -25,10 +27,9 @@ Architecture: amd64
 Depends:
  ${misc:Depends},
  ${shlibs:Depends},
+ qt6-svg-plugins,
 Description: offline text-to-speech reader
  Legilo reads selected text, the clipboard and plain-text files aloud
  with neural voices that run entirely on the local machine. It cleans up
  text copied from PDFs before speaking it, and integrates with KDE
  Plasma through global shortcuts and the system tray.
- .
- This is an early development build with no speech yet.

@@ -54,7 +54,8 @@ On Debian 13, install the build dependencies:
 sudo apt install build-essential cmake ninja-build pkgconf qt6-base-dev \
     libespeak-ng-dev libonnxruntime-dev libarchive-dev libminiaudio-dev \
     libkf6globalaccel-dev libkf6guiaddons-dev \
-    wbritish wamerican clang-format clang-tidy help2man
+    wbritish wamerican appstream desktop-file-utils \
+    clang-format clang-tidy help2man
 ```
 
 `debian/control` holds the authoritative list of build dependencies.
@@ -64,7 +65,8 @@ On Fedora 45:
 ```
 sudo dnf install gcc-c++ cmake ninja-build pkgconf-pkg-config qt6-qtbase-devel \
     espeak-ng-devel onnxruntime-devel libarchive-devel miniaudio-devel \
-    kf6-kglobalaccel-devel kf6-kguiaddons-devel podman
+    kf6-kglobalaccel-devel kf6-kguiaddons-devel qt6-qtsvg \
+    appstream desktop-file-utils podman
 ```
 
 Fedora has no package with Debian's British and American word lists, so
@@ -133,6 +135,7 @@ the first build compiles sherpa-onnx; each takes a few minutes.
 | `tests/integration/` | Tests against real dependencies, such as speech synthesis with real voices |
 | `tests/corpus/` | The regression corpus for PDF detection and clean-up, and the tools that make it (its own README) |
 | `tests/benchmark/` | Benchmarks, run by `scripts/bench` rather than CTest |
+| `resources/` | Icons, and the desktop file and AppStream metadata for Linux |
 | `debian/` | Debian packaging |
 | `packaging/` | The build container and, later, the Windows installer |
 | `scripts/` | Developer scripts (see above) |

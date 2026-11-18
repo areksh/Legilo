@@ -21,9 +21,13 @@ add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x060800)
 include(cmake/CompilerWarnings.cmake)
 include(cmake/SherpaOnnx.cmake)
 
-add_subdirectory(src)
-
 if(BUILD_TESTING)
     enable_testing()
+endif()
+
+add_subdirectory(src)
+add_subdirectory(resources)
+
+if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()

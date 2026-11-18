@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Legilo
+GenericName=Text to Speech Reader
+Comment=Read selected text, the clipboard or documents aloud
+Exec=legilo --read %f
+Icon=sh.arek.legilo
+Terminal=false
+Categories=Utility;Accessibility;Qt;KDE;
+MimeType=text/plain;
+Keywords=speech;tts;read;aloud;voice;
+StartupNotify=false

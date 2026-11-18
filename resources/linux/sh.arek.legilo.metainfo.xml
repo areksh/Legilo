@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>sh.arek.legilo</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Legilo</name>
+  <summary>Read selected text, the clipboard or documents aloud</summary>
+  <description>
+    <p>
+      Legilo reads text aloud with natural-sounding neural voices that run
+      entirely on your computer. Select text in any application and press a
+      shortcut to hear it, or have it read the clipboard or a plain-text file.
+    </p>
+    <p>
+      Text copied from PDF files is cleaned up before it is spoken: lines are
+      joined back into sentences, words broken across lines are mended, and
+      page numbers and running headers are left out.
+    </p>
+    <p>
+      Legilo works offline and sends nothing anywhere. Its global shortcuts can
+      be changed in System Settings.
+    </p>
+  </description>
+  <launchable type="desktop-id">sh.arek.legilo.desktop</launchable>
+  <developer id="sh.arek">
+    <name>Arek</name>
+  </developer>
+  <url type="homepage">https://github.com/areksh/Legilo</url>
+  <url type="bugtracker">https://github.com/areksh/Legilo/issues</url>
+  <content_rating type="oars-1.1"/>
+  <provides>
+    <binary>legilo</binary>
+  </provides>
+  <keywords>
+    <keyword>text to speech</keyword>
+    <keyword>read aloud</keyword>
+    <keyword>accessibility</keyword>
+  </keywords>
+</component>

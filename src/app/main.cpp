@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
+#include <QIcon>
 #include <QTextStream>
 
 #include <memory>
@@ -176,6 +177,7 @@ int main(int argc, char *argv[])
         QGuiApplication::setDesktopFileName(QString::fromLatin1(DesktopFileName));
         QGuiApplication::setApplicationDisplayName(QStringLiteral("Legilo"));
         QApplication::setQuitOnLastWindowClosed(false);
+        QApplication::setWindowIcon(QIcon(QStringLiteral(":/legilo/icons/sh.arek.legilo.svg")));
     } else {
         app = std::make_unique<QCoreApplication>(argc, argv);
     }

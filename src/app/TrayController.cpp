@@ -13,19 +13,19 @@ namespace {
 
 constexpr int NoticeMs = 4000;
 
-// Theme icons until Legilo has its own (stage 3 packaging).
+// Legilo's icon, with a play or pause badge while speaking or paused.
 QIcon iconFor(PlaybackController::State state)
 {
     switch (state) {
     case PlaybackController::State::Starting:
     case PlaybackController::State::Playing:
-        return QIcon::fromTheme(u"media-playback-start"_s);
+        return QIcon(u":/legilo/icons/tray-speaking.svg"_s);
     case PlaybackController::State::Paused:
-        return QIcon::fromTheme(u"media-playback-pause"_s);
+        return QIcon(u":/legilo/icons/tray-paused.svg"_s);
     case PlaybackController::State::Idle:
         break;
     }
-    return QIcon::fromTheme(u"audio-volume-high"_s);
+    return QIcon(u":/legilo/icons/sh.arek.legilo.svg"_s);
 }
 
 } // namespace
