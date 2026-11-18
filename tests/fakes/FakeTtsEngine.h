@@ -30,7 +30,9 @@ public:
         return qRound(static_cast<double>(text.size() * FramesPerChar) / speed);
     }
 
-    int sampleRate() const override { return Rate; }
+    int sampleRate() const override { return rate; }
+
+    int rate = Rate; // another rate, for voice changes
 
     std::optional<std::vector<float>> synthesise(const QString &text, double speed) override
     {

@@ -46,12 +46,38 @@ PlaybackController::~PlaybackController()
     m_thread.wait();
 }
 
+// A new voice applies from the next segment not yet synthesised, as a
+// speed change does (7.5). A voice with another sample rate needs the
+// device opened again, so the segment being heard starts again in it.
 void PlaybackController::setEngine(std::shared_ptr<TtsEngine> engine)
 {
     m_engine = std::move(engine);
+    if (m_state == State::Idle || !m_engine) {
+        return;
+    }
+    const int sampleRate = m_engine->sampleRate();
+    if (sampleRate == m_openSampleRate) {
+        resynthesiseAfterHeard(tr("The voice could not be changed."));
+        return;
+    }
+    const int at = position();
+    const bool paused = m_state == State::Paused;
+    m_output->stop();
+    if (!m_output->open(sampleRate, &m_queue)) {
+        m_openSampleRate = 0;
+        stop();
+        emit error(tr("The audio device could not be opened."));
+        return;
+    }
+    m_openSampleRate = sampleRate;
+    if (restartAt(at) && !paused) {
+        // The first audio in the new voice starts the device again.
+        setState(State::Starting);
+    }
 }
 
-void PlaybackController::play(const QStringList &segments, int startSegment)
+void PlaybackController::play(const QStringList &segments, int startSegment,
+                              const QList<int> &paragraphs)
 {
     if (!m_engine) {
         emit error(tr("No voice is loaded."));
@@ -67,19 +93,105 @@ void PlaybackController::play(const QStringList &segments, int startSegment)
         }
         m_openSampleRate = sampleRate;
     }
+    m_segments = segments;
+    m_paragraphs = paragraphs;
+    if (!restartAt(startSegment)) {
+        return;
+    }
+    setState(State::Starting);
+    m_pollTimer.start();
+}
+
+bool PlaybackController::restartAt(int segment)
+{
     const auto generation = m_queue.requestFlush(-1);
     if (!generation) {
         emit error(tr("Playback could not be restarted."));
-        return;
+        return false;
     }
     m_generation = *generation;
-    m_documentGeneration = *generation;
-    m_startSegment = startSegment;
+    m_positionGeneration = *generation;
+    m_startSegment = segment;
     m_currentSegment = -1;
     m_synthesisDone = false;
-    emit startRequested(m_engine, segments, startSegment, m_generation, m_speed, QPrivateSignal());
-    setState(State::Starting);
-    m_pollTimer.start();
+    emit startRequested(m_engine, m_segments, segment, m_generation, m_speed, QPrivateSignal());
+    return true;
+}
+
+// A seek while paused takes effect on resume. While playing, the device
+// runs on and plays silence until the target's first chunk is queued,
+// which the short first chunk keeps brief (7.5).
+void PlaybackController::seekToSegment(int segment)
+{
+    if (m_state == State::Idle || segment < 0 || segment >= m_segments.size()) {
+        return;
+    }
+    restartAt(segment);
+}
+
+void PlaybackController::nextSegment()
+{
+    seekToSegment(position() + 1);
+}
+
+// Like music players: early in a segment, go to the one before; later,
+// back to the start of this one (7.5).
+void PlaybackController::previousSegment()
+{
+    constexpr double EarlySeconds = 1.5;
+    const int at = position();
+    const bool early = m_currentSegment < 0 || secondsIntoSegment() < EarlySeconds;
+    seekToSegment(early ? std::max(at - 1, 0) : at);
+}
+
+void PlaybackController::nextParagraph()
+{
+    const int at = position();
+    const int paragraph = paragraphOf(at);
+    for (int i = at + 1; i < m_segments.size(); ++i) {
+        if (paragraphOf(i) != paragraph) {
+            seekToSegment(i);
+            return;
+        }
+    }
+}
+
+void PlaybackController::previousParagraph()
+{
+    // Back to the start of this paragraph, then to the start of the one
+    // before it.
+    int start = position();
+    while (start > 0 && paragraphOf(start - 1) == paragraphOf(start)) {
+        --start;
+    }
+    if (start == 0) {
+        seekToSegment(0);
+        return;
+    }
+    const int previous = paragraphOf(start - 1);
+    int target = start - 1;
+    while (target > 0 && paragraphOf(target - 1) == previous) {
+        --target;
+    }
+    seekToSegment(target);
+}
+
+int PlaybackController::position() const
+{
+    return m_currentSegment >= 0 ? m_currentSegment : m_startSegment;
+}
+
+int PlaybackController::paragraphOf(int segment) const
+{
+    return m_paragraphs.value(segment, 0);
+}
+
+double PlaybackController::secondsIntoSegment() const
+{
+    if (m_currentSegment < 0 || m_openSampleRate <= 0) {
+        return 0.0;
+    }
+    return static_cast<double>(m_queue.framesIntoSegment()) / m_openSampleRate;
 }
 
 void PlaybackController::pause()
@@ -116,22 +228,27 @@ void PlaybackController::stop()
 void PlaybackController::setSpeed(double speed)
 {
     m_speed = std::clamp(speed, 0.5, 2.5);
-    if (m_state == State::Idle) {
-        return;
+    if (m_state != State::Idle) {
+        resynthesiseAfterHeard(tr("The speed could not be changed."));
     }
-    // Keep the segment being heard; synthesise the rest again. Before any
-    // of this document is heard, start again from its first segment.
+}
+
+// Keeps the segment being heard and synthesises the rest again, with the
+// current voice and speed. Before anything since play or the last seek is
+// heard, synthesis starts again from where that began.
+void PlaybackController::resynthesiseAfterHeard(const QString &failure)
+{
     const int playing =
-        m_queue.playingGeneration() >= m_documentGeneration ? m_queue.currentSegment() : -1;
-    const int restartAt = playing >= 0 ? playing + 1 : m_startSegment;
+        m_queue.playingGeneration() >= m_positionGeneration ? m_queue.currentSegment() : -1;
+    const int from = playing >= 0 ? playing + 1 : m_startSegment;
     const auto generation = m_queue.requestFlush(playing);
     if (!generation) {
-        emit error(tr("The speed could not be changed."));
+        emit error(failure);
         return;
     }
     m_generation = *generation;
     m_synthesisDone = false;
-    emit restartRequested(restartAt, m_generation, m_speed, QPrivateSignal());
+    emit restartRequested(m_engine, from, m_generation, m_speed, QPrivateSignal());
 }
 
 PlaybackController::State PlaybackController::state() const
@@ -194,7 +311,7 @@ void PlaybackController::poll()
     if (m_state != State::Playing) {
         return;
     }
-    if (m_queue.playingGeneration() >= m_documentGeneration) {
+    if (m_queue.playingGeneration() >= m_positionGeneration) {
         const int segment = m_queue.currentSegment();
         if (segment != m_currentSegment) {
             m_currentSegment = segment;

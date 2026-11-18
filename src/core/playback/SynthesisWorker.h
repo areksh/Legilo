@@ -40,8 +40,10 @@ public:
     // Starts synthesising segments from startSegment, for generation.
     void start(const std::shared_ptr<TtsEngine> &engine, const QStringList &segments,
                int startSegment, quint64 generation, double speed);
-    // Synthesises again from segment onwards, for a speed change.
-    void restartFrom(int segment, quint64 generation, double speed);
+    // Synthesises again from segment onwards, with engine, for a speed or
+    // voice change.
+    void restartFrom(const std::shared_ptr<TtsEngine> &engine, int segment, quint64 generation,
+                     double speed);
     // Stops all work.
     void stop();
 

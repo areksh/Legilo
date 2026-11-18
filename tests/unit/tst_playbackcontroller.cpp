@@ -49,6 +49,27 @@ QStringList segments(int count)
     return list;
 }
 
+// Segments of two seconds each with the fake voice, longer than the 1.5 s
+// that decides where "previous" goes, and too long for one first chunk.
+QStringList longSegments(int count)
+{
+    QStringList list;
+    for (int i = 0; i < count; ++i) {
+        list.append(u"Sentence %1 is long. "_s.arg(i).repeated(10).trimmed());
+    }
+    return list;
+}
+
+// The segments reported as heard from now on.
+QList<int> heardFrom(const QSignalSpy &spy, qsizetype from)
+{
+    QList<int> heard;
+    for (qsizetype i = from; i < spy.size(); ++i) {
+        heard.append(spy.at(i).at(0).toInt());
+    }
+    return heard;
+}
+
 qsizetype framesOf(const QStringList &texts, double speed = 1.0)
 {
     qsizetype frames = 0;
@@ -84,6 +105,16 @@ private slots:
     void failedSegmentIsReportedAndSkipped();
     void playWithoutEngineReportsError();
     void opensOutputAtTheVoiceSampleRate();
+
+    void seekPlaysOnFromTheTarget();
+    void seekWhilePausedResumesAtTheTarget();
+    void seekWhenIdleDoesNothing();
+    void nextSegmentMovesOnAndStopsAtTheLast();
+    void previousSegmentEarlyInASentenceGoesBackOne();
+    void previousSegmentLaterInASentenceRestartsIt();
+    void paragraphNavigationFindsParagraphStarts();
+    void voiceChangeAppliesFromTheNextSentence();
+    void voiceChangeAtAnotherRateReopensTheOutput();
 
 private:
     std::unique_ptr<FakeAudioOutput> m_output;
@@ -333,6 +364,138 @@ void TestPlaybackController::opensOutputAtTheVoiceSampleRate()
     QCOMPARE(m_output->sampleRate(), FakeTtsEngine::Rate);
     m_controller->play(segments(1));
     QCOMPARE(m_output->opens(), 1);
+}
+
+void TestPlaybackController::seekPlaysOnFromTheTarget()
+{
+    QSignalSpy heard(m_controller.get(), &PlaybackController::segmentChanged);
+    const QStringList document = segments(10);
+    m_controller->play(document);
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 1; }, 10));
+    const qsizetype before = heard.size();
+
+    m_controller->seekToSegment(6);
+
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->state() == State::Idle; }, 10));
+    QCOMPARE(heardFrom(heard, before), (QList<int>{6, 7, 8, 9}));
+}
+
+void TestPlaybackController::seekWhilePausedResumesAtTheTarget()
+{
+    QSignalSpy heard(m_controller.get(), &PlaybackController::segmentChanged);
+    m_controller->play(segments(10));
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 1; }, 10));
+    m_controller->pause();
+    const qsizetype before = heard.size();
+
+    m_controller->seekToSegment(8);
+
+    QCOMPARE(m_controller->state(), State::Paused);
+    m_controller->resume();
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->state() == State::Idle; }, 10));
+    QCOMPARE(heardFrom(heard, before), (QList<int>{8, 9}));
+}
+
+void TestPlaybackController::seekWhenIdleDoesNothing()
+{
+    m_controller->seekToSegment(3);
+    QTest::qWait(50);
+
+    QCOMPARE(m_controller->state(), State::Idle);
+    QVERIFY(m_engine->calls().isEmpty());
+}
+
+void TestPlaybackController::nextSegmentMovesOnAndStopsAtTheLast()
+{
+    QSignalSpy heard(m_controller.get(), &PlaybackController::segmentChanged);
+    m_controller->play(segments(6));
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 1; }, 10));
+    qsizetype before = heard.size();
+
+    // Pressed twice before the next is heard: it skips one.
+    m_controller->nextSegment();
+    m_controller->nextSegment();
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 5; }, 10));
+    QCOMPARE(heardFrom(heard, before), (QList<int>{3, 4, 5}));
+
+    before = heard.size();
+    m_controller->nextSegment(); // the last: nothing to move to
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->state() == State::Idle; }, 10));
+    QVERIFY(heardFrom(heard, before).isEmpty());
+}
+
+void TestPlaybackController::previousSegmentEarlyInASentenceGoesBackOne()
+{
+    QSignalSpy heard(m_controller.get(), &PlaybackController::segmentChanged);
+    m_controller->play(longSegments(4), 2);
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 2; }, 10));
+    m_output->pull(500); // half a second into the sentence
+    const qsizetype before = heard.size();
+
+    m_controller->previousSegment();
+
+    QVERIFY(playUntil(*m_output, [&] { return heard.size() > before; }, 50));
+    QCOMPARE(heardFrom(heard, before).first(), 1);
+}
+
+void TestPlaybackController::previousSegmentLaterInASentenceRestartsIt()
+{
+    QSignalSpy heard(m_controller.get(), &PlaybackController::segmentChanged);
+    m_controller->play(longSegments(4), 2);
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 2; }, 10));
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->secondsIntoSegment() > 1.6; }, 50));
+    const qsizetype callsBefore = m_engine->calls().size();
+
+    m_controller->previousSegment();
+
+    QVERIFY(waitUntil([&] { return m_engine->calls().size() > callsBefore; }));
+    // The sentence starts again, as its first chunk.
+    QVERIFY(longSegments(4).at(2).startsWith(m_engine->calls().at(callsBefore).text));
+    QCOMPARE(m_controller->currentSegment(), -1);
+}
+
+void TestPlaybackController::paragraphNavigationFindsParagraphStarts()
+{
+    const QList<int> paragraphs{0, 0, 1, 1, 1, 2};
+    m_controller->play(segments(6), 1, paragraphs);
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 1; }, 10));
+
+    m_controller->nextParagraph();
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 2; }, 10));
+    m_controller->seekToSegment(4);
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 4; }, 10));
+    m_controller->previousParagraph();
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 0; }, 10));
+}
+
+void TestPlaybackController::voiceChangeAppliesFromTheNextSentence()
+{
+    auto other = std::make_shared<FakeTtsEngine>();
+    m_controller->play(segments(6));
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 1; }, 10));
+
+    m_controller->setEngine(other);
+
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->state() == State::Idle; }, 10));
+    QVERIFY(other->texts().contains(segments(6).at(5)));
+    QVERIFY(!other->texts().contains(segments(6).at(1)));
+    QCOMPARE(m_output->opens(), 1);
+}
+
+void TestPlaybackController::voiceChangeAtAnotherRateReopensTheOutput()
+{
+    auto other = std::make_shared<FakeTtsEngine>();
+    other->rate = 2 * FakeTtsEngine::Rate;
+    m_controller->play(segments(6));
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->currentSegment() == 2; }, 10));
+
+    m_controller->setEngine(other);
+
+    QCOMPARE(m_output->sampleRate(), other->rate);
+    QVERIFY(playUntil(*m_output, [&] { return m_controller->state() == State::Idle; }, 10));
+    // The sentence being heard starts again in the new voice.
+    QVERIFY(other->texts().contains(segments(6).at(2)));
+    QVERIFY(!other->texts().contains(segments(6).at(1)));
 }
 
 QTEST_GUILESS_MAIN(TestPlaybackController)

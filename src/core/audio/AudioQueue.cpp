@@ -128,6 +128,12 @@ qsizetype AudioQueue::pull(std::span<float> out)
         written += count;
         sampleRead += count;
         chunk.consumed += count;
+        // A segment heard again after a flush starts from nothing too.
+        if (chunk.segment != m_currentSegment.load(std::memory_order_relaxed) ||
+            chunk.generation != m_playingGeneration.load(std::memory_order_relaxed)) {
+            m_segmentFramesPlayed.store(0, std::memory_order_relaxed);
+        }
+        m_segmentFramesPlayed.fetch_add(count, std::memory_order_relaxed);
         m_currentSegment.store(chunk.segment, std::memory_order_relaxed);
         // The count is reset before the new generation is published, so a
         // producer that sees the generation never sees an older count.
@@ -167,6 +173,11 @@ quint64 AudioQueue::playingGeneration() const
 int AudioQueue::currentSegment() const
 {
     return m_currentSegment.load(std::memory_order_relaxed);
+}
+
+qint64 AudioQueue::framesIntoSegment() const
+{
+    return m_segmentFramesPlayed.load(std::memory_order_relaxed);
 }
 
 qint64 AudioQueue::framesPlayed() const

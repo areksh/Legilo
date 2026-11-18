@@ -62,6 +62,9 @@ public:
     quint64 playingGeneration() const;
     // Frames of audio pulled so far, not counting silence.
     qint64 framesPlayed() const;
+    // Frames pulled of the segment playing, from its start: for "previous",
+    // which goes back a segment only early in one (design 7.5).
+    qint64 framesIntoSegment() const;
     // Frames pushed but not yet pulled or discarded. Approximate while
     // other threads are at work.
     qint64 queuedFrames() const;
@@ -109,6 +112,8 @@ private:
     std::atomic<int> m_currentSegment = -1;       // consumer
     std::atomic<quint64> m_playingGeneration = 0; // consumer
     std::atomic<qint64> m_framesPlayed = 0;       // consumer
+    // Frames pulled of the segment playing, reset when it changes.
+    std::atomic<qint64> m_segmentFramesPlayed = 0; // consumer
     // Frames pulled of the playing generation, reset when it changes.
     std::atomic<qint64> m_generationFramesPlayed = 0; // consumer
 

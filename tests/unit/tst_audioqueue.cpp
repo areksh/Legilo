@@ -64,6 +64,7 @@ private slots:
     void flushFailsWhenCallbackFallsBehind();
     void queuedFramesOfAGenerationLeaveOutDiscardedAudio();
     void queuedFramesOfAGenerationFallAsItPlays();
+    void framesIntoSegmentCountFromTheSegmentsStart();
     void concurrentProducerAndConsumerKeepOrder();
 };
 
@@ -293,6 +294,27 @@ void TestAudioQueue::queuedFramesOfAGenerationFallAsItPlays()
     QCOMPARE(queue.queuedFramesOf(generation), 5);
     pull(queue, 10);
     QCOMPARE(queue.queuedFramesOf(generation), 0);
+}
+
+void TestAudioQueue::framesIntoSegmentCountFromTheSegmentsStart()
+{
+    AudioQueue queue(64);
+    QVERIFY(queue.push(0, 0, ramp(1, 10)));
+    QVERIFY(queue.push(0, 0, ramp(1, 10))); // a segment's second chunk
+    QVERIFY(queue.push(0, 1, ramp(1, 10)));
+    QCOMPARE(queue.framesIntoSegment(), 0);
+
+    pull(queue, 15);
+    QCOMPARE(queue.framesIntoSegment(), 15);
+    pull(queue, 10);
+    QCOMPARE(queue.currentSegment(), 1);
+    QCOMPARE(queue.framesIntoSegment(), 5);
+
+    // The same segment again, after a flush, counts from its start.
+    const quint64 generation = queue.requestFlush(-1).value_or(0);
+    QVERIFY(queue.push(generation, 1, ramp(1, 10)));
+    pull(queue, 3);
+    QCOMPARE(queue.framesIntoSegment(), 3);
 }
 
 void TestAudioQueue::flushFailsWhenCallbackFallsBehind()

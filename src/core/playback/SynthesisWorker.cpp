@@ -39,8 +39,10 @@ void SynthesisWorker::start(const std::shared_ptr<TtsEngine> &engine, const QStr
     step();
 }
 
-void SynthesisWorker::restartFrom(int segment, quint64 generation, double speed)
+void SynthesisWorker::restartFrom(const std::shared_ptr<TtsEngine> &engine, int segment,
+                                  quint64 generation, double speed)
 {
+    m_engine = engine;
     begin(segment, generation, speed);
     step();
 }
