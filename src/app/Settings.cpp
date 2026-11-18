@@ -1,5 +1,7 @@
 #include "app/Settings.h"
 
+#include <QStandardPaths>
+
 #include <algorithm>
 #include <array>
 
@@ -130,9 +132,21 @@ int readInt(const QSettings &store, const Key<int> &key)
 } // namespace
 
 Settings::Settings(QObject *parent)
-    : QObject(parent)
-    , m_store(QSettings::IniFormat, QSettings::UserScope, u"legilo"_s, u"legilo"_s)
+    : Settings(defaultFileName(), parent)
 {}
+
+// QSettings names an INI file legilo.ini wherever it puts it, so the
+// Linux name is given in full.
+QString Settings::defaultFileName()
+{
+#ifdef Q_OS_WIN
+    return QSettings(QSettings::IniFormat, QSettings::UserScope, u"legilo"_s, u"legilo"_s)
+        .fileName();
+#else
+    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) +
+           u"/legilo/legilo.conf"_s;
+#endif
+}
 
 Settings::Settings(const QString &fileName, QObject *parent)
     : QObject(parent)

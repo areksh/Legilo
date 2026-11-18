@@ -31,11 +31,15 @@ public:
     };
     Q_ENUM(ShowCaptureInReader)
 
-    // Opens the per-user file: legilo/legilo.conf under the XDG config
-    // directory on Linux, %APPDATA%\legilo\legilo.ini on Windows.
+    // Opens the per-user file, defaultFileName().
     explicit Settings(QObject *parent = nullptr);
     // Opens the given INI file instead.
     explicit Settings(const QString &fileName, QObject *parent = nullptr);
+
+    // The user's settings file (design 7.9): legilo/legilo.conf under the
+    // XDG config directory on Linux, %APPDATA%\legilo\legilo.ini on
+    // Windows.
+    static QString defaultFileName();
 
     bool autostart() const;
     void setAutostart(bool value);

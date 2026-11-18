@@ -2,6 +2,7 @@
 
 #include <QSettings>
 #include <QSignalSpy>
+#include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -45,6 +46,8 @@ private slots:
 
     void changedIsEmittedWithKeyWhenValueChanges();
     void changedIsNotEmittedWhenValueIsUnchanged();
+
+    void userSettingsLiveWhereTheDesignSays();
 
 private:
     static void boolKeys();
@@ -350,6 +353,22 @@ void TestSettings::changedIsNotEmittedWhenValueIsUnchanged()
     settings.setShowCaptureInReader(Settings::ShowCaptureInReader::IfVisible);
 
     QCOMPARE(spy.count(), 0);
+}
+
+// Regression: QSettings in INI format names the file legilo.ini wherever it
+// is, but design 7.9 has legilo.conf on Linux, as KDE applications do.
+void TestSettings::userSettingsLiveWhereTheDesignSays()
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QString config = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
+
+    const QString fileName = Settings::defaultFileName();
+
+#ifdef Q_OS_WIN
+    QVERIFY(fileName.endsWith(QStringLiteral("/legilo/legilo.ini")));
+#else
+    QCOMPARE(fileName, config + QStringLiteral("/legilo/legilo.conf"));
+#endif
 }
 
 QTEST_GUILESS_MAIN(TestSettings)
