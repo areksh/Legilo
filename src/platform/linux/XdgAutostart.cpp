@@ -79,9 +79,8 @@ QString XdgAutostart::filePath() const
 QString quoteExecArgument(const QString &argument)
 {
     QString quoted = argument;
-    const bool needsQuotes = std::any_of(argument.begin(), argument.end(), [](QChar character) {
-        return Reserved.contains(character);
-    });
+    const bool needsQuotes =
+        std::ranges::any_of(argument, [](QChar character) { return Reserved.contains(character); });
     if (needsQuotes) {
         quoted.clear();
         for (const QChar character : argument) {
